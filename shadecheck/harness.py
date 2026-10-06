@@ -30,7 +30,8 @@ class Observer(rpc.CompactTxStreamerServicer):
                                      request_sequence=seq, grpc_code=error.code().name)
                 context.abort(error.code(), error.details())
         self.recorder.record("SendTransaction", "response", context.peer(),
-                             request_sequence=seq, error_code=response.errorCode)
+                             request_sequence=seq, error_code=response.errorCode,
+                             response_message=response.errorMessage)
         return response
 
     def GetMempoolStream(self, request, context):

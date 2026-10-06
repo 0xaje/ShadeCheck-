@@ -1,0 +1,46 @@
+name: shadecheck-regtest
+services:
+  zcashd:
+    image: electriccoinco/zcashd:v6.12.2
+    platform: linux/amd64
+    # Bypass the image's fetch-all-params wrapper: this transparent regtest flow
+    # uses no Sprout proofs. Sapling parameters are bundled in this node version.
+    entrypoint: ["zcashd"]
+    command: ["-conf=/etc/zcash/shadecheck.conf", "-datadir=/data", "-printtoconsole"]
+    volumes:
+      - ./zcash.conf:/etc/zcash/shadecheck.conf:ro
+      - node-data:/data
+    healthcheck:
+      test: ["CMD", "zcash-cli", "-conf=/etc/zcash/shadecheck.conf", "-datadir=/data", "getblockchaininfo"]
+      interval: 3s
+      timeout: 5s
+      retries: 60
+      start_period: 20s
+    networks: [regtest]
+  lightwalletd:
+    build:
+      context: https://github.com/zcash/lightwalletd.git#d16d48124e9ad4157ebc2324b5090c6ba201470c
+    platform: linux/amd64
+    command:
+      - --grpc-bind-addr=0.0.0.0:9067
+      - --no-tls-very-insecure
+      - --rpchost=zcashd
+      - --rpcport=18232
+      - --rpcuser=shadecheck-regtest
+      - --rpcpassword=local-regtest-only
+      - --data-dir=/var/lib/lightwalletd
+      - --log-file=/dev/stdout
+    depends_on:
+      zcashd:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:9067:9067"
+    volumes:
+      - lightwalletd-data:/var/lib/lightwalletd
+    networks: [regtest]
+volumes:
+  node-data:
+  lightwalletd-data:
+networks:
+  regtest:
+    internal: true

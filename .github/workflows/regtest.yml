@@ -1,0 +1,40 @@
+name: Real Zcash regtest broadcast
+on:
+  push:
+    paths:
+      - 'integration/**'
+      - 'scripts/regtest.py'
+      - 'shadecheck/**'
+      - '.github/workflows/regtest.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  broadcast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install .
+      - name: Start actual node and lightwalletd
+        run: python scripts/regtest.py up
+      - name: Create and sign a funded local transaction without broadcasting
+        run: python scripts/regtest.py prepare
+      - name: Prove broadcast linkability and strict CLI enforcement
+        run: python scripts/regtest.py prove
+      - name: Capture backend logs
+        if: always()
+        run: |
+          mkdir -p out
+          docker compose -f integration/compose.yml logs --no-color > out/backend.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-regtest-evidence
+          path: out/
+      - name: Stop local backend
+        if: always()
+        run: docker compose -f integration/compose.yml down

@@ -4,6 +4,8 @@ This setup creates an actual isolated Zcash regtest node and lightwalletd. The w
 
 This proves SC-002 transport linkability using a transparent transaction. It does not yet demonstrate a shielded wallet flow, anonymity, or mitigation. All test keys remain inside the developer's local node wallet.
 
+Validated with an actual node and lightwalletd in [GitHub Actions](https://github.com/0xaje/ShadeCheck-/actions/runs/37396184795) on October 6, 2026. The downloaded evidence contained six captured events with a valid hash chain, one HIGH finding supported by three events, backend response code 0, and independently matching node mempool data. These Windows commands still need verification on your machine.
+
 ## Prerequisites
 
 Install Docker Desktop for Windows with Linux containers and the WSL 2 backend, Git, and Python 3.11+. Start Docker Desktop and wait until its engine is running.

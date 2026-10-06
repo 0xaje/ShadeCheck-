@@ -10,7 +10,19 @@ This is the **SC-002 foundation**, not the completed MVP. It captures actual gRP
 
 The local protocol client replays an upstream transaction test vector to a controlled endpoint that explicitly rejects it. It never claims a fixture was network accepted, mined, or consensus valid. No spending keys are requested or stored.
 
-**Milestone gate remains open until the live path succeeds:** a genuinely signed transaction must be accepted by a real controlled lightwalletd backend and the exact submitted bytes must then be observed through that backend's mempool stream. No dashboard or additional rules are implemented until that architecture proof succeeds.
+**SC-002 transport milestone verified:** the real regtest integration run accepted a genuinely signed transparent transaction, captured its exact bytes through lightwalletd's mempool stream, independently confirmed those bytes at the node, and verified HIGH plus strict CLI exit 1. This is a transport proof; shielded wallet integration and mitigation remain.
+
+## Run the real local backend
+
+See the [Windows PowerShell setup guide](docs/regtest-setup.md). After installing Docker Desktop and ShadeCheck:
+
+```sh
+python scripts/regtest.py up
+python scripts/regtest.py prepare
+python scripts/regtest.py prove
+```
+
+The prove command starts the observer automatically and saves evidence and JSON/HTML reports in a unique out/regtest directory. The [real-backend CI run](https://github.com/0xaje/ShadeCheck-/actions/runs/37396184795) passed on October 6, 2026. Its artifacts contain the actual evidence. The protocol fixture workflow remains a separate internal conformance test.
 
 ## Setup
 
@@ -119,6 +131,6 @@ Fixtures remain only for deterministic unit/protocol tests and are labeled as su
 
 ## Remaining MVP
 
-SC-001, SC-003, SC-004, SC-005, baselines, a full controlled chain environment, wallet integration, mitigation comparison, and clean-machine/real-backend validation remain. The GitHub Actions example tests the protocol fixture and strict exit behavior; it is not a real-chain integration job.
+SC-001, SC-003, SC-004, SC-005, baselines, shielded wallet integration, mitigation comparison, and verification on the developer's Windows machine remain. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
 
 See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).

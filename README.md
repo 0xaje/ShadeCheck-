@@ -24,6 +24,10 @@ git pull --ff-only
 
 This single command starts the real backend, runs transparent/shielded proofs and all five rule families, checks strict exit codes, and independently audits the saved evidence, baselines, and JSON/HTML results. [Fresh CI run 37409730042](https://github.com/0xaje/ShadeCheck-/actions/runs/37409730042) passed the consolidated workflow: 18 steps, 24 recomputed reports, and 112 hashed artifacts. The downloaded artifact passed independent offline revalidation, and changed evidence was rejected. It saves one isolated out/acceptance run with suite.json, suite.html, individual reports, logs, artifact hashes, and actual image identities. Acceptance PASS means the test checks behaved as required; expected privacy failures remain FAIL. Offline revalidation: `python scripts/acceptance.py --verify <suite-directory>`.
 
+## View actual reports in the local dashboard
+
+After an acceptance run, start `shadecheck dashboard` (PowerShell: `.\.venv\Scripts\shadecheck.exe dashboard`) and open http://127.0.0.1:9070. It loads the newest acceptance run, validates its artifacts, and displays a fixed read-only snapshot with report filters, finding evidence, baseline changes, the five-rule library, and exact-file downloads. [Real CI and Chrome run 37411834768](https://github.com/0xaje/ShadeCheck-/actions/runs/37411834768) passed with actual acceptance data, exact downloads, and reviewed desktop/mobile screenshots. See the [dashboard guide](docs/dashboard.md). No Node installation or new runtime test is needed to view existing results. Empty or invalid data cannot produce a fabricated success state.
+
 ## Run the real local backend
 
 See the [Windows PowerShell setup guide](docs/regtest-setup.md). After installing Docker Desktop and ShadeCheck:
@@ -165,6 +169,6 @@ Fixtures remain only for deterministic unit/protocol tests and are labeled as su
 
 ## Acceptance status
 
-The core CLI MVP passed its defined acceptance suite on a fresh Linux CI runner. All individual real milestones, including SC-005, are also verified on the developer's Windows machine. The consolidated Windows command awaits execution. No dashboard has been built. Passing this acceptance suite means the expected checks and exit codes were verified; it does not mean the tested architecture passed every privacy requirement or establish production readiness or anonymity. Broader rule-family behaviors and wallet support remain outside the documented coverage.
+The core CLI MVP passed its defined acceptance suite on a fresh Linux CI runner. All individual real milestones, including SC-005, are also verified on the developer's Windows machine. The consolidated Windows workflow was also verified from the developer's terminal output. The local dashboard is secondary and displays validated saved artifacts. Passing this acceptance suite means the expected checks and exit codes were verified; it does not mean the tested architecture passed every privacy requirement or establish production readiness or anonymity. Broader rule-family behaviors and wallet support remain outside the documented coverage.
 
 See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).

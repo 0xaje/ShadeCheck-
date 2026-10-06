@@ -29,3 +29,7 @@ SC-005 compares validated evidence under compatible rule selection, correlation 
 ## Consolidated acceptance boundary
 
 The [acceptance suite](acceptance.md) executes the real local backend and the defined tests, then revalidates the saved evidence and reports. Acceptance PASS means expected outcomes were verified; it is separate from privacy status and does not waive findings. Each run uses an isolated artifact root. Backend/adapter trust, release/source pins versus mutable build inputs, synthetic unit-test separation, and incomplete family coverage are explicitly documented. The suite is a collection of real traces, not a fabricated merged client session or anonymity proof.
+
+## Dashboard boundary
+
+The [local dashboard](dashboard.md) uses the same acceptance artifact validator before serving an immutable snapshot on loopback. It displays existing evidence and comparison results; it does not generate findings, execute attacks, or imply anonymity. Display-only large integers use exact decimal strings, while downloads retain original bytes. It is not a remotely hosted authenticated service. Artifact hashes do not authenticate authors, and local node/adapter trust remains unchanged.

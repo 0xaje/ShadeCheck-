@@ -5,6 +5,7 @@ on:
       - 'integration/**'
       - 'scripts/regtest.py'
       - 'scripts/broadcast_comparison.py'
+      - 'scripts/selective_fetch.py'
       - 'shadecheck/**'
       - '.github/workflows/regtest.yml'
   workflow_dispatch:
@@ -36,6 +37,8 @@ jobs:
           python scripts/regtest.py prove
       - name: Verify actual unified and separated observer roles
         run: python scripts/broadcast_comparison.py
+      - name: Verify SC-003 against a real confirmed compact block
+        run: python scripts/selective_fetch.py
       - name: Capture backend logs
         if: always()
         run: |

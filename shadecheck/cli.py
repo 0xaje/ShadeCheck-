@@ -28,6 +28,7 @@ def main(argv=None):
     source.add_argument("--events")
     source.add_argument("--fixture", help="Hex transaction file; replayed only against a rejecting local endpoint")
     test.add_argument("--policy", choices=["strict", "advisory"], default="strict")
+    test.add_argument("--rules", nargs="+", choices=["SC-002", "SC-003"], default=["SC-002"])
     test.add_argument("--output", default="out/report.json")
     test.add_argument("--record", default="out/events.jsonl")
 
@@ -50,10 +51,13 @@ def main(argv=None):
     report.add_argument("--format", choices=["json", "html"], default="json")
     report.add_argument("--output")
     explain = commands.add_parser("explain")
-    explain.add_argument("rule", choices=["SC-002"])
+    explain.add_argument("rule", choices=["SC-002", "SC-003"])
     args = parser.parse_args(argv)
     try:
         if args.command == "explain":
+            if args.rule == "SC-003":
+                print("SC-003: MEDIUM when the same connection requests a non-empty proper subset of IDs from an upstream compact block containing at least two transactions within 30 seconds. Block delivery is observable; wallet processing or ownership is not. PASS is limited to this rule and recorded trace.")
+                return 0
             print("SC-002: MEDIUM for non-empty submission on an observable connection. HIGH requires upstream errorCode=0 plus identical transaction bytes returned by GetMempoolStream within 30 seconds. Strict policy fails any finding. Fixture replay never earns HIGH. No txid is inferred.")
             return 0
         if args.command == "observe":
@@ -63,7 +67,7 @@ def main(argv=None):
                        else grpc.secure_channel(args.upstream, grpc.ssl_channel_credentials()))
             recorder = Recorder(args.output, "upstream")
             server, _ = start_server(recorder, f"127.0.0.1:{args.port}", rpc.CompactTxStreamerStub(channel))
-            print(f"Observer listening at 127.0.0.1:{args.port}; GetLatestBlock, SendTransaction, and GetMempoolStream supported", flush=True)
+            print(f"Observer listening at 127.0.0.1:{args.port}; GetLatestBlock, GetBlockRange, GetTransaction, SendTransaction, and GetMempoolStream supported", flush=True)
             try:
                 server.wait_for_termination()
             except KeyboardInterrupt:
@@ -96,7 +100,7 @@ def main(argv=None):
                 events = load_events(args.record)
             else:
                 events = load_events(args.events)
-            result = evaluate(events, args.policy)
+            result = evaluate(events, args.policy, rules=args.rules)
             output = Path(args.output)
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_text(canonical(result) + "\n")

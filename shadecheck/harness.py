@@ -31,6 +31,42 @@ class Observer(rpc.CompactTxStreamerServicer):
                              block_hash=response.hash.hex())
         return response
 
+    def GetBlockRange(self, request, context):
+        seq = self.recorder.record("GetBlockRange", "request", context.peer(),
+                                   start_height=request.start.height, end_height=request.end.height)
+        if self.upstream is None:
+            context.abort(grpc.StatusCode.UNIMPLEMENTED, "Block ranges require an actual backend")
+        call = self.upstream.GetBlockRange(request, timeout=30)
+        context.add_callback(call.cancel)
+        try:
+            for block in call:
+                self.recorder.record("GetBlockRange", "response", context.peer(),
+                                     request_sequence=seq, height=block.height,
+                                     block_hash=block.hash.hex(),
+                                     transaction_ids=[tx.txid.hex() for tx in block.vtx],
+                                     serialized_sha256=hashlib.sha256(block.SerializeToString()).hexdigest())
+                yield block
+        except grpc.RpcError as error:
+            self.recorder.record("GetBlockRange", "error", context.peer(),
+                                 request_sequence=seq, grpc_code=error.code().name)
+            context.abort(error.code(), error.details())
+
+    def GetTransaction(self, request, context):
+        seq = self.recorder.record("GetTransaction", "request", context.peer(),
+                                   transaction_id=request.hash.hex())
+        if self.upstream is None:
+            context.abort(grpc.StatusCode.UNIMPLEMENTED, "Transaction retrieval requires an actual backend")
+        try:
+            response = self.upstream.GetTransaction(request, timeout=15)
+        except grpc.RpcError as error:
+            self.recorder.record("GetTransaction", "error", context.peer(),
+                                 request_sequence=seq, grpc_code=error.code().name)
+            context.abort(error.code(), error.details())
+        self.recorder.record("GetTransaction", "response", context.peer(),
+                             request_sequence=seq, height=response.height,
+                             **payload_metadata(response.data))
+        return response
+
     def SendTransaction(self, request, context):
         seq = self.recorder.record("SendTransaction", "request", context.peer(),
                                    **payload_metadata(request.data))

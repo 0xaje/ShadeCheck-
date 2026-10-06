@@ -66,8 +66,16 @@ def main(argv=None):
     compare.add_argument("--events", default="out/events.jsonl")
     compare.add_argument("--baseline", default="shadecheck-baseline.json")
     compare.add_argument("--output", default="out/comparison.json")
+    dashboard = commands.add_parser("dashboard", help="Read-only localhost viewer of a validated acceptance snapshot")
+    dashboard.add_argument("--suite", help="Acceptance directory; default is newest out/acceptance directory")
+    dashboard.add_argument("--port", type=int, default=9070)
     args = parser.parse_args(argv)
     try:
+        if args.command == "dashboard":
+            from .dashboard_server import latest_suite, serve
+            root = Path(args.suite) if args.suite else latest_suite(Path("out/acceptance"))
+            serve(root, args.port)
+            return 0
         if args.command == "baseline":
             value = save_baseline(args.events, args.input, args.output)
             print(f"Baseline saved: {args.output}; evidence root: {value['result']['evidence_root']}")

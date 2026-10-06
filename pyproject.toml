@@ -14,3 +14,6 @@ shadecheck = "shadecheck.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["shadecheck*"]
+
+[tool.setuptools.package-data]
+shadecheck = ["dashboard/*.html", "dashboard/*.css", "dashboard/*.js"]

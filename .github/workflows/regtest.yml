@@ -10,6 +10,9 @@ on:
       - 'scripts/transparent_fallback.py'
       - 'scripts/privacy_regression.py'
       - 'scripts/acceptance.py'
+      - 'scripts/dashboard_smoke.py'
+      - 'tests/dashboard_browser.cjs'
+      - 'pyproject.toml'
       - 'shadecheck/**'
       - '.github/workflows/regtest.yml'
   workflow_dispatch:
@@ -27,6 +30,10 @@ jobs:
       - run: python -m pip install .
       - name: Run consolidated real MVP acceptance
         run: python scripts/acceptance.py
+      - name: Install pinned browser-test driver
+        run: npm install --prefix "$RUNNER_TEMP/shadecheck-browser" --no-audit --no-fund playwright@1.62.1
+      - name: Verify dashboard with real acceptance reports in Chrome
+        run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/shadecheck-browser/node_modules/playwright" python scripts/dashboard_smoke.py
       - name: Capture backend logs
         if: always()
         run: |

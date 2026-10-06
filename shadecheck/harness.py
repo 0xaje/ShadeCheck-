@@ -16,6 +16,21 @@ class Observer(rpc.CompactTxStreamerServicer):
         self.recorder = recorder
         self.upstream = upstream
 
+    def GetLatestBlock(self, request, context):
+        seq = self.recorder.record("GetLatestBlock", "request", context.peer())
+        if self.upstream is None:
+            context.abort(grpc.StatusCode.UNIMPLEMENTED, "Latest block requires an actual backend")
+        try:
+            response = self.upstream.GetLatestBlock(request, timeout=15)
+        except grpc.RpcError as error:
+            self.recorder.record("GetLatestBlock", "error", context.peer(),
+                                 request_sequence=seq, grpc_code=error.code().name)
+            context.abort(error.code(), error.details())
+        self.recorder.record("GetLatestBlock", "response", context.peer(),
+                             request_sequence=seq, height=response.height,
+                             block_hash=response.hash.hex())
+        return response
+
     def SendTransaction(self, request, context):
         seq = self.recorder.record("SendTransaction", "request", context.peer(),
                                    **payload_metadata(request.data))

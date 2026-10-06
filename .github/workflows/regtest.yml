@@ -4,6 +4,7 @@ on:
     paths:
       - 'integration/**'
       - 'scripts/regtest.py'
+      - 'scripts/broadcast_comparison.py'
       - 'shadecheck/**'
       - '.github/workflows/regtest.yml'
   workflow_dispatch:
@@ -33,6 +34,8 @@ jobs:
         run: |
           python scripts/regtest.py prepare-shielded
           python scripts/regtest.py prove
+      - name: Verify actual unified and separated observer roles
+        run: python scripts/broadcast_comparison.py
       - name: Capture backend logs
         if: always()
         run: |

@@ -184,4 +184,5 @@ def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",), sync
             "rules": coverage,
             "findings": findings, "limitations": LIMITATIONS,
             "evidence_root": events[-1]["event_hash"],
-            "correlation_window_seconds": window_seconds,\n            "sync_policy": sync_policy if "SC-001" in rules else None}
+            "correlation_window_seconds": window_seconds,
+            "sync_policy": sync_policy if "SC-001" in rules else None}

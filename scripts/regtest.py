@@ -169,7 +169,8 @@ def sync_wallet_chain():
         block_hash = node("getblockhash", height)
         block = node("getblock", block_hash, 0)
         status = node("submitblock", block, service="wallet")
-        if status is not None:
+        # zcash-cli prints JSON null as empty stdout; verify the exact tip below.
+        if status not in (None, ""):
             raise RuntimeError(f"Wallet rejected canonical block {height}: {status}")
         if height % 25 == 0:
             print(f"Wallet imported actual canonical block {height}", flush=True)

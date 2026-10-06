@@ -1,4 +1,4 @@
-# SC-002 threat model and milestone gate
+# ShadeCheck threat model and milestone gates
 
 Adversary: the service receiving a client's broadcast RPC, able to observe the transport connection and submitted transaction bytes. It may observe matching transaction bytes through its own mempool interface. No global passive adversary, account identity, IP-to-person attribution, Tor analysis, or chain deanonymization is modeled.
 
@@ -25,3 +25,7 @@ SC-004 requires an explicit shielded-payment policy and consumes labeled native-
 ## SC-005 comparison boundary
 
 SC-005 compares validated evidence under compatible rule selection, correlation window, policies, and evidence modes. Behavior identity excludes incidental transaction IDs, sessions, heights, and timestamps. The tested categories, severity ordering, portable baseline format, and coverage requirements are documented in [SC-005](sc005.md). Baselines cannot exempt a known strict failure. New findings or increased severity can reflect stronger observation; causal attribution to a code change requires developer investigation. Hashes are integrity checks, not signatures, and scenario/backend comparability remains the developer's responsibility.
+
+## Consolidated acceptance boundary
+
+The [acceptance suite](acceptance.md) executes the real local backend and the defined tests, then revalidates the saved evidence and reports. Acceptance PASS means expected outcomes were verified; it is separate from privacy status and does not waive findings. Each run uses an isolated artifact root. Backend/adapter trust, release/source pins versus mutable build inputs, synthetic unit-test separation, and incomplete family coverage are explicitly documented. The suite is a collection of real traces, not a fabricated merged client session or anonymity proof.

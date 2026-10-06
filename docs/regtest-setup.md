@@ -2,9 +2,9 @@
 
 This setup creates an actual isolated Zcash regtest node and lightwalletd. The wallet generates local coins and signs a transparent transaction; the client broadcasts it through ShadeCheck. No fixture or mock replaces acceptance. The observer then captures the identical bytes from lightwalletd's actual mempool stream, and the script independently confirms the transaction in the node's mempool.
 
-This proves SC-002 transport linkability using a transparent transaction. It does not yet demonstrate a shielded wallet flow, anonymity, or mitigation. All test keys remain inside the developer's local node wallet.
+This proves SC-002 transport linkability using a transparent transaction. This transparent proof alone does not demonstrate a shielded wallet flow, anonymity, or mitigation. The [shielded guide](shielded-regtest.md) and [consolidated acceptance workflow](acceptance.md) add the verified shielded and rule-comparison paths. All test keys remain inside the developer's local node wallet.
 
-Validated with an actual node and lightwalletd in [GitHub Actions](https://github.com/0xaje/ShadeCheck-/actions/runs/37396184795) on October 6, 2026. The downloaded evidence contained six captured events with a valid hash chain, one HIGH finding supported by three events, backend response code 0, and independently matching node mempool data. These Windows commands still need verification on your machine.
+Validated with an actual node and lightwalletd in [GitHub Actions](https://github.com/0xaje/ShadeCheck-/actions/runs/37396184795) on October 6, 2026. The downloaded evidence contained six captured events with a valid hash chain, one HIGH finding supported by three events, backend response code 0, and independently matching node mempool data. These commands were also verified on the developer's Windows machine.
 
 ## Prerequisites
 

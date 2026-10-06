@@ -6,11 +6,23 @@ ShadeCheck evaluates defined observable Zcash application behaviors against docu
 
 ## Current implementation
 
-This implements **all five initial rule families**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates sync-range policy, broadcast connection linkability, selective retrieval, and instrumented wallet payment privacy, and baseline regressions, and generates JSON/HTML reports with policy exit codes.
+This implements **all five initial rule families** within the documented observable-behavior boundaries. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates sync-range policy, broadcast connection linkability, selective retrieval, and instrumented wallet payment privacy, and baseline regressions, and generates JSON/HTML reports with policy exit codes.
 
 The local protocol client replays an upstream transaction test vector to a controlled endpoint that explicitly rejects it. It never claims a fixture was network accepted, mined, or consensus valid. No spending keys are requested or stored.
 
 **SC-002 transport milestone verified:** the real regtest integration run accepted a genuinely signed transparent transaction, captured its exact bytes through lightwalletd's mempool stream, independently confirmed those bytes at the node, and verified HIGH plus strict CLI exit 1. Real Sapling-to-Sapling integration is also verified: two successive shielded transactions passed backend validation with zero transparent inputs or outputs and produced the same evidence-backed HIGH finding. The [real observer-role comparison](docs/broadcast-comparison.md) is verified: separated routing removes submission visibility from the read observer while the broadcast observer still reports HIGH. This is not a production mitigation or anonymity proof.
+
+## Run the consolidated acceptance suite
+
+See the [definition-of-done audit and fresh-machine guide](docs/acceptance.md). With Docker Desktop running:
+
+```powershell
+git pull --ff-only
+.\.venv\Scripts\python.exe -m pip install .
+.\.venv\Scripts\python.exe scripts/acceptance.py
+```
+
+This single command starts the real backend, runs transparent/shielded proofs and all five rule families, checks strict exit codes, and independently audits the saved evidence, baselines, and JSON/HTML results. [Fresh CI run 37409730042](https://github.com/0xaje/ShadeCheck-/actions/runs/37409730042) passed the consolidated workflow: 18 steps, 24 recomputed reports, and 112 hashed artifacts. The downloaded artifact passed independent offline revalidation, and changed evidence was rejected. It saves one isolated out/acceptance run with suite.json, suite.html, individual reports, logs, artifact hashes, and actual image identities. Acceptance PASS means the test checks behaved as required; expected privacy failures remain FAIL. Offline revalidation: `python scripts/acceptance.py --verify <suite-directory>`.
 
 ## Run the real local backend
 
@@ -151,8 +163,8 @@ ShadeCheck's product claims must come from real protocol behavior:
 
 Fixtures remain only for deterministic unit/protocol tests and are labeled as such.
 
-## Remaining MVP
+## Acceptance status
 
-The five rule families and baselines are implemented. A consolidated acceptance audit and clean end-to-end developer workflow remain before calling the MVP complete. Production mitigation validation is outside the local proof. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and on Windows. SC-003 is verified in real CI and on Windows. SC-001 is verified in real CI and on Windows. SC-004 is verified in real CI and on Windows. SC-005 is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
+The core CLI MVP passed its defined acceptance suite on a fresh Linux CI runner. All individual real milestones, including SC-005, are also verified on the developer's Windows machine. The consolidated Windows command awaits execution. No dashboard has been built. Passing this acceptance suite means the expected checks and exit codes were verified; it does not mean the tested architecture passed every privacy requirement or establish production readiness or anonymity. Broader rule-family behaviors and wallet support remain outside the documented coverage.
 
 See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).

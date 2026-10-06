@@ -254,6 +254,7 @@ def prepare_shielded():
     write_json(STATE, {
         "network": "regtest", "transaction_kind": "sapling-shielded",
         "hex": raw, "txid": txid, "structure": structure,
+        "sender_address": sender, "receiver_address": receiver,
         "construction": "real isolated zcashd wallet; locally accepted in wallet mempool",
         "verifier_tip": require_regtest()["bestblockhash"],
         "setup_transactions": {"transparent_funding": funding_txid, "sapling_funding": shielding_txid},

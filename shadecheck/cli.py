@@ -28,8 +28,8 @@ def main(argv=None):
     source.add_argument("--events")
     source.add_argument("--fixture", help="Hex transaction file; replayed only against a rejecting local endpoint")
     test.add_argument("--policy", choices=["strict", "advisory"], default="strict")
-    test.add_argument("--rules", nargs="+", choices=["SC-001", "SC-002", "SC-003"], default=["SC-002"])
-    test.add_argument("--config", help="JSON policy configuration; required when selecting SC-001")
+    test.add_argument("--rules", nargs="+", choices=["SC-001", "SC-002", "SC-003", "SC-004"], default=["SC-002"])
+    test.add_argument("--config", help="JSON policy configuration; required when selecting SC-001 or SC-004")
     test.add_argument("--output", default="out/report.json")
     test.add_argument("--record", default="out/events.jsonl")
 
@@ -52,10 +52,16 @@ def main(argv=None):
     report.add_argument("--format", choices=["json", "html"], default="json")
     report.add_argument("--output")
     explain = commands.add_parser("explain")
-    explain.add_argument("rule", choices=["SC-001", "SC-002", "SC-003"])
+    explain.add_argument("rule", choices=["SC-001", "SC-002", "SC-003", "SC-004"])
     args = parser.parse_args(argv)
     try:
         if args.command == "explain":
+            if args.rule == "SC-004":
+                print("SC-004: explicit shielded-payment policy required. MEDIUM for instrumented permissive transparent selection; HIGH requires actual decoded transparent components linked by payload fingerprint to accepted upstream submission. Adapter records are not passive network observations. Specific FullPrivacy rejection or verified execution supplies outcome coverage.")
+                return 0
+            if args.rule == "SC-001":
+                print("SC-001: MEDIUM for upstream block ranges that violate an explicit size/alignment policy. Complete actual range delivery is required for PASS coverage. No wallet history or identity is inferred.")
+                return 0
             if args.rule == "SC-003":
                 print("SC-003: MEDIUM when the same connection requests a non-empty proper subset of IDs from an upstream compact block containing at least two transactions within 30 seconds. Block delivery is observable; wallet processing or ownership is not. PASS is limited to this rule and recorded trace.")
                 return 0
@@ -102,12 +108,14 @@ def main(argv=None):
             else:
                 events = load_events(args.events)
             sync_policy = None
+            payment_policy = None
             if args.config:
                 config = json.loads(Path(args.config).read_text())
                 if not isinstance(config, dict) or config.get("schema_version") != 1:
                     raise ValueError("Policy configuration requires schema_version 1")
                 sync_policy = config.get("sync")
-            result = evaluate(events, args.policy, rules=args.rules, sync_policy=sync_policy)
+                payment_policy = config.get("payment")
+            result = evaluate(events, args.policy, rules=args.rules, sync_policy=sync_policy, payment_policy=payment_policy)
             output = Path(args.output)
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_text(canonical(result) + "\n")

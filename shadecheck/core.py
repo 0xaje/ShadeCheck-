@@ -4,9 +4,10 @@ import json
 import threading
 import time
 from pathlib import Path
+from .payment_rule import evaluate_payment
 
 LIMITATIONS = [
-    "SC-001, SC-002, and SC-003 are implemented; SC-004 and SC-005 remain.",
+    "SC-001 through SC-004 are implemented; SC-005 remains.",
     "A transport peer identifies a connection, not a person or wallet.",
     "Local fixture replay is not consensus validation or network acceptance.",
     "Transaction SHA-256 fingerprints are not Zcash transaction IDs.",
@@ -30,10 +31,12 @@ class Recorder:
         self.sequence = 0
         self.previous = "0" * 64
 
-    def record(self, method, phase, peer, **metadata):
+    def record(self, method, phase, peer, source_mode=None, **metadata):
+        if source_mode is not None and source_mode not in {"upstream", "wallet-adapter", "protocol-fixture"}:
+            raise ValueError("Unknown evidence source mode")
         with self.lock:
             self.sequence += 1
-            event = dict(schema_version=1, sequence=self.sequence, mode=self.mode,
+            event = dict(schema_version=1, sequence=self.sequence, mode=source_mode or self.mode,
                          method=method, phase=phase,
                          timestamp_ns=time.time_ns(),
                          elapsed_ns=time.monotonic_ns() - self.started,
@@ -65,9 +68,9 @@ def load_events(path):
     return events
 
 
-def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",), sync_policy=None):
-    if not rules or set(rules) - {"SC-001", "SC-002", "SC-003"}:
-        raise ValueError("Select implemented rules SC-001, SC-002, and/or SC-003")
+def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",), sync_policy=None, payment_policy=None):
+    if not rules or set(rules) - {"SC-001", "SC-002", "SC-003", "SC-004"}:
+        raise ValueError("Select implemented rules SC-001 through SC-004")
     if not events:
         raise ValueError("Empty evidence: no test was executed")
     findings = []
@@ -176,6 +179,10 @@ def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",), sync
         coverage.append({"rule_id": "SC-003", "executed": True,
                          "coverage": "multi-transaction-block-delivered" if blocks else "no-multi-transaction-block-delivered",
                          "covered": bool(blocks)})
+    if "SC-004" in rules:
+        payment_findings, payment_coverage = evaluate_payment(events, payment_policy)
+        findings.extend(payment_findings)
+        coverage.append(payment_coverage)
     if findings:
         status = "FAIL" if policy == "strict" else "WARN"
     else:
@@ -185,4 +192,5 @@ def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",), sync
             "findings": findings, "limitations": LIMITATIONS,
             "evidence_root": events[-1]["event_hash"],
             "correlation_window_seconds": window_seconds,
-            "sync_policy": sync_policy if "SC-001" in rules else None}
+            "sync_policy": sync_policy if "SC-001" in rules else None,
+            "payment_policy": payment_policy if "SC-004" in rules else None}

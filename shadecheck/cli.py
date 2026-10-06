@@ -7,7 +7,17 @@ from pathlib import Path
 import grpc
 from .core import Recorder, canonical, evaluate, load_events
 from .generated import service_pb2_grpc as rpc
-from .harness import probe, start_server
+from .harness import live_sc002_probe, probe, start_server
+
+
+def _read_hex_transaction(path):
+    text = Path(path).read_text().strip()
+    if not text:
+        raise ValueError("Transaction file is empty")
+    try:
+        return bytes.fromhex(text)
+    except ValueError as error:
+        raise ValueError("Transaction file must contain raw transaction bytes encoded as hex") from error
 
 
 def main(argv=None):
@@ -20,11 +30,21 @@ def main(argv=None):
     test.add_argument("--policy", choices=["strict", "advisory"], default="strict")
     test.add_argument("--output", default="out/report.json")
     test.add_argument("--record", default="out/events.jsonl")
+
     observe = commands.add_parser("observe", help="Forward two supported RPCs to your controlled lightwalletd")
     observe.add_argument("--upstream", required=True)
     observe.add_argument("--plaintext-upstream", action="store_true")
     observe.add_argument("--output", default="out/events.jsonl")
     observe.add_argument("--port", type=int, default=9068)
+
+    live = commands.add_parser(
+        "live-sc002",
+        help="Send a real signed raw transaction through a running ShadeCheck observer and require exact mempool re-observation",
+    )
+    live.add_argument("--observer", default="127.0.0.1:9068")
+    live.add_argument("--transaction", required=True, help="Hex file containing a genuinely signed raw Zcash transaction")
+    live.add_argument("--timeout", type=int, default=30)
+
     report = commands.add_parser("report")
     report.add_argument("--input", default="out/report.json")
     report.add_argument("--format", choices=["json", "html"], default="json")
@@ -53,9 +73,21 @@ def main(argv=None):
                 channel.close()
                 recorder.close()
             return 0
+        if args.command == "live-sc002":
+            transaction = _read_hex_transaction(args.transaction)
+            result = live_sc002_probe(args.observer, transaction, args.timeout)
+            print(canonical(result))
+            if not result["accepted"]:
+                print("ShadeCheck live milestone incomplete: backend rejected the transaction.", file=sys.stderr)
+                return 1
+            if not result["mempool_match"]:
+                print("ShadeCheck live milestone incomplete: accepted transaction was not observed byte-for-byte in the mempool stream.", file=sys.stderr)
+                return 1
+            print("ShadeCheck live milestone evidence generated: backend accepted the transaction and exact bytes were observed in the mempool stream.", file=sys.stderr)
+            return 0
         if args.command == "test":
             if args.fixture:
-                transaction = bytes.fromhex(Path(args.fixture).read_text())
+                transaction = _read_hex_transaction(args.fixture)
                 recorder = Recorder(args.record, "protocol-fixture")
                 try:
                     probe(recorder, transaction)

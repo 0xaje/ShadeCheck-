@@ -25,6 +25,10 @@ jobs:
         run: python scripts/regtest.py prepare
       - name: Prove broadcast linkability and strict CLI enforcement
         run: python scripts/regtest.py prove
+      - name: Construct real fully shielded transaction on isolated wallet node
+        run: python scripts/regtest.py prepare-shielded
+      - name: Prove shielded transaction broadcast linkability
+        run: python scripts/regtest.py prove
       - name: Capture backend logs
         if: always()
         run: |

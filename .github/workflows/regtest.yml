@@ -8,6 +8,7 @@ on:
       - 'scripts/selective_fetch.py'
       - 'scripts/sync_pattern.py'
       - 'scripts/transparent_fallback.py'
+      - 'scripts/privacy_regression.py'
       - 'shadecheck/**'
       - '.github/workflows/regtest.yml'
   workflow_dispatch:
@@ -45,6 +46,8 @@ jobs:
         run: python scripts/sync_pattern.py
       - name: Verify SC-004 real wallet privacy-policy enforcement
         run: python scripts/transparent_fallback.py
+      - name: Verify real SC-005 baseline and regression enforcement
+        run: python scripts/privacy_regression.py
       - name: Capture backend logs
         if: always()
         run: |

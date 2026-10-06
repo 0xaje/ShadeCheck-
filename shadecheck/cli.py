@@ -1,11 +1,12 @@
 import argparse
-import html
 import json
 import sys
 from pathlib import Path
 
 import grpc
 from .core import Recorder, canonical, evaluate, load_events
+from .reporting import render_html
+from .regression import save_baseline, load_baseline, compare_result, verified_report
 from .generated import service_pb2_grpc as rpc
 from .harness import live_sc002_probe, probe, start_server
 
@@ -28,9 +29,10 @@ def main(argv=None):
     source.add_argument("--events")
     source.add_argument("--fixture", help="Hex transaction file; replayed only against a rejecting local endpoint")
     test.add_argument("--policy", choices=["strict", "advisory"], default="strict")
-    test.add_argument("--rules", nargs="+", choices=["SC-001", "SC-002", "SC-003", "SC-004"], default=["SC-002"])
+    test.add_argument("--rules", nargs="+", choices=["SC-001", "SC-002", "SC-003", "SC-004", "SC-005"], default=["SC-002"])
     test.add_argument("--config", help="JSON policy configuration; required when selecting SC-001 or SC-004")
     test.add_argument("--output", default="out/report.json")
+    test.add_argument("--baseline", nargs="?", const="shadecheck-baseline.json", help="Compare with a saved baseline; appends SC-005")
     test.add_argument("--record", default="out/events.jsonl")
 
     observe = commands.add_parser("observe", help="Forward supported broadcast, mempool, and latest-block RPCs to your controlled lightwalletd")
@@ -52,10 +54,36 @@ def main(argv=None):
     report.add_argument("--format", choices=["json", "html"], default="json")
     report.add_argument("--output")
     explain = commands.add_parser("explain")
-    explain.add_argument("rule", choices=["SC-001", "SC-002", "SC-003", "SC-004"])
+    explain.add_argument("rule", choices=["SC-001", "SC-002", "SC-003", "SC-004", "SC-005"])
+    baseline = commands.add_parser("baseline")
+    actions = baseline.add_subparsers(dest="action", required=True)
+    save = actions.add_parser("save")
+    save.add_argument("--input", default="out/report.json")
+    save.add_argument("--events", default="out/events.jsonl")
+    save.add_argument("--output", default="shadecheck-baseline.json")
+    compare = commands.add_parser("compare")
+    compare.add_argument("--input", default="out/report.json")
+    compare.add_argument("--events", default="out/events.jsonl")
+    compare.add_argument("--baseline", default="shadecheck-baseline.json")
+    compare.add_argument("--output", default="out/comparison.json")
     args = parser.parse_args(argv)
     try:
+        if args.command == "baseline":
+            value = save_baseline(args.events, args.input, args.output)
+            print(f"Baseline saved: {args.output}; evidence root: {value['result']['evidence_root']}")
+            return 0
+        if args.command == "compare":
+            _, current = verified_report(args.events, args.input)
+            result = compare_result(current, load_baseline(args.baseline))
+            output = Path(args.output)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(canonical(result) + "\n")
+            print(f"{result['status']}: {result['baseline_comparison']['regressions']} regression(s); report: {output}")
+            return 1 if result['status'] == 'FAIL' else (2 if result['status'] == 'WARN' and result['policy'] == 'strict' else 0)
         if args.command == "explain":
+            if args.rule == "SC-005":
+                print("SC-005: compares validated current evidence with a portable, recomputed baseline under the same rules and test policy. Detects new failures, increased severity, and newly observed behavior categories. Incidental transaction IDs, sessions, and timestamps are excluded. Missing coverage cannot PASS; existing strict failures remain failures.")
+                return 0
             if args.rule == "SC-004":
                 print("SC-004: explicit shielded-payment policy required. MEDIUM for instrumented permissive transparent selection; HIGH requires actual decoded transparent components linked by payload fingerprint to accepted upstream submission. Adapter records are not passive network observations. Specific FullPrivacy rejection or verified execution supplies outcome coverage.")
                 return 0
@@ -115,18 +143,19 @@ def main(argv=None):
                     raise ValueError("Policy configuration requires schema_version 1")
                 sync_policy = config.get("sync")
                 payment_policy = config.get("payment")
-            result = evaluate(events, args.policy, rules=args.rules, sync_policy=sync_policy, payment_policy=payment_policy)
+            if "SC-005" in args.rules and not args.baseline:
+                raise ValueError("SC-005 requires --baseline")
+            selected = [r for r in args.rules if r != "SC-005"]
+            result = evaluate(events, args.policy, rules=selected, sync_policy=sync_policy, payment_policy=payment_policy)
+            if args.baseline:
+                result = compare_result(result, load_baseline(args.baseline))
             output = Path(args.output)
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_text(canonical(result) + "\n")
             print(f"{result['status']}: {len(result['findings'])} finding(s); report: {output}")
             return 1 if result["status"] == "FAIL" else (2 if result["status"] == "WARN" and args.policy == "strict" else 0)
         result = json.loads(Path(args.input).read_text())
-        content = (json.dumps(result, indent=2, sort_keys=True) if args.format == "json" else
-                   "<!doctype html><meta charset='utf-8'><title>ShadeCheck evidence report</title>"
-                   "<h1>ShadeCheck: " + html.escape(result["status"]) + "</h1>"
-                   "<p>Defined observable behavior tests; passing does not establish anonymity.</p>"
-                   "<pre>" + html.escape(json.dumps(result, indent=2, sort_keys=True)) + "</pre>")
+        content = json.dumps(result, indent=2, sort_keys=True) if args.format == "json" else render_html(result)
         if args.output:
             Path(args.output).write_text(content + "\n")
         else:

@@ -7,7 +7,7 @@ from pathlib import Path
 from .payment_rule import evaluate_payment
 
 LIMITATIONS = [
-    "SC-001 through SC-004 are implemented; SC-005 remains.",
+    "Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.",
     "A transport peer identifies a connection, not a person or wallet.",
     "Local fixture replay is not consensus validation or network acceptance.",
     "Transaction SHA-256 fingerprints are not Zcash transaction IDs.",
@@ -54,6 +54,10 @@ class Recorder:
 
 def load_events(path):
     events = [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+    return validate_events(events)
+
+
+def validate_events(events):
     if not events:
         raise ValueError("Empty evidence: no test was executed")
     previous = "0" * 64
@@ -191,6 +195,7 @@ def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",), sync
             "rules": coverage,
             "findings": findings, "limitations": LIMITATIONS,
             "evidence_root": events[-1]["event_hash"],
+            "evidence_modes": sorted({e["mode"] for e in events}),
             "correlation_window_seconds": window_seconds,
             "sync_policy": sync_policy if "SC-001" in rules else None,
             "payment_policy": payment_policy if "SC-004" in rules else None}

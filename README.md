@@ -6,7 +6,7 @@ ShadeCheck evaluates defined observable Zcash application behaviors against docu
 
 ## Current implementation
 
-This implements **SC-001, SC-002, SC-003, and SC-004**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates sync-range policy, broadcast connection linkability, selective retrieval, and instrumented wallet payment privacy, and generates JSON/HTML reports with policy exit codes.
+This implements **all five initial rule families**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates sync-range policy, broadcast connection linkability, selective retrieval, and instrumented wallet payment privacy, and baseline regressions, and generates JSON/HTML reports with policy exit codes.
 
 The local protocol client replays an upstream transaction test vector to a controlled endpoint that explicitly rejects it. It never claims a fixture was network accepted, mined, or consensus valid. No spending keys are requested or stored.
 
@@ -53,6 +53,12 @@ See the [SC-003 rule and Windows guide](docs/sc003.md). Run `python scripts/sele
 See the [SC-004 rule and Windows guide](docs/sc004.md). Run `python scripts/transparent_fallback.py` with the backend running. It compares an actual Sapling-to-transparent payment permitted by AllowRevealedRecipients with FullPrivacy rejecting that recipient and then accepting a shielded payment. The tested flow explicitly requires shielding.
 
 [Real CI run 37407689623](https://github.com/0xaje/ShadeCheck-/actions/runs/37407689623) verified permissive HIGH/FAIL with strict exit 1 and FullPrivacy PASS for SC-004 with exit 0. Saved event hash chains and recomputed reports were checked, including native privacy error -8, actual decoded transaction components, exact mempool bytes, and independent node acceptance. Select `--rules SC-004 --config <policy.json>`. Native-wallet adapter evidence is explicitly distinguished from observed RPC evidence. Automatic Unified Address fallback is not implemented; this tests the explicit transparent recipient path.
+
+## SC-005 baselines and regression checks
+
+See the [SC-005 rule, baseline format, and Windows guide](docs/sc005.md). `shadecheck baseline save` stores the full validated trace and recomputed result; `shadecheck test --baseline` and `shadecheck compare` evaluate new failures, higher severity, and newly observed behavior categories. Named evidence/report paths can be supplied explicitly. Comparisons require compatible rule selection, policy, and evidence modes. A saved known failure remains a strict failure.
+
+Run `python scripts/privacy_regression.py` with the real backend running and a prior actual `regtest.py prove` trace available. It checks fresh aligned versus unaligned requests, a newly observed sync violation category, and MEDIUM-to-HIGH escalation using an explicitly labeled prefix and the complete actual broadcast trace. [Real CI run 37408670341](https://github.com/0xaje/ShadeCheck-/actions/runs/37408670341) passed all five comparison cases; the saved reports were reproduced exactly from the artifact. JSON/HTML comparisons include inspectable evidence and portable baselines. The prefix does not assert rejection or acceptance before those outcomes were observed.
 
 ## Local protocol slice — internal test only
 
@@ -147,6 +153,6 @@ Fixtures remain only for deterministic unit/protocol tests and are labeled as su
 
 ## Remaining MVP
 
-SC-005 and baselines remain in the required MVP scope. Production mitigation validation is outside the local proof. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and on Windows. SC-003 is verified in real CI and on Windows. SC-001 is verified in real CI and on Windows. SC-004 is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
+The five rule families and baselines are implemented. A consolidated acceptance audit and clean end-to-end developer workflow remain before calling the MVP complete. Production mitigation validation is outside the local proof. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and on Windows. SC-003 is verified in real CI and on Windows. SC-001 is verified in real CI and on Windows. SC-004 is verified in real CI and on Windows. SC-005 is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
 
 See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).

@@ -21,3 +21,7 @@ SC-001 compares observed block-range boundaries and request sizes with an explic
 ## SC-004 native-wallet boundary
 
 SC-004 requires an explicit shielded-payment policy and consumes labeled native-wallet adapter receipts alongside observed upstream broadcasts. Receiver selection, operation errors, and transaction structure come from the trusted developer-owned local wallet/node, not passive network inference. Real CI verified a Sapling-to-transparent payment with one transparent output and HIGH/FAIL, and FullPrivacy rejecting that recipient with native privacy error -8 before a successful Sapling-to-Sapling payment with zero transparent inputs or outputs. This covers the explicit transparent recipient path; automatic Unified Address fallback is not implemented. See [SC-004](sc004.md). Passing this payment rule does not resolve broadcast linkability or establish anonymity.
+
+## SC-005 comparison boundary
+
+SC-005 compares validated evidence under compatible rule selection, correlation window, policies, and evidence modes. Behavior identity excludes incidental transaction IDs, sessions, heights, and timestamps. The tested categories, severity ordering, portable baseline format, and coverage requirements are documented in [SC-005](sc005.md). Baselines cannot exempt a known strict failure. New findings or increased severity can reflect stronger observation; causal attribution to a code change requires developer investigation. Hashes are integrity checks, not signatures, and scenario/backend comparability remains the developer's responsibility.

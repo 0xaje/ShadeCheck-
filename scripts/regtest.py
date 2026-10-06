@@ -180,7 +180,7 @@ def sync_wallet_chain():
 
 def wallet_payment(sender, receiver, amount, privacy):
     operation = node("z_sendmany", sender, [{"address": receiver, "amount": amount}],
-                     1, 0.0001, privacy, service="wallet")
+                     1, 0.001, privacy, service="wallet")
     deadline = time.monotonic() + 180
     while time.monotonic() < deadline:
         statuses = node("z_getoperationstatus", [operation], service="wallet")
@@ -226,7 +226,7 @@ def prepare_shielded():
     receiver = node("z_getnewaddress", "sapling", service="wallet")
     print("Building real Sapling funding transaction on wallet node...", flush=True)
     # Shield the entire funding output minus the explicit fee, avoiding transparent change.
-    shielding_txid = wallet_payment(funding_address, sender, 0.9999, "AllowRevealedSenders")
+    shielding_txid = wallet_payment(funding_address, sender, 0.999, "AllowRevealedSenders")
     shielding_hex = node("getrawtransaction", shielding_txid, service="wallet")
     if not node("decoderawtransaction", shielding_hex).get("vShieldedOutput"):
         raise RuntimeError("Setup payment did not create an actual Sapling output")

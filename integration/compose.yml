@@ -39,10 +39,11 @@ services:
       - "127.0.0.1:9067:9067"
     volumes:
       - lightwalletd-data:/var/lib/lightwalletd
-    networks: [regtest]
+    networks: [regtest, observer]
 volumes:
   node-data:
   lightwalletd-data:
 networks:
   regtest:
     internal: true
+  observer: {}

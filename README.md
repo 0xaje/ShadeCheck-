@@ -10,7 +10,7 @@ This is the **SC-002 foundation**, not the completed MVP. It captures actual gRP
 
 The local protocol client replays an upstream transaction test vector to a controlled endpoint that explicitly rejects it. It never claims a fixture was network accepted, mined, or consensus valid. No spending keys are requested or stored.
 
-**SC-002 transport milestone verified:** the real regtest integration run accepted a genuinely signed transparent transaction, captured its exact bytes through lightwalletd's mempool stream, independently confirmed those bytes at the node, and verified HIGH plus strict CLI exit 1. Real Sapling-to-Sapling integration is also verified: two successive shielded transactions passed backend validation with zero transparent inputs or outputs and produced the same evidence-backed HIGH finding. Mitigation comparison remains.
+**SC-002 transport milestone verified:** the real regtest integration run accepted a genuinely signed transparent transaction, captured its exact bytes through lightwalletd's mempool stream, independently confirmed those bytes at the node, and verified HIGH plus strict CLI exit 1. Real Sapling-to-Sapling integration is also verified: two successive shielded transactions passed backend validation with zero transparent inputs or outputs and produced the same evidence-backed HIGH finding. The [real observer-role comparison](docs/broadcast-comparison.md) is verified: separated routing removes submission visibility from the read observer while the broadcast observer still reports HIGH. This is not a production mitigation or anonymity proof.
 
 ## Run the real local backend
 
@@ -131,6 +131,6 @@ Fixtures remain only for deterministic unit/protocol tests and are labeled as su
 
 ## Remaining MVP
 
-SC-001, SC-003, SC-004, SC-005, baselines, mitigation comparison, and Windows verification of the shielded path remain. The developer has verified the transparent regtest path on Windows. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
+SC-001, SC-003, SC-004, SC-005, baselines, and a production mitigation proof remain. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
 
 See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).

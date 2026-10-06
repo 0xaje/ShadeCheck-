@@ -31,7 +31,7 @@ def main(argv=None):
     test.add_argument("--output", default="out/report.json")
     test.add_argument("--record", default="out/events.jsonl")
 
-    observe = commands.add_parser("observe", help="Forward two supported RPCs to your controlled lightwalletd")
+    observe = commands.add_parser("observe", help="Forward supported broadcast, mempool, and latest-block RPCs to your controlled lightwalletd")
     observe.add_argument("--upstream", required=True)
     observe.add_argument("--plaintext-upstream", action="store_true")
     observe.add_argument("--output", default="out/events.jsonl")
@@ -63,7 +63,7 @@ def main(argv=None):
                        else grpc.secure_channel(args.upstream, grpc.ssl_channel_credentials()))
             recorder = Recorder(args.output, "upstream")
             server, _ = start_server(recorder, f"127.0.0.1:{args.port}", rpc.CompactTxStreamerStub(channel))
-            print(f"Observer listening at 127.0.0.1:{args.port}; only SendTransaction and GetMempoolStream supported", flush=True)
+            print(f"Observer listening at 127.0.0.1:{args.port}; GetLatestBlock, SendTransaction, and GetMempoolStream supported", flush=True)
             try:
                 server.wait_for_termination()
             except KeyboardInterrupt:

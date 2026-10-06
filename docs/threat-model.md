@@ -13,3 +13,7 @@ The completed transport proof is evidence for the narrow SC-002 rule. Broader pr
 ## SC-003 observer boundary
 
 SC-003 observes delivered compact blocks and subsequent ID-specific requests on a recorded connection. It cannot observe wallet processing or establish transaction ownership. Its deterministic subset condition, finite-trace limitations, explicit coverage requirements, and verified real backend comparison are documented in [SC-003](sc003.md). Broader fetching changed this tested result; this is not an anonymity or production mitigation claim.
+
+## SC-001 declared-policy boundary
+
+SC-001 compares observed block-range boundaries and request sizes with an explicit developer-selected alignment and chunk policy. It does not infer a wallet birthday, local balance, transaction history, or person. Complete upstream delivery is required for PASS coverage. Historical completed-chunk conformance is verified; chain-tip truncation, timing fingerprints, reorg policy, and repeated-history analysis are outside this implementation. See [SC-001](sc001.md).

@@ -6,7 +6,7 @@ ShadeCheck evaluates defined observable Zcash application behaviors against docu
 
 ## Current implementation
 
-This implements **SC-002 and SC-003**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates broadcast connection linkability, and generates JSON/HTML reports with policy exit codes.
+This implements **SC-001, SC-002, and SC-003**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates broadcast connection linkability, and generates JSON/HTML reports with policy exit codes.
 
 The local protocol client replays an upstream transaction test vector to a controlled endpoint that explicitly rejects it. It never claims a fixture was network accepted, mined, or consensus valid. No spending keys are requested or stored.
 
@@ -37,6 +37,10 @@ python -m venv .venv
 python -m pip install .
 python -m unittest discover -s tests -v
 ```
+
+## Real SC-001 sync-range comparison
+
+See the [SC-001 rule and Windows guide](docs/sc001.md). Run `python scripts/sync_pattern.py` with the backend running. The script evaluates actual block-range requests against an explicit 20-block aligned policy and independently checks each compact block against the canonical node. [Real CI run 37406302451](https://github.com/0xaje/ShadeCheck-/actions/runs/37406302451) verified narrow MEDIUM/FAIL with strict exit 1 and aligned PASS for the declared SC-001 policy with exit 0. Select SC-001 with `--rules SC-001 --config <policy.json>`; the comparison saves its exact policy beside the evidence. This policy does not establish anonymity or infer wallet history.
 
 ## Real SC-003 retrieval comparison
 
@@ -137,6 +141,6 @@ Fixtures remain only for deterministic unit/protocol tests and are labeled as su
 
 ## Remaining MVP
 
-SC-001, SC-004, SC-005, baselines, and a production mitigation proof remain. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and on Windows. SC-003 is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
+SC-004, SC-005, baselines, and a production mitigation proof remain. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and on Windows. SC-003 is verified in real CI and on Windows. SC-001 is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
 
 See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).

@@ -225,7 +225,8 @@ def prepare_shielded():
     sender = node("z_getnewaddress", "sapling", service="wallet")
     receiver = node("z_getnewaddress", "sapling", service="wallet")
     print("Building real Sapling funding transaction on wallet node...", flush=True)
-    shielding_txid = wallet_payment(funding_address, sender, 0.5, "AllowRevealedSenders")
+    # Shield the entire funding output minus the explicit fee, avoiding transparent change.
+    shielding_txid = wallet_payment(funding_address, sender, 0.9999, "AllowRevealedSenders")
     shielding_hex = node("getrawtransaction", shielding_txid, service="wallet")
     if not node("decoderawtransaction", shielding_hex).get("vShieldedOutput"):
         raise RuntimeError("Setup payment did not create an actual Sapling output")

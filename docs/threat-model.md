@@ -17,3 +17,7 @@ SC-003 observes delivered compact blocks and subsequent ID-specific requests on 
 ## SC-001 declared-policy boundary
 
 SC-001 compares observed block-range boundaries and request sizes with an explicit developer-selected alignment and chunk policy. It does not infer a wallet birthday, local balance, transaction history, or person. Complete upstream delivery is required for PASS coverage. Historical completed-chunk conformance is verified; chain-tip truncation, timing fingerprints, reorg policy, and repeated-history analysis are outside this implementation. See [SC-001](sc001.md).
+
+## SC-004 native-wallet boundary
+
+SC-004 requires an explicit shielded-payment policy and consumes labeled native-wallet adapter receipts alongside observed upstream broadcasts. Receiver selection, operation errors, and transaction structure come from the trusted developer-owned local wallet/node, not passive network inference. Real CI verified a Sapling-to-transparent payment with one transparent output and HIGH/FAIL, and FullPrivacy rejecting that recipient with native privacy error -8 before a successful Sapling-to-Sapling payment with zero transparent inputs or outputs. This covers the explicit transparent recipient path; automatic Unified Address fallback is not implemented. See [SC-004](sc004.md). Passing this payment rule does not resolve broadcast linkability or establish anonymity.

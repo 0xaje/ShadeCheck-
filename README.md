@@ -6,7 +6,7 @@ ShadeCheck evaluates defined observable Zcash application behaviors against docu
 
 ## Current implementation
 
-This implements **SC-001, SC-002, and SC-003**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates broadcast connection linkability, and generates JSON/HTML reports with policy exit codes.
+This implements **SC-001, SC-002, SC-003, and SC-004**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates sync-range policy, broadcast connection linkability, selective retrieval, and instrumented wallet payment privacy, and generates JSON/HTML reports with policy exit codes.
 
 The local protocol client replays an upstream transaction test vector to a controlled endpoint that explicitly rejects it. It never claims a fixture was network accepted, mined, or consensus valid. No spending keys are requested or stored.
 
@@ -47,6 +47,12 @@ See the [SC-001 rule and Windows guide](docs/sc001.md). Run `python scripts/sync
 See the [SC-003 rule and Windows guide](docs/sc003.md). Run `python scripts/selective_fetch.py` with the backend running. It records actual compact-block delivery and transaction retrieval, independently checks returned bytes and inclusion against the node, and compares fetching one compact transaction with fetching every compact transaction in the same confirmed block.
 
 [Real CI run 37403356091](https://github.com/0xaje/ShadeCheck-/actions/runs/37403356091) verified subset MEDIUM/FAIL with strict exit 1 and complete fetch PASS for SC-003 with exit 0. Full events, JSON/HTML reports, and node confirmation are inspectable in the uploaded artifact. Select SC-003 explicitly using `shadecheck test --events <path> --rules SC-003`; the existing default remains SC-002. Passing this narrow executed rule does not establish anonymity.
+
+## Real SC-004 payment-policy comparison
+
+See the [SC-004 rule and Windows guide](docs/sc004.md). Run `python scripts/transparent_fallback.py` with the backend running. It compares an actual Sapling-to-transparent payment permitted by AllowRevealedRecipients with FullPrivacy rejecting that recipient and then accepting a shielded payment. The tested flow explicitly requires shielding.
+
+[Real CI run 37407689623](https://github.com/0xaje/ShadeCheck-/actions/runs/37407689623) verified permissive HIGH/FAIL with strict exit 1 and FullPrivacy PASS for SC-004 with exit 0. Saved event hash chains and recomputed reports were checked, including native privacy error -8, actual decoded transaction components, exact mempool bytes, and independent node acceptance. Select `--rules SC-004 --config <policy.json>`. Native-wallet adapter evidence is explicitly distinguished from observed RPC evidence. Automatic Unified Address fallback is not implemented; this tests the explicit transparent recipient path.
 
 ## Local protocol slice — internal test only
 
@@ -122,7 +128,7 @@ Strict policy rejects any SC-002 finding (exit 1); missing coverage also returns
 
 ## Evidence
 
-Each event includes sequence, wall clock and monotonic elapsed time, hashed transport peer, RPC/phase, payload size/fingerprint, mode, and hash chain. A SHA-256 payload fingerprint is **not** a Zcash transaction ID. Full raw transaction bytes are forwarded without being stored in evidence. Hash chaining detects accidental editing; it is not a signature or protection against an author rewriting the complete chain.
+Each event includes sequence, wall clock and monotonic elapsed time, hashed transport peer, RPC/phase, payload size/fingerprint, mode, and hash chain. A SHA-256 payload fingerprint is **not** a Zcash transaction ID. Full raw transaction bytes are forwarded without being stored in proxy events. The SC-004 backend proof additionally saves the actual decoded local test transaction; native adapter events include test receiver addresses and wallet operation results. Hash chaining detects accidental editing; it is not a signature or protection against an author rewriting the complete chain.
 
 Reports may contain privacy-sensitive connection and transaction fingerprints. Treat them as controlled test artifacts.
 
@@ -141,6 +147,6 @@ Fixtures remain only for deterministic unit/protocol tests and are labeled as su
 
 ## Remaining MVP
 
-SC-004, SC-005, baselines, and a production mitigation proof remain. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and on Windows. SC-003 is verified in real CI and on Windows. SC-001 is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
+SC-005 and baselines remain in the required MVP scope. Production mitigation validation is outside the local proof. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and on Windows. SC-003 is verified in real CI and on Windows. SC-001 is verified in real CI and on Windows. SC-004 is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
 
 See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).

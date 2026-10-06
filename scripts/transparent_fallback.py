@@ -159,7 +159,7 @@ def main():
     try:
         backend.require_regtest()
         backend.lightd_info()
-        directory = backend.ROOT / "out/transparent-fallback" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
+        directory = backend.OUTPUT_ROOT / "transparent-fallback" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
         config = directory / "policy.json"
         backend.write_json(config, {"schema_version": 1, "payment": POLICY})
         weak = exercise(directory / "permissive", config, False)

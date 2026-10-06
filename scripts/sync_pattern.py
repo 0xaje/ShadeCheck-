@@ -70,7 +70,7 @@ def main():
         start = ((available + 1) // chunk - 1) * chunk
         if start < 1:
             raise RuntimeError("Actual chain lacks a complete non-genesis policy chunk; run regtest.py up")
-        directory = backend.ROOT / "out/sync-pattern" / (
+        directory = backend.OUTPUT_ROOT / "sync-pattern" / (
             time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
         config_path = directory / "policy.json"
         backend.write_json(config_path, {"schema_version": 1, "sync": SYNC_POLICY})

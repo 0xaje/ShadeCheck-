@@ -97,7 +97,7 @@ def main():
             if time.monotonic() >= deadline:
                 raise RuntimeError("lightwalletd did not reach actual confirmed test block")
             time.sleep(0.5)
-        directory = backend.ROOT / "out/selective-fetch" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
+        directory = backend.OUTPUT_ROOT / "selective-fetch" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
         subset = exercise(directory / "subset", height, expected_ids, False)
         complete = exercise(directory / "complete", height, expected_ids, True)
         backend.write_json(directory / "comparison.json", {

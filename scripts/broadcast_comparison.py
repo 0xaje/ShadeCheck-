@@ -108,7 +108,7 @@ def main():
     try:
         backend.require_regtest()
         backend.lightd_info()
-        directory = backend.ROOT / "out/comparison" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
+        directory = backend.OUTPUT_ROOT / "comparison" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
         unified = exercise(directory / "unified", False)
         separated = exercise(directory / "separated", True)
         comparison = {"schema_version": 1, "unified": unified, "separated": separated,

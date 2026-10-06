@@ -35,7 +35,7 @@ def main():
         start = ((available + 1) // chunk - 1) * chunk
         if start < 1:
             raise RuntimeError("Need a completed historical chunk")
-        root = backend.ROOT / "out/privacy-regression" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
+        root = backend.OUTPUT_ROOT / "privacy-regression" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
         config = root / "policy.json"
         backend.write_json(config, {"schema_version": 1, "sync": sync_pattern.SYNC_POLICY})
         for case, first, last, exit_code in [
@@ -68,7 +68,7 @@ def main():
             raise RuntimeError("An unchanged known failure was mislabeled as a regression")
         # Use an actual earlier accepted broadcast trace. A prefix is explicitly a partial
         # observation: the real request was seen before its response/mempool observation.
-        candidates = sorted((backend.ROOT / "out/regtest").glob("*/report.json"))
+        candidates = sorted((backend.OUTPUT_ROOT / "regtest").glob("*/report.json"))
         if not candidates:
             raise RuntimeError("Run regtest.py prepare-shielded then prove for severity evidence")
         source = candidates[-1].parent
@@ -82,6 +82,7 @@ def main():
             "source_evidence_root": events[-1]["event_hash"], "last_sequence": request["sequence"],
             "limitation": "Partial observation before response/mempool evidence; no rejection or acceptance is asserted here."})
         cli(["test", "--events", str(partial / "events.jsonl"), "--output", str(partial / "report.json")], 1)
+        cli(["report", "--input", str(partial / "report.json"), "--format", "html", "--output", str(partial / "report.html")], 0)
         severity_baseline = root / "broadcast-baseline.json"
         save(partial, severity_baseline)
         full = root / "broadcast-full-observation"
@@ -90,6 +91,7 @@ def main():
         backend.write_json(full / "provenance.json", {"kind": "actual-event-copy", "source_events": str(source / "events.jsonl"),
                                                      "source_evidence_root": events[-1]["event_hash"]})
         cli(["test", "--events", str(full / "events.jsonl"), "--output", str(full / "report.json")], 1)
+        cli(["report", "--input", str(full / "report.json"), "--format", "html", "--output", str(full / "report.html")], 0)
         severity = comparison(full, severity_baseline, root / "severity-increase.json", 1)
         if not any(f["rule_id"] == "SC-005" and f["change"]["change"] == "severity-increased"
                    and f["change"]["previous_severity"] == "MEDIUM" and f["severity"] == "HIGH" for f in severity["findings"]):

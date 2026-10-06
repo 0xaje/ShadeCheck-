@@ -3,6 +3,7 @@ import argparse
 from decimal import Decimal
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -17,6 +18,7 @@ from shadecheck.harness import start_server
 
 ROOT = Path(__file__).resolve().parents[1]
 COMPOSE = ["docker", "compose", "-f", str(ROOT / "integration/compose.yml")]
+OUTPUT_ROOT = Path(os.environ.get("SHADECHECK_OUTPUT_ROOT", str(ROOT / "out"))).resolve()
 STATE = ROOT / ".shadecheck/regtest/transaction.json"
 
 
@@ -306,7 +308,7 @@ def prove():
     else:
         raise RuntimeError("Unknown transaction kind; refusing unsupported proof")
     data = bytes.fromhex(transaction["hex"])
-    directory = ROOT / "out/regtest" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
+    directory = OUTPUT_ROOT / "regtest" / (time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
     events = directory / "events.jsonl"
     recorder = Recorder(events, "upstream")
     server = None

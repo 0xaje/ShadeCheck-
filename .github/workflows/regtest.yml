@@ -1,4 +1,4 @@
-name: Real Zcash regtest broadcast
+name: Real Zcash MVP acceptance
 on:
   push:
     paths:
@@ -9,6 +9,7 @@ on:
       - 'scripts/sync_pattern.py'
       - 'scripts/transparent_fallback.py'
       - 'scripts/privacy_regression.py'
+      - 'scripts/acceptance.py'
       - 'shadecheck/**'
       - '.github/workflows/regtest.yml'
   workflow_dispatch:
@@ -24,30 +25,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install .
-      - name: Start actual node and lightwalletd
-        run: python scripts/regtest.py up
-      - name: Create and sign a funded local transaction without broadcasting
-        run: python scripts/regtest.py prepare
-      - name: Prove broadcast linkability and strict CLI enforcement
-        run: python scripts/regtest.py prove
-      - name: Construct real fully shielded transaction on isolated wallet node
-        run: python scripts/regtest.py prepare-shielded
-      - name: Prove shielded transaction broadcast linkability
-        run: python scripts/regtest.py prove
-      - name: Verify another shielded run on the existing local chain
-        run: |
-          python scripts/regtest.py prepare-shielded
-          python scripts/regtest.py prove
-      - name: Verify actual unified and separated observer roles
-        run: python scripts/broadcast_comparison.py
-      - name: Verify SC-003 against a real confirmed compact block
-        run: python scripts/selective_fetch.py
-      - name: Verify SC-001 against actual canonical block ranges
-        run: python scripts/sync_pattern.py
-      - name: Verify SC-004 real wallet privacy-policy enforcement
-        run: python scripts/transparent_fallback.py
-      - name: Verify real SC-005 baseline and regression enforcement
-        run: python scripts/privacy_regression.py
+      - name: Run consolidated real MVP acceptance
+        run: python scripts/acceptance.py
       - name: Capture backend logs
         if: always()
         run: |

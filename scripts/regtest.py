@@ -62,6 +62,9 @@ def wait_node():
             return require_regtest()
         except RuntimeError as error:
             last_error = str(error)
+            exited = compose("ps", "--all", "--status", "exited", "--quiet", "zcashd")
+            if exited:
+                raise RuntimeError("Node exited during startup:\n" + compose("logs", "--tail", "60", "zcashd")) from error
             time.sleep(2)
     raise RuntimeError(f"Node did not become ready: {last_error}")
 

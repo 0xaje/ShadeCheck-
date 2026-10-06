@@ -20,6 +20,8 @@ services:
   lightwalletd:
     build:
       context: https://github.com/zcash/lightwalletd.git#d16d48124e9ad4157ebc2324b5090c6ba201470c
+      args:
+        BUILDKIT_CONTEXT_KEEP_GIT_DIR: "1"
     platform: linux/amd64
     command:
       - --grpc-bind-addr=0.0.0.0:9067

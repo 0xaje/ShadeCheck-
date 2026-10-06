@@ -6,7 +6,7 @@ ShadeCheck evaluates defined observable Zcash application behaviors against docu
 
 ## Current implementation
 
-This is the **SC-002 foundation**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates broadcast connection linkability, and generates JSON/HTML reports with policy exit codes.
+This implements **SC-002 and SC-003**, not the completed MVP. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates broadcast connection linkability, and generates JSON/HTML reports with policy exit codes.
 
 The local protocol client replays an upstream transaction test vector to a controlled endpoint that explicitly rejects it. It never claims a fixture was network accepted, mined, or consensus valid. No spending keys are requested or stored.
 
@@ -37,6 +37,12 @@ python -m venv .venv
 python -m pip install .
 python -m unittest discover -s tests -v
 ```
+
+## Real SC-003 retrieval comparison
+
+See the [SC-003 rule and Windows guide](docs/sc003.md). Run `python scripts/selective_fetch.py` with the backend running. It records actual compact-block delivery and transaction retrieval, independently checks returned bytes and inclusion against the node, and compares fetching one compact transaction with fetching every compact transaction in the same confirmed block.
+
+[Real CI run 37403356091](https://github.com/0xaje/ShadeCheck-/actions/runs/37403356091) verified subset MEDIUM/FAIL with strict exit 1 and complete fetch PASS for SC-003 with exit 0. Full events, JSON/HTML reports, and node confirmation are inspectable in the uploaded artifact. Select SC-003 explicitly using `shadecheck test --events <path> --rules SC-003`; the existing default remains SC-002. Passing this narrow executed rule does not establish anonymity.
 
 ## Local protocol slice — internal test only
 
@@ -95,7 +101,7 @@ Only this upstream-backed evidence can produce **HIGH**. A fixture can never pro
 
 ## Controlled lightwalletd integration
 
-Only `SendTransaction` and `GetMempoolStream` are forwarded in the current observer. Other RPCs return UNIMPLEMENTED. This is not yet a full wallet sync proxy.
+`GetLatestBlock`, `GetBlockRange`, `GetTransaction`, `SendTransaction`, and `GetMempoolStream` are forwarded in the current observer. Other RPCs return UNIMPLEMENTED. This is not yet a full wallet sync proxy.
 
 The observer itself changes routing and timing. SC-002 therefore makes a narrow claim: the service receiving the broadcast can associate submitted raw transaction bytes with the transport connection it observed. A connection is not a person or stable wallet identity.
 
@@ -131,6 +137,6 @@ Fixtures remain only for deterministic unit/protocol tests and are labeled as su
 
 ## Remaining MVP
 
-SC-001, SC-003, SC-004, SC-005, baselines, and a production mitigation proof remain. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
+SC-001, SC-004, SC-005, baselines, and a production mitigation proof remain. The developer has verified both transparent and shielded regtest paths on Windows; the observer-role comparison is verified in real CI and on Windows. SC-003 is verified in real CI and awaits Windows execution. The separate regtest workflow now validates a real node/lightwalletd broadcast; it does not establish production readiness or anonymity.
 
 See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).

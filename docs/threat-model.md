@@ -9,3 +9,7 @@ The observer captures the gRPC transport peer and hashes it. A connection is not
 The first transport milestone requires a controlled real backend to accept a valid transaction, GetMempoolStream to return matching bytes, the finding to embed those recorded events, and strict CLI execution to return 1. The real regtest CI run on October 6, 2026 satisfied these conditions with a genuinely signed transparent transaction and independent node confirmation. The subsequent [real shielded integration run](https://github.com/0xaje/ShadeCheck-/actions/runs/37401106271) verified two successive Sapling-to-Sapling transactions, each with one Sapling spend, two Sapling outputs, and zero transparent inputs or outputs. The wallet constructs and accepts each transaction on an isolated local node; its first submission to the separate verifier passes through ShadeCheck. This is not a mitigation proof. Fixture replay remains only an internal protocol test.
 
 The completed transport proof is evidence for the narrow SC-002 rule. Broader privacy claims require the remaining tests and wallet integrations.
+
+## SC-003 observer boundary
+
+SC-003 observes delivered compact blocks and subsequent ID-specific requests on a recorded connection. It cannot observe wallet processing or establish transaction ownership. Its deterministic subset condition, finite-trace limitations, explicit coverage requirements, and verified real backend comparison are documented in [SC-003](sc003.md). Broader fetching changed this tested result; this is not an anonymity or production mitigation claim.

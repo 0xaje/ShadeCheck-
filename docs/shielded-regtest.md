@@ -41,6 +41,12 @@ For another shielded run, repeat prepare-shielded and prove. Stop all three serv
 
 All test spending keys stay in local node wallet volumes; ShadeCheck does not export or hold them. This validates a narrow broadcast-observer relationship even when the transaction itself is shielded; it does not establish anonymity or mitigation.
 
+## Verified integration
+
+[GitHub Actions run 37401106271](https://github.com/0xaje/ShadeCheck-/actions/runs/37401106271) passed on October 6, 2026. It exercised the transparent proof followed by two real shielded proofs on the same chain. Each shielded transaction had one Sapling spend, two Sapling outputs, and zero transparent inputs, transparent outputs, or Sprout JoinSplits. Both were accepted by the verifier, independently matched through node RPC, and produced HIGH plus strict CLI exit 1. The uploaded artifact includes hash-chain-validated events and JSON/HTML reports. Windows execution of this shielded path still requires verification on your machine.
+
+Setup waits for the wallet notification thread to confirm each specific funding transaction. Wallet operations use an explicit 0.0002 ZEC fee; the initial shielding payment consumes its entire 1 ZEC funding output minus that fee.
+
 ## Primary source
 
 https://github.com/zcash/zcash/blob/v6.12.2/src/wallet/rpcwallet.cpp documents FullPrivacy and the asynchronous z_sendmany result. The actual signing/proving path is in https://github.com/zcash/zcash/blob/v6.12.2/src/wallet/asyncrpcoperation_sendmany.cpp.

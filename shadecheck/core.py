@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 
 LIMITATIONS = [
-    "SC-002 and SC-003 are implemented; SC-001, SC-004, and SC-005 remain.",
+    "SC-001, SC-002, and SC-003 are implemented; SC-004 and SC-005 remain.",
     "A transport peer identifies a connection, not a person or wallet.",
     "Local fixture replay is not consensus validation or network acceptance.",
     "Transaction SHA-256 fingerprints are not Zcash transaction IDs.",
@@ -65,9 +65,9 @@ def load_events(path):
     return events
 
 
-def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",)):
-    if not rules or set(rules) - {"SC-002", "SC-003"}:
-        raise ValueError("Select implemented rules SC-002 and/or SC-003")
+def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",), sync_policy=None):
+    if not rules or set(rules) - {"SC-001", "SC-002", "SC-003"}:
+        raise ValueError("Select implemented rules SC-001, SC-002, and/or SC-003")
     if not events:
         raise ValueError("Empty evidence: no test was executed")
     findings = []
@@ -97,6 +97,49 @@ def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",)):
             "payload_sha256": fingerprint, "network_acceptance_reported": accepted,
         })
     coverage = []
+    if "SC-001" in rules:
+        if not isinstance(sync_policy, dict) or set(sync_policy) != {"chunk_size", "alignment_height"}:
+            raise ValueError("SC-001 requires chunk_size and alignment_height in the sync policy")
+        chunk = sync_policy["chunk_size"]
+        alignment = sync_policy["alignment_height"]
+        if type(chunk) is not int or chunk <= 0 or type(alignment) is not int or alignment < 0:
+            raise ValueError("Sync policy needs a positive integer chunk size and nonnegative alignment height")
+        ranges = [e for e in events if e["method"] == "GetBlockRange" and e["phase"] == "request"
+                  and e["mode"] == "upstream"]
+        complete = []
+        for request in ranges:
+            start = request["metadata"].get("start_height")
+            end = request["metadata"].get("end_height")
+            if type(start) is not int or type(end) is not int or start < 0 or end < start:
+                raise ValueError("Invalid block range in SC-001 evidence")
+            delivered = [e for e in events if e["method"] == "GetBlockRange" and e["phase"] == "response"
+                         and e["session"] == request["session"]
+                         and e["metadata"].get("request_sequence") == request["sequence"]]
+            heights = {e["metadata"]["height"] for e in delivered}
+            size = end - start + 1
+            fully_delivered = (len(heights) == size and min(heights, default=-1) == start
+                               and max(heights, default=-1) == end)
+            complete.append(fully_delivered)
+            violations = []
+            if start < alignment or (start - alignment) % chunk:
+                violations.append("start height is not aligned to the configured boundary")
+            if size != chunk:
+                violations.append("inclusive request size differs from the configured chunk size")
+            if violations:
+                findings.append({
+                    "rule_id": "SC-001", "title": "Block range violates configured sync disclosure policy",
+                    "severity": "MEDIUM",
+                    "observed_behavior": f"Requested heights {start} through {end} ({size} blocks): " + "; ".join(violations) + ".",
+                    "evidence": [request] + delivered,
+                    "possible_privacy_consequence": "The service observes the connection's exact scan boundary and request size. These can depend on local sync state, but wallet history or identity is not proven.",
+                    "affected_component": "lightwalletd block-range synchronization",
+                    "suggested_investigation": "Review fixed-size aligned retrieval, local filtering, and chain-tip handling against the declared policy; evaluate extra bandwidth and other privacy tradeoffs.",
+                    "sync_policy": dict(sync_policy), "request_size": size,
+                    "violations": violations, "complete_range_delivered": fully_delivered,
+                })
+        coverage.append({"rule_id": "SC-001", "executed": True,
+                         "coverage": "complete-range-delivery" if ranges and all(complete) else "incomplete-range-delivery",
+                         "covered": bool(ranges) and all(complete)})
     if "SC-002" in rules:
         coverage.append({"rule_id": "SC-002", "executed": True,
                          "coverage": "broadcast-observed" if requests else "no-broadcast-observed",
@@ -141,4 +184,4 @@ def evaluate(events, policy="strict", window_seconds=30, rules=("SC-002",)):
             "rules": coverage,
             "findings": findings, "limitations": LIMITATIONS,
             "evidence_root": events[-1]["event_hash"],
-            "correlation_window_seconds": window_seconds}
+            "correlation_window_seconds": window_seconds,\n            "sync_policy": sync_policy if "SC-001" in rules else None}

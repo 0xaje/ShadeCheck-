@@ -28,8 +28,8 @@ def main(argv=None):
     source.add_argument("--events")
     source.add_argument("--fixture", help="Hex transaction file; replayed only against a rejecting local endpoint")
     test.add_argument("--policy", choices=["strict", "advisory"], default="strict")
-    test.add_argument("--rules", nargs="+", choices=["SC-002", "SC-003"], default=["SC-002"])
-    test.add_argument("--output", default="out/report.json")
+    test.add_argument("--rules", nargs="+", choices=["SC-001", "SC-002", "SC-003"], default=["SC-002"])
+    test.add_argument("--config", help="JSON policy configuration; required when selecting SC-001")\n    test.add_argument("--output", default="out/report.json")
     test.add_argument("--record", default="out/events.jsonl")
 
     observe = commands.add_parser("observe", help="Forward supported broadcast, mempool, and latest-block RPCs to your controlled lightwalletd")
@@ -51,7 +51,7 @@ def main(argv=None):
     report.add_argument("--format", choices=["json", "html"], default="json")
     report.add_argument("--output")
     explain = commands.add_parser("explain")
-    explain.add_argument("rule", choices=["SC-002", "SC-003"])
+    explain.add_argument("rule", choices=["SC-001", "SC-002", "SC-003"])
     args = parser.parse_args(argv)
     try:
         if args.command == "explain":
@@ -100,7 +100,13 @@ def main(argv=None):
                 events = load_events(args.record)
             else:
                 events = load_events(args.events)
-            result = evaluate(events, args.policy, rules=args.rules)
+            sync_policy = None
+            if args.config:
+                config = json.loads(Path(args.config).read_text())
+                if not isinstance(config, dict) or config.get("schema_version") != 1:
+                    raise ValueError("Policy configuration requires schema_version 1")
+                sync_policy = config.get("sync")
+            result = evaluate(events, args.policy, rules=args.rules, sync_policy=sync_policy)
             output = Path(args.output)
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_text(canonical(result) + "\n")

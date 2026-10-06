@@ -195,14 +195,19 @@ def wallet_payment(sender, receiver, amount, privacy):
     raise RuntimeError(f"Wallet operation did not finish: {operation}")
 
 
-def wait_wallet_balance(field, minimum):
+def wait_wallet_confirmation(txid):
     deadline = time.monotonic() + 60
+    last = "not yet visible"
     while time.monotonic() < deadline:
-        info = node("getwalletinfo", service="wallet")
-        if Decimal(str(info.get(field, 0))) >= minimum:
-            return
+        try:
+            info = node("gettransaction", txid, service="wallet")
+            if info.get("confirmations", 0) >= 1:
+                return
+            last = info.get("confirmations", 0)
+        except RuntimeError as error:
+            last = str(error)
         time.sleep(0.5)
-    raise RuntimeError(f"Wallet did not observe confirmed {field}: {info}")
+    raise RuntimeError(f"Wallet did not observe confirmation of {txid}: {last}")
 
 
 def prepare_shielded():
@@ -221,7 +226,7 @@ def prepare_shielded():
     funding_txid = node("sendtoaddress", funding_address, 1)
     node("generate", 1)
     sync_wallet_chain()
-    wait_wallet_balance("balance", Decimal("1"))
+    wait_wallet_confirmation(funding_txid)
     sender = node("z_getnewaddress", "sapling", service="wallet")
     receiver = node("z_getnewaddress", "sapling", service="wallet")
     print("Building real Sapling funding transaction on wallet node...", flush=True)
@@ -234,7 +239,7 @@ def prepare_shielded():
         raise RuntimeError("Verifier did not accept the exact Sapling funding transaction")
     node("generate", 1)
     sync_wallet_chain()
-    wait_wallet_balance("shielded_balance", Decimal("0.5"))
+    wait_wallet_confirmation(shielding_txid)
     print("Building fully shielded Sapling-to-Sapling transaction with real proofs...", flush=True)
     txid = wallet_payment(sender, receiver, 0.25, "FullPrivacy")
     raw = node("getrawtransaction", txid, service="wallet")
@@ -330,6 +335,8 @@ def prove():
                 "send_response_message": response.errorMessage,
                 "node_subversion": node("getnetworkinfo")["subversion"],
                 "lightwalletd_revision": lightd_info().gitCommit,
+                "construction": transaction.get("construction", "zcashd raw transaction signing"),
+                "setup_transactions": transaction.get("setup_transactions", {}),
             })
     finally:
         if server is not None:

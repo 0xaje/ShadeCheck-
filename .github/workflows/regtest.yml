@@ -29,6 +29,10 @@ jobs:
         run: python scripts/regtest.py prepare-shielded
       - name: Prove shielded transaction broadcast linkability
         run: python scripts/regtest.py prove
+      - name: Verify another shielded run on the existing local chain
+        run: |
+          python scripts/regtest.py prepare-shielded
+          python scripts/regtest.py prove
       - name: Capture backend logs
         if: always()
         run: |

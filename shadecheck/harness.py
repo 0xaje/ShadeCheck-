@@ -1,4 +1,5 @@
 import hashlib
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 import grpc
@@ -70,3 +71,51 @@ def probe(recorder, transaction):
                 pb.RawTransaction(data=transaction), timeout=5)
     finally:
         server.stop(0).wait()
+
+
+def live_sc002_probe(endpoint, transaction, timeout_seconds=30):
+    """Exercise SC-002 against a running ShadeCheck observer backed by real lightwalletd.
+
+    The caller must provide a genuinely signed raw transaction appropriate for the
+    controlled backend. This helper never manufactures transaction bytes and never
+    upgrades a rejected transaction into a successful result.
+    """
+    if not transaction:
+        raise ValueError("Live transaction cannot be empty")
+    if timeout_seconds <= 0:
+        raise ValueError("timeout_seconds must be positive")
+
+    fingerprint = hashlib.sha256(transaction).hexdigest()
+    with grpc.insecure_channel(endpoint) as channel:
+        grpc.channel_ready_future(channel).result(timeout=5)
+        stub = rpc.CompactTxStreamerStub(channel)
+        response = stub.SendTransaction(pb.RawTransaction(data=transaction), timeout=15)
+        accepted = response.errorCode == 0
+        if not accepted:
+            return {
+                "accepted": False,
+                "mempool_match": False,
+                "payload_sha256": fingerprint,
+                "backend_error_code": response.errorCode,
+                "backend_error_message": response.errorMessage,
+            }
+
+        matched = False
+        try:
+            stream = stub.GetMempoolStream(pb.Empty(), timeout=timeout_seconds)
+            for item in stream:
+                if item.data == transaction:
+                    matched = True
+                    break
+        except grpc.RpcError as error:
+            if error.code() != grpc.StatusCode.DEADLINE_EXCEEDED:
+                raise
+
+        return {
+            "accepted": True,
+            "mempool_match": matched,
+            "payload_sha256": fingerprint,
+            "backend_error_code": response.errorCode,
+            "backend_error_message": response.errorMessage,
+            "timeout_seconds": timeout_seconds,
+        }

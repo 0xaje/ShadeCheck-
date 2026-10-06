@@ -20,7 +20,9 @@ ADAPTER = "local-wallet-adapter; not a passive transport peer"
 
 
 def record(recorder, method, phase, **metadata):
-    return recorder.record(method, phase, ADAPTER, source_mode="wallet-adapter", **metadata)
+    # Preserve exact decimal RPC values as strings in canonical JSON evidence.
+    normalized = json.loads(json.dumps(metadata, default=str))
+    return recorder.record(method, phase, ADAPTER, source_mode="wallet-adapter", **normalized)
 
 
 def fund_source():

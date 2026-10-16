@@ -1,3 +1,221 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadeCheck — Privacy evidence</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
-<body><div class="shell"><aside><a class="brand" href="/" aria-label="ShadeCheck home"><span class="mark">S/</span>ShadeCheck</a><div class="eyebrow">ZCASH DEVELOPER TOOLING</div><nav aria-label="Main"><button data-tab="reports" class="active">Reports <span>01</span></button><button data-tab="rules">Rule library <span>02</span></button><button data-tab="artifacts">Artifacts <span>03</span></button></nav><div class="aside-note"><span class="dot"></span>Local artifact viewer<p>Read-only. No network scan.<br>No spending keys.</p></div></aside><main><header><div><div class="eyebrow">PRIVACY CI / EVIDENCE WORKSPACE</div><h1>Observe. Inspect. Verify.</h1><p class="lead">Defined behavior tests for Zcash applications.</p></div><a id="bundle" class="button dark hidden" href="/download/bundle">Download run ↗</a></header><div class="boundary">Passing a defined test does not establish anonymity.</div><div id="message" role="status" class="message">Loading saved evidence…</div><section id="workspace" class="hidden"><div class="metrics"><div><div class="eyebrow">ACCEPTANCE CHECKS</div><strong id="acceptance">—</strong><small>Expected test outcomes verified</small></div><div><div class="eyebrow">AGGREGATE PRIVACY</div><strong id="privacy">—</strong><small>Includes deliberately weak flows</small></div><div><div class="eyebrow">SAVED REPORTS</div><strong id="count">—</strong><small>Actual recorded traces</small></div><div><div class="eyebrow">EXECUTED FAMILIES</div><strong id="rule-count">—</strong><small>Scoped to documented coverage</small></div></div><div class="runline"><span id="run-name"></span><span id="loaded"></span></div><section id="reports-view"><div class="section-head"><h2>Test reports</h2><div class="filters"><label>Status <select id="status"><option value="all">All statuses</option><option>FAIL</option><option>WARN</option><option>PASS</option></select></label><label>Rule <select id="rule"><option value="all">All rules</option></select></label><label class="search-label">Search <input id="search" type="search" placeholder="Report path or finding"></label></div></div><div class="report-layout"><div id="report-list" class="report-list" aria-label="Saved reports"></div><div id="detail" class="detail" aria-live="polite"></div></div></section><section id="rules-view" class="hidden"><div class="section-head"><h2>Five defined tests</h2><p>Read the boundary before interpreting a result.</p></div><div id="rule-library"></div></section><section id="artifacts-view" class="hidden"><div class="section-head"><h2>Inspectable artifacts</h2><p>Exact files from the loaded, validated snapshot.</p></div><div id="artifact-list"></div></section><details class="limits"><summary>Run limitations and verification boundary</summary><div id="limits"></div><p>Hashes detect editing; they do not authenticate the author. The trusted local adapter and node supply native wallet evidence.</p></details></section><footer>SHADECHECK <span>Privacy CI for Zcash applications.</span></footer></main></div></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ShadeCheck — Privacy evidence</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <a class="brand" href="/" aria-label="ShadeCheck home">
+        <span class="mark">S/</span>ShadeCheck
+      </a>
+      <div class="eyebrow">ZCASH DEVELOPER TOOLING</div>
+      <nav aria-label="Main">
+        <button data-tab="reports" class="active">Reports <span>01</span></button>
+        <button data-tab="rules">Rule library <span>02</span></button>
+        <button data-tab="artifacts">Artifacts <span>03</span></button>
+        <button data-tab="simulator">Leak Inspector <span>04</span></button>
+        <button data-tab="ci">CI Gate <span>05</span></button>
+      </nav>
+      <div class="aside-note">
+        <span class="dot"></span>Local artifact viewer
+        <p>Read-only. No network scan.<br>No spending keys.</p>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+        <div>
+          <div class="eyebrow">PRIVACY CI / EVIDENCE WORKSPACE</div>
+          <h1>Observe. Inspect. Verify.</h1>
+          <p class="lead">Defined behavior tests for Zcash applications.</p>
+        </div>
+        <a id="bundle" class="button dark hidden" href="/download/bundle">Download run ↗</a>
+      </header>
+
+      <div class="boundary">Passing a defined test does not establish anonymity.</div>
+      <div id="message" role="status" class="message">Loading saved evidence…</div>
+
+      <section id="workspace" class="hidden">
+        <div class="metrics">
+          <div>
+            <div class="eyebrow">ACCEPTANCE CHECKS</div>
+            <strong id="acceptance">—</strong>
+            <small>Expected test outcomes verified</small>
+          </div>
+          <div>
+            <div class="eyebrow">AGGREGATE PRIVACY</div>
+            <strong id="privacy">—</strong>
+            <small>Includes deliberately weak flows</small>
+          </div>
+          <div>
+            <div class="eyebrow">SAVED REPORTS</div>
+            <strong id="count">—</strong>
+            <small>Actual recorded traces</small>
+          </div>
+          <div>
+            <div class="eyebrow">EXECUTED FAMILIES</div>
+            <strong id="rule-count">—</strong>
+            <small>Scoped to documented coverage</small>
+          </div>
+        </div>
+
+        <div class="runline">
+          <span id="run-name"></span>
+          <span id="loaded"></span>
+        </div>
+
+        <section id="reports-view">
+          <div class="section-head">
+            <h2>Test reports</h2>
+            <div class="filters">
+              <label>Status
+                <select id="status">
+                  <option value="all">All statuses</option>
+                  <option>FAIL</option>
+                  <option>WARN</option>
+                  <option>PASS</option>
+                </select>
+              </label>
+              <label>Rule
+                <select id="rule">
+                  <option value="all">All rules</option>
+                </select>
+              </label>
+              <label class="search-label">Search
+                <input id="search" type="search" placeholder="Report path or finding">
+              </label>
+            </div>
+          </div>
+          <div class="report-layout">
+            <div id="report-list" class="report-list" aria-label="Saved reports"></div>
+            <div id="detail" class="detail" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section id="rules-view" class="hidden">
+          <div class="section-head">
+            <h2>Five defined tests</h2>
+            <p>Read the boundary before interpreting a result.</p>
+          </div>
+          <div id="rule-library"></div>
+        </section>
+
+        <section id="artifacts-view" class="hidden">
+          <div class="section-head">
+            <h2>Inspectable artifacts</h2>
+            <p>Exact files from the loaded, validated snapshot.</p>
+          </div>
+          <div id="artifact-list"></div>
+        </section>
+
+        <section id="simulator-view" class="hidden">
+          <div class="section-head">
+            <h2>Wire Leak Inspector</h2>
+            <p>Compare raw network-layer observations between vulnerable and protected Zcash client implementations.</p>
+          </div>
+          <div class="sim-controls">
+            <button id="sim-leaky-btn" class="button dark" type="button">Vulnerable / Leaky Flow (Fail)</button>
+            <button id="sim-shielded-btn" class="button" type="button">Protected / Shielded Flow (Pass)</button>
+          </div>
+          <div class="sim-grid">
+            <div class="sim-card">
+              <div class="eyebrow">WHAT THE RPC ADVERSARY OBSERVES OVER THE WIRE</div>
+              <div id="sim-adversary-body"></div>
+            </div>
+            <div class="sim-card">
+              <div class="eyebrow">SHADECHECK AUTOMATED CI EVALUATION</div>
+              <div id="sim-ci-body"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="ci-view" class="hidden">
+          <div class="section-head">
+            <h2>GitHub Actions CI Integration</h2>
+            <p>Automate privacy regression testing on every Pull Request across your team.</p>
+          </div>
+          <div class="ci-preview-card">
+            <div class="ci-header">
+              <span class="badge pass">CI GATE READY</span>
+              <strong>.github/workflows/privacy-ci.yml</strong>
+              <button id="copy-ci-btn" class="button" type="button">Copy Workflow 📋</button>
+            </div>
+            <pre id="ci-yaml-code">name: ShadeCheck Privacy CI
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  privacy-check:
+    name: Zcash Privacy CI Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShadeCheck Action
+        uses: 0xaje/ShadeCheck-@main
+        with:
+          rules: 'SC-001 SC-002 SC-003 SC-004'
+          policy: 'strict'
+          generate-summary: 'true'</pre>
+          </div>
+          <div class="ci-demo-summary">
+            <div class="eyebrow">GITHUB PULL REQUEST STEP SUMMARY PREVIEW</div>
+            <div class="step-summary-box">
+              <h3>🛡️ ShadeCheck Privacy CI: PASS</h3>
+              <p><em>Defined observable behavior tests for Zcash applications; passing does not establish anonymity.</em></p>
+              <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+                <thead>
+                  <tr style="border-bottom:1px solid #ddd;text-align:left;">
+                    <th style="padding:6px;">Rule</th>
+                    <th style="padding:6px;">Status</th>
+                    <th style="padding:6px;">Coverage Boundary</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:6px;"><strong>SC-001</strong></td>
+                    <td style="padding:6px;"><span class="badge pass">Covered</span></td>
+                    <td style="padding:6px;font-size:11px;color:#666;">20-block aligned scan chunk delivery</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:6px;"><strong>SC-002</strong></td>
+                    <td style="padding:6px;"><span class="badge pass">Covered</span></td>
+                    <td style="padding:6px;font-size:11px;color:#666;">Decoupled transport broadcast path</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:6px;"><strong>SC-003</strong></td>
+                    <td style="padding:6px;"><span class="badge pass">Covered</span></td>
+                    <td style="padding:6px;font-size:11px;color:#666;">Complete block transaction fetch set</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:6px;"><strong>SC-004</strong></td>
+                    <td style="padding:6px;"><span class="badge pass">Covered</span></td>
+                    <td style="padding:6px;font-size:11px;color:#666;">FullPrivacy mode (0 transparent inputs/outputs)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p style="margin-top:14px;font-size:11px;color:#49672e;font-weight:600;">✅ PR Merge Approved: Zero metadata leaks or regressions detected.</p>
+            </div>
+          </div>
+        </section>
+
+        <details class="limits">
+          <summary>Run limitations and verification boundary</summary>
+          <div id="limits"></div>
+          <p>Hashes detect editing; they do not authenticate the author. The trusted local adapter and node supply native wallet evidence.</p>
+        </details>
+      </section>
+
+      <footer>
+        SHADECHECK <span>Privacy CI for Zcash applications.</span>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+name: ShadeCheck Privacy CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+jobs:
+  privacy-check:
+    name: Zcash Privacy CI Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run ShadeCheck Action
+        uses: ./
+        with:
+          rules: 'SC-002'
+          policy: 'strict'
+          generate-summary: 'true'
+        continue-on-error: true # For demonstration: weak flow exits 1 but captures artifacts
+
+      - name: Upload Privacy Evidence & HTML Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shadecheck-privacy-evidence
+          path: out/

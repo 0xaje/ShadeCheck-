@@ -5,7 +5,7 @@ from pathlib import Path
 
 import grpc
 from .core import Recorder, canonical, evaluate, load_events
-from .reporting import render_html
+from .reporting import render_html, render_markdown
 from .regression import save_baseline, load_baseline, compare_result, verified_report
 from .generated import service_pb2_grpc as rpc
 from .harness import live_sc002_probe, probe, start_server
@@ -51,7 +51,7 @@ def main(argv=None):
 
     report = commands.add_parser("report")
     report.add_argument("--input", default="out/report.json")
-    report.add_argument("--format", choices=["json", "html"], default="json")
+    report.add_argument("--format", choices=["json", "html", "markdown", "md"], default="json")
     report.add_argument("--output")
     explain = commands.add_parser("explain")
     explain.add_argument("rule", choices=["SC-001", "SC-002", "SC-003", "SC-004", "SC-005"])
@@ -69,8 +69,16 @@ def main(argv=None):
     dashboard = commands.add_parser("dashboard", help="Read-only localhost viewer of a validated acceptance snapshot")
     dashboard.add_argument("--suite", help="Acceptance directory; default is newest out/acceptance directory")
     dashboard.add_argument("--port", type=int, default=9070)
+    demo = commands.add_parser("demo", help="Run 60-second interactive leak vs. shielded demonstration")
     args = parser.parse_args(argv)
     try:
+        if args.command == "demo":
+            import importlib.util
+            demo_path = Path(__file__).resolve().parent.parent / "scripts" / "demo.py"
+            spec = importlib.util.spec_from_file_location("demo", demo_path)
+            demo_mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(demo_mod)
+            return demo_mod.run_demo()
         if args.command == "dashboard":
             from .dashboard_server import latest_suite, serve
             root = Path(args.suite) if args.suite else latest_suite(Path("out/acceptance"))
@@ -163,7 +171,12 @@ def main(argv=None):
             print(f"{result['status']}: {len(result['findings'])} finding(s); report: {output}")
             return 1 if result["status"] == "FAIL" else (2 if result["status"] == "WARN" and args.policy == "strict" else 0)
         result = json.loads(Path(args.input).read_text())
-        content = json.dumps(result, indent=2, sort_keys=True) if args.format == "json" else render_html(result)
+        if args.format == "json":
+            content = json.dumps(result, indent=2, sort_keys=True)
+        elif args.format in ("markdown", "md"):
+            content = render_markdown(result)
+        else:
+            content = render_html(result)
         if args.output:
             Path(args.output).write_text(content + "\n")
         else:

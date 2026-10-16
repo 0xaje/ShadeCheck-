@@ -1,8 +1,68 @@
 # ShadeCheck
 
-Privacy CI for Zcash applications.
+**Privacy CI for Zcash applications.**
 
-ShadeCheck evaluates defined observable Zcash application behaviors against documented privacy tests. Passing does not establish anonymity.
+[![Privacy CI](https://github.com/0xaje/ShadeCheck-/actions/workflows/privacy.yml/badge.svg)](https://github.com/0xaje/ShadeCheck-/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](THIRD_PARTY_LICENSE)
+[![Python: 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](pyproject.toml)
+[![Rules: SC--001--SC--005](https://img.shields.io/badge/Rules-SC--001--SC--005-emerald.svg)](docs/threat-model.md)
+
+ShadeCheck evaluates defined observable Zcash application behaviors against documented privacy tests. *Passing does not establish anonymity.*
+
+---
+
+## ⚡ 60-Second Interactive Demo
+
+Run our zero-dependency interactive demonstration to see ShadeCheck intercept a leaky Zcash client flow (exit 1 / PR blocked) vs. a protected, fully shielded flow (exit 0 / PR approved):
+
+```bash
+# Clone and install
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+
+# Run the 60-second interactive demonstration
+shadecheck demo
+```
+
+To view the generated evidence chains and reports in the local dashboard:
+```bash
+shadecheck dashboard
+# Open http://127.0.0.1:9070
+```
+
+---
+
+## 🚀 Use in Your Repository (Turnkey GitHub Action)
+
+Add automated Privacy CI to any Zcash wallet or light-client repository by dropping this into `.github/workflows/privacy-ci.yml`:
+
+```yaml
+name: ShadeCheck Privacy CI
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  privacy-gate:
+    name: Zcash Privacy CI Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShadeCheck Privacy Gate
+        uses: 0xaje/ShadeCheck-@main
+        with:
+          rules: 'SC-001 SC-002 SC-003 SC-004'
+          policy: 'strict'
+          generate-summary: 'true'
+```
+
+*Automatically generates a rich markdown Step Summary directly in your GitHub PR tab and blocks merges if privacy side-channels or regressions are detected.*
+
+> 💡 **Hackathon Judges:** See the [Hackathon Pitch & 2-Minute Demo Script](docs/HACKATHON_PITCH.md) for architecture, competitive comparison, and presentation talking points.
+
+---
 
 ## Current implementation
 

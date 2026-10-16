@@ -1,0 +1,21 @@
+{
+  "name": "shadecheck",
+  "version": "0.1.0",
+  "description": "Privacy CI for Zcash applications",
+  "scripts": {
+    "dev": "bash -c 'if [ -f .venv/bin/shadecheck ]; then .venv/bin/shadecheck dashboard; else shadecheck dashboard; fi'",
+    "start": "npm run dev",
+    "demo": "bash -c 'if [ -f .venv/bin/shadecheck ]; then .venv/bin/shadecheck demo; else shadecheck demo; fi'",
+    "test": "bash -c 'if [ -f .venv/bin/python ]; then .venv/bin/python -m unittest discover -s tests -v; else python3 -m unittest discover -s tests -v; fi'"
+  },
+  "keywords": [
+    "zcash",
+    "privacy",
+    "ci",
+    "zero-knowledge",
+    "grpc",
+    "lightwalletd"
+  ],
+  "author": "0xaje",
+  "license": "MIT"
+}

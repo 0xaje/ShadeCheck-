@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "name": "shadecheck",
+  "builds": [
+    {
+      "src": "api/data.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "shadecheck/dashboard/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/data",
+      "dest": "/api/data.js"
+    },
+    {
+      "src": "/style.css",
+      "dest": "/shadecheck/dashboard/style.css"
+    },
+    {
+      "src": "/app.js",
+      "dest": "/shadecheck/dashboard/app.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/shadecheck/dashboard/index.html"
+    }
+  ]
+}

@@ -80,19 +80,24 @@ def display_safe(value):
 def create_server(root=None, port=9070):
     payload, files = snapshot(root)
     assets = Path(__file__).parent / 'dashboard'
-    routes = {'/': (assets / 'index.html').read_bytes(), '/app.js': (assets / 'app.js').read_bytes(),
-              '/style.css': (assets / 'style.css').read_bytes(), '/api/data': canonical(display_safe(payload)).encode()}
-    types = {'/': 'text/html; charset=utf-8', '/app.js': 'text/javascript; charset=utf-8',
-             '/style.css': 'text/css; charset=utf-8', '/api/data': 'application/json; charset=utf-8'}
-
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             if self.headers.get('Host') not in {f'127.0.0.1:{self.server.server_port}', f'localhost:{self.server.server_port}'}:
                 self.send_error(403)
                 return
-            if self.path in routes:
-                body, kind = routes[self.path], types[self.path]
-                filename = None
+            filename = None
+            if self.path in ('/', '/index.html'):
+                body = (assets / 'index.html').read_bytes()
+                kind = 'text/html; charset=utf-8'
+            elif self.path == '/app.js':
+                body = (assets / 'app.js').read_bytes()
+                kind = 'text/javascript; charset=utf-8'
+            elif self.path == '/style.css':
+                body = (assets / 'style.css').read_bytes()
+                kind = 'text/css; charset=utf-8'
+            elif self.path == '/api/data':
+                body = canonical(display_safe(payload)).encode()
+                kind = 'application/json; charset=utf-8'
             elif self.path.startswith('/download/') and self.path[10:] in files:
                 filename, body = files[self.path[10:]]
                 filename = Path(filename).name

@@ -20,8 +20,8 @@
         <button data-tab="artifacts">Artifacts <span>03</span></button>
       </nav>
       <div class="aside-note">
-        <span class="dot"></span>Local artifact viewer
-        <p>Read-only. No network scan.<br>No spending keys.</p>
+        <span class="dot"></span><span id="mode-title">Recorded evidence</span>
+        <p><span id="execution-mode">Recorded evidence viewer.</span><br>No spending keys.</p>
       </div>
     </aside>
 
@@ -35,7 +35,7 @@
         <a id="bundle" class="button dark hidden" href="/download/bundle">Download run ↗</a>
       </header>
 
-      <div class="boundary">Passing a defined test does not establish anonymity.</div>
+      <section id="runner" class="runner hidden"><h2>Controlled local tests</h2><p>Runs the existing regtest harness on this computer. Execution status is separate from privacy status.</p><div class="actions"><button id="run-sync" class="button">Run real sync comparison</button><button id="run-acceptance" class="button">Run full acceptance suite</button></div><p id="job-status" role="status">No job started.</p><details><summary>Actual execution log</summary><pre id="job-log"></pre></details><div id="job-results"></div></section><div class="boundary">Passing a defined test does not establish anonymity.</div>
       <div id="message" role="status" class="message">Loading saved evidence…</div>
 
       <section id="workspace" class="hidden">

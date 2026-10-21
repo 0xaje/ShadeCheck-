@@ -32,8 +32,28 @@ function showReport(report) {
 function filteredReports(){const status=$('status').value,rule=$('rule').value,q=$('search').value.trim().toLowerCase();return state.data.reports.filter(r=>(status==='all'||r.result.status===status)&&(rule==='all'||r.result.rules.some(x=>x.rule_id===rule))&&(!q||(r.path+' '+r.result.findings.map(f=>f.title+' '+f.observed_behavior).join(' ')).toLowerCase().includes(q)));}
 function listReports(){const reports=filteredReports(),host=$('report-list');host.replaceChildren();for(const r of reports){const button=node('button',undefined,'report-item');button.type='button';button.dataset.id=r.id;const line=node('div',undefined,'report-title');line.append(node('span',r.result.rules.map(x=>x.rule_id).join(' / ')),badge(r.result.status));button.append(line,node('div',title(r.path),'path'),node('div',r.result.findings.length+' finding(s)','path'));button.addEventListener('click',()=>showReport(r));host.append(button);}if(!reports.length){host.append(node('div','No reports match these filters.','empty-list'));$('detail').replaceChildren(node('p','Choose different filters to inspect a saved report.'));state.selected=null;return;}showReport(reports.find(r=>r.id===state.selected)||reports[0]);}
 function tabs(){for(const button of document.querySelectorAll('[data-tab]'))button.addEventListener('click',()=>{for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b===button);for(const tab of ['reports','rules','artifacts'])$(tab+'-view')?.classList.toggle('hidden',tab!==button.dataset.tab);});}
+let jobTimer=null;
+async function pollJob(){
+ const response=await fetch('/api/job',{cache:'no-store'});if(!response.ok)throw new Error('Job state unavailable');
+ const job=await response.json();$('job-status').textContent=job.status+' · '+(job.elapsed_seconds||0)+'s'+(job.exit_code!==undefined?' · process exit '+job.exit_code:'')+(job.error?' · '+job.error:'');
+ $('job-log').textContent=(job.logs||[]).join('\n');
+ const busy=['queued','running','validating'].includes(job.status);$('run-sync').disabled=busy;$('run-acceptance').disabled=busy;
+ if(!busy){clearInterval(jobTimer);jobTimer=null;$('job-results').replaceChildren();if(job.message)$('job-results').append(node('p',job.message));
+  for(const r of job.results||[]){const link=node('a',r.path+' · privacy '+r.status,'button');link.href='/job-download/'+r.id;link.download='report.json';$('job-results').append(link);}
+ }
+ return job;
+}
+async function startJob(scenario){
+ try{
+  $('run-sync').disabled=true;$('run-acceptance').disabled=true;
+  const response=await fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json','X-ShadeCheck-Token':state.data.runner.token},body:JSON.stringify({scenario})});
+  if(!response.ok)throw new Error('Could not start the controlled test ('+response.status+')');
+  await pollJob();if(!jobTimer)jobTimer=setInterval(()=>pollJob().catch(e=>{$('job-status').textContent=e.message;clearInterval(jobTimer);jobTimer=null;}),1200);
+ }catch(error){$('job-status').textContent=error.message;$('run-sync').disabled=false;$('run-acceptance').disabled=false;}
+}
 function populate(data){
   state.data=data;
+  if(data.runner?.enabled){$('runner').classList.remove('hidden');$('execution-mode').textContent='Controlled local runner enabled.';$('mode-title').textContent='Local regtest execution';$('run-sync').onclick=()=>startJob('sync-pattern');$('run-acceptance').onclick=()=>startJob('acceptance');}
   $('workspace').classList.remove('hidden');
 
   if($('rule-library').children.length===0){

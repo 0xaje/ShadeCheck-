@@ -39,7 +39,7 @@ Counts derive from the loaded report index and rule list. The acceptance and agg
 
 JavaScript cannot exactly represent all nanosecond integers. The display API converts integer values larger than 2^53-1 to exact decimal strings. The UI labels this representation; JSON and event downloads preserve their original bytes and numeric types. It does not reinterpret transaction payload fingerprints as transaction IDs.
 
-The loaded snapshot stays fixed. Restart the dashboard to load a newly generated run. It does not start tests, submit payments, change policies, save baselines, alter findings, or export spending keys. Server binding is limited to 127.0.0.1. This is a local developer tool, not a hosted service with authentication or remote-access support.
+The loaded snapshot stays fixed. Restart the dashboard to load a newly generated run. By default it does not execute tests or change results. Opt-in controlled execution is described below. It never exports spending keys or accepts arbitrary target URLs/commands. Server binding is limited to 127.0.0.1. This is a local developer tool, not a hosted service with authentication or remote-access support.
 
 Artifact validation detects mismatched hashes and reports; it does not authenticate an author or prove that maliciously rewritten evidence came from the original test environment. Native adapter and node trust remain as documented in the threat model. Reports can contain sensitive test metadata; the same care applies to downloaded bundles.
 
@@ -50,3 +50,17 @@ Unit checks cover empty states, packaged asset delivery, loopback host enforceme
 ## Verified real CI
 
 [Run 37411834768](https://github.com/0xaje/ShadeCheck-/actions/runs/37411834768) passed on October 6, 2026: 32 unit tests, the fresh real acceptance suite, and Chrome browser integration. It generated the actual data before UI checks; no fabricated finding or browser test dataset supplied runtime results. All 24 JSON downloads matched their source bytes, and the run ZIP preserved the original suite metadata. Desktop/mobile screenshots were reviewed after downloading the artifact. The dashboard showed acceptance PASS separately from aggregate privacy FAIL, displayed baseline MEDIUM-to-HIGH evidence, and passed filters, search, artifact counts, rule-library, download, timestamp precision, and mobile layout checks. Windows dashboard launch awaits verification; the core acceptance run is already verified on Windows.
+
+## Opt-in real local execution
+
+With Docker running, enable the fixed local worker from the source checkout:
+
+```powershell
+.\.venv\Scripts\shadecheck.exe dashboard --enable-runner --project .
+```
+
+The dashboard then offers **Run real sync comparison** and **Run full acceptance suite**. These launch the existing Python drivers, not a simulator. The sync scenario requires the local backend to be up (`python scripts/regtest.py up`); full acceptance starts/checks the backend itself. Status and logs come from the actual process. A process exit 0 means its expected outcomes were verified; the sync comparison must still contain a FAIL trace and a PASS trace. Report files are re-evaluated before downloads are exposed.
+
+Only one job runs at a time. Scenario names are allowlisted, no shell is used, requests require the same-origin per-process token, and the server binds to loopback. Unknown scenarios or extra command parameters are rejected. A 20-minute timeout terminates the process group. Closing the server terminates an active worker process; Docker services/volumes are preserved for developer inspection. Restart the dashboard to load a completed new full acceptance suite into its main snapshot index.
+
+The static public viewer exposes no execution token or POST worker. Fresh tests for judges are available by cloning/forking the repository and running acceptance locally or via workflow_dispatch in GitHub Actions. Hosted execution with public access would require a separately secured worker service; this release does not pretend the static viewer is such a service.

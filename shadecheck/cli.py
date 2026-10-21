@@ -69,6 +69,8 @@ def main(argv=None):
     dashboard = commands.add_parser("dashboard", help="Read-only localhost viewer of a validated acceptance snapshot")
     dashboard.add_argument("--suite", help="Acceptance directory; default is newest out/acceptance directory")
     dashboard.add_argument("--port", type=int, default=9070)
+    dashboard.add_argument("--enable-runner", action="store_true", help="Allow fixed local regtest jobs from this source checkout")
+    dashboard.add_argument("--project", default=".", help="ShadeCheck source checkout for opt-in runner")
     demo = commands.add_parser("demo", help="Walk through validated recorded real-regtest evidence")
     demo.add_argument("--suite", help="Completed acceptance directory")
     args = parser.parse_args(argv)
@@ -79,7 +81,7 @@ def main(argv=None):
         if args.command == "dashboard":
             from .dashboard_server import latest_suite, serve
             root = Path(args.suite) if args.suite else latest_suite(Path("out/acceptance"))
-            serve(root, args.port)
+            serve(root, args.port, args.project if args.enable_runner else None)
             return 0
         if args.command == "baseline":
             value = save_baseline(args.events, args.input, args.output)

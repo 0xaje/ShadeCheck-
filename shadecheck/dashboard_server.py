@@ -4,6 +4,7 @@ import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import io
 import json
+import secrets
 from pathlib import Path
 import zipfile
 
@@ -77,8 +78,13 @@ def display_safe(value):
     return value
 
 
-def create_server(root=None, port=9070):
+def create_server(root=None, port=9070, project=None):
     payload, files = snapshot(root)
+    runner=None;token=None
+    if project is not None:
+        from .jobs import LocalRunner
+        runner=LocalRunner(project);token=secrets.token_urlsafe(32)
+    payload['runner']={'enabled':runner is not None,'token':token}
     assets = Path(__file__).parent / 'dashboard'
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -95,6 +101,12 @@ def create_server(root=None, port=9070):
             elif self.path == '/style.css':
                 body = (assets / 'style.css').read_bytes()
                 kind = 'text/css; charset=utf-8'
+            elif self.path == '/api/job' and runner is not None:
+                body=canonical(display_safe(runner.get())).encode()
+                kind='application/json; charset=utf-8'
+            elif self.path.startswith('/job-download/') and runner is not None and self.path[14:] in runner.files:
+                filename,body=runner.files[self.path[14:]]
+                kind='application/octet-stream'
             elif self.path == '/api/data':
                 body = canonical(display_safe(payload)).encode()
                 kind = 'application/json; charset=utf-8'
@@ -117,20 +129,42 @@ def create_server(root=None, port=9070):
             self.end_headers()
             self.wfile.write(body)
 
+        def do_POST(self):
+            from .jobs import BusyError
+            expected={f'127.0.0.1:{self.server.server_port}',f'localhost:{self.server.server_port}'}
+            if (runner is None or self.path!='/api/jobs' or self.headers.get('Host') not in expected
+                    or self.headers.get('X-ShadeCheck-Token')!=token
+                    or self.headers.get('Origin') not in {None,*('http://'+host for host in expected)}):
+                self.send_error(403);return
+            try:
+                size=int(self.headers.get('Content-Length','0'))
+                if size<=0 or size>1024:raise ValueError('Invalid job request length')
+                request=json.loads(self.rfile.read(size))
+                if set(request)!={'scenario'}:raise ValueError('Only a controlled scenario may be supplied')
+                result=runner.start(request['scenario'])
+                body=canonical(result).encode();self.send_response(202)
+                self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(body)))
+                self.end_headers();self.wfile.write(body)
+            except BusyError as error:self.send_error(409,str(error))
+            except (ValueError,TypeError,KeyError) as error:self.send_error(400,str(error))
+
         def log_message(self, fmt, *args):
             pass
 
-    return ThreadingHTTPServer(('127.0.0.1', port), Handler)
+    server=ThreadingHTTPServer(('127.0.0.1',port),Handler)
+    server.runner=runner
+    return server
 
 
-def serve(root=None, port=9070):
+def serve(root=None, port=9070, project=None):
     if not 1 <= port <= 65535:
         raise ValueError('Port must be between 1 and 65535')
-    server = create_server(root, port)
-    print(f'ShadeCheck dashboard: http://127.0.0.1:{server.server_port} (validated artifact snapshot; Ctrl-C to stop)', flush=True)
+    server = create_server(root, port, project)
+    print(f'ShadeCheck dashboard: http://127.0.0.1:{server.server_port} (validated evidence; controlled runner enabled: {project is not None}; Ctrl-C to stop)', flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
+        if server.runner:server.runner.close()
         server.server_close()

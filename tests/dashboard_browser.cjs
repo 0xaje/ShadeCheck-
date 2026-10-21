@@ -33,6 +33,15 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
   await page.fill('#search','');await page.setViewportSize({width:390,height:844});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
   await page.screenshot({path:process.env.SHADECHECK_SCREENSHOT_DIR+'/dashboard-mobile.png',fullPage:true});
+  if(data.runner?.enabled){
+    await page.locator('#run-sync').click();
+    await page.waitForFunction(async()=>{const r=await fetch('/api/job');const j=await r.json();return ['completed','failed'].includes(j.status);},{},{timeout:120000});
+    const job=await page.evaluate(()=>fetch('/api/job').then(r=>r.json()));
+    assert.equal(job.status,'completed');assert.equal(job.exit_code,0);
+    assert.deepEqual(job.results.map(r=>r.status).sort(),['FAIL','PASS']);
+    console.log('REAL DASHBOARD EXECUTION VERIFIED: actual sync job, real FAIL/PASS reports and process exit 0.');
+  }
+
   assert.deepEqual(errors,[]);console.log('REAL DASHBOARD BROWSER CHECK VERIFIED: filters, findings, exact timestamp strings, baseline escalation, downloads, rule library, artifacts, responsive layout.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});

@@ -21,7 +21,7 @@ def main():
     suite=latest_suite(ROOT/'out/acceptance')
     if suite is None:
         raise ValueError('Run acceptance first; no runtime data is invented for UI tests')
-    server=create_server(suite,0)
+    server=create_server(suite,0,project=ROOT)
     thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
     output=ROOT/'out/dashboard';output.mkdir(exist_ok=True)
     url=f'http://127.0.0.1:{server.server_port}'

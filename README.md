@@ -44,6 +44,8 @@ Open http://127.0.0.1:9070. Both commands validate the newest completed out/acce
 
 The dashboard shows report filters, findings, source events, baseline changes, rule coverage/limits, and byte-exact downloads. Large integers are displayed as decimal strings to preserve nanosecond precision; original downloads retain their exact numeric types. No Node installation is needed for the CLI/dashboard. Optional `npm run dev`, `npm run demo`, and `npm test` launch the same Python commands on Windows and POSIX systems.
 
+To run actual controlled tests from the local dashboard, use `shadecheck dashboard --enable-runner --project .` with Docker running. It launches fixed sync/acceptance drivers, shows actual logs/status, validates the new reports, and exposes their downloads. No arbitrary scan targets or shell commands are accepted. Default and public static views remain recorded-evidence viewers.
+
 [Dashboard guide](docs/dashboard.md)
 
 ## Five initial rule families

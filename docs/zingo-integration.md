@@ -20,6 +20,21 @@ The integration is verified only when the dedicated workflow completes the real
 wallet synchronization step and emits `integration_status: VERIFIED`. A compiled
 binary or passing synthetic unit tests alone do not satisfy that gate.
 
+## Verified run — October 21, 2026
+
+[The dedicated real CI run](https://github.com/0xaje/ShadeCheck-/actions/runs/39599061669)
+passed at ShadeCheck revision `48e11f0b006fa2ad4fe4cefba027e6ea8a235196`.
+Both direct and observed clients scanned 101 blocks (10–110); 124 events were
+captured, and every delivered compact block hash matched the canonical node.
+42 unit/boundary tests passed. The report contains two SC-001 MEDIUM policy
+findings (strict exit 1), with SC-002/SC-003/SC-004 explicitly uncovered and no
+SC-005 comparison. This is not a claim of a Zingo security vulnerability.
+
+The [original recorded archive and provenance](../examples/zingo/README.md) are
+committed for inspection without GitHub artifact-download authentication or a
+wallet build. Offline verification was repeated after downloading the archive.
+Wallet files and spending keys are absent from that evidence bundle.
+
 ## Why a separate backend
 
 The CLI's regtest configuration activates network upgrades through NU6.1 at
@@ -40,6 +55,7 @@ proving-parameter downloads, and Docker build inputs.
 git clone https://github.com/zingolabs/zingolib.git ../shadecheck-zingo-client
 git -C ../shadecheck-zingo-client checkout --detach 31da83657d88fbb3b57bf45996023850e8aaf9da
 cd ../shadecheck-zingo-client
+rustup toolchain install 1.90.0 --profile minimal
 cargo +1.90.0 build --locked --release -p zingo-cli --features regtest
 cd ../ShadeCheck-
 ./.venv/bin/python scripts/zingo_integration.py --source ../shadecheck-zingo-client

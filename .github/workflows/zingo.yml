@@ -1,7 +1,16 @@
 name: Independent Zingo regtest integration
 on:
   push:
-    branches: [integration/zingo-regtest]
+    branches: [main, integration/zingo-regtest]
+    paths:
+      - 'integration/zingo/**'
+      - 'scripts/zingo_integration.py'
+      - 'shadecheck/harness.py'
+      - 'shadecheck/generated/**'
+      - 'tests/test_rpc_compatibility.py'
+      - 'tests/test_zingo_integration.py'
+      - 'pyproject.toml'
+      - '.github/workflows/zingo.yml'
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,0 +1,3 @@
+Captured evidence: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/regtest/20261021T093021-e6a82d31/events.jsonl
+FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/regtest/20261021T093021-e6a82d31/report.json
+SC-002 REAL REGTEST PROOF VERIFIED: HIGH; strict CLI exit 1. Kind: sapling-shielded. Reports: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/regtest/20261021T093021-e6a82d31

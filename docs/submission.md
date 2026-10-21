@@ -21,3 +21,11 @@ Run your client through the observer before invoking the Action. Only the suppor
 ## Current trust boundary
 
 The public export is an auditable snapshot of a controlled run, not remote attestation. Hashes detect accidental/inconsistent edits but do not authenticate an author. The recorded native adapter and node are trusted, and all wallets/keys are local test wallets. A successful suite verifies expected PASS, WARN, and FAIL behavior; it does not certify the sample architecture as private.
+
+## Deploy the prepared public snapshot on Vercel
+
+Import this GitHub repository into your Vercel account (or redeploy its existing project). Use the repository root, framework Other, and output directory `public`. The committed vercel.json skips build/install commands because this is a prevalidated static export, rewrites `/api/data` to the generated JSON, and supplies the recorded-run ZIP download header. No Zcash wallet keys, GitHub token, or runtime API secrets are required by the public viewer.
+
+Check the deployment URL Vercel actually assigns; no deployed URL is assumed or fabricated in this repository. Open `/api/data`, inspect source commit/run metadata, download a report and the run ZIP, and run offline validation on the extracted suite. The static site is not a hosted execution service. Use `shadecheck dashboard --enable-runner --project .` for local controlled execution, or fork/run the existing GitHub Actions workflow for fresh remote execution.
+
+The committed recorded export was generated and browser-tested by the source CI run documented in RELEASE_VALIDATION.md. Regenerate exports from a new verified suite when replacing its recorded data; do not hand-author findings or status values.

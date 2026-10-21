@@ -1,0 +1,6 @@
+{
+  "payment": {
+    "require_shielded": true
+  },
+  "schema_version": 1
+}

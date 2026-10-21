@@ -1,0 +1,14 @@
+Starting isolated local wallet node...
+Funding wallet with a real setup payment and importing canonical blocks...
+Building real Sapling funding transaction on wallet node...
+Building fully shielded Sapling-to-Sapling transaction with real proofs...
+Real shielded transaction constructed and accepted on isolated wallet node: c653671c2d97750b4b9c353c24d38bd316e2be8555df86a9cb763e0123a005a0
+NOT submitted to the verification backend. Next: prove
+{
+  "transparent_inputs": 0,
+  "transparent_outputs": 0,
+  "sapling_spends": 1,
+  "sapling_outputs": 2,
+  "sprout_joinsplits": 0
+}
+State: /home/runner/work/ShadeCheck-/ShadeCheck-/.shadecheck/regtest/transaction.json

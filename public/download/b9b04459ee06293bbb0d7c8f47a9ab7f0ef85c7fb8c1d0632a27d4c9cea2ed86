@@ -1,0 +1,16 @@
+PASS: 0 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/baseline-run/report.json
+PASS: 0 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/unchanged-run/report.json
+FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/regressed-run/report.json
+Baseline saved: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/baseline.json; evidence root: 43a71c67111379a7b3a7e62cf403aeefe6c403ebec30e6e29006e9eb324aacd2
+PASS: 0 regression(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/unchanged-comparison.json
+FAIL: 1 regression(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/regressed-comparison.json
+FAIL: 2 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/test-with-baseline.json
+FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/size-only/report.json
+Baseline saved: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/size-baseline.json; evidence root: 93cc92a3984caf57487ee53780c27251f273cab25aee07ae30d5be239cee6dd1
+FAIL: 1 regression(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/new-behavior.json
+FAIL: 0 regression(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/known-failure.json
+FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/broadcast-request-snapshot/report.json
+Baseline saved: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/broadcast-baseline.json; evidence root: 553978d7b01810d8381e5bbb3ef2c006c95b9300c890266e0cadb6efddfddce3
+FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/broadcast-full-observation/report.json
+FAIL: 1 regression(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6/severity-increase.json
+REAL SC-005 COMPARISON VERIFIED: unchanged PASS; new failure, new behavior, severity increase FAIL; known strict failure remains FAIL. Reports: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/privacy-regression/20261021T093210-63ff24a6

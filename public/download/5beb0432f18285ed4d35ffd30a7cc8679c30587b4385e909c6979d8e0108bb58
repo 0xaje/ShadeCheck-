@@ -1,0 +1,47 @@
+test_empty_state_and_packaged_assets (test_dashboard.DashboardTests.test_empty_state_and_packaged_assets) ... ok
+test_host_and_non_artifact_requests_rejected (test_dashboard.DashboardTests.test_host_and_non_artifact_requests_rejected) ... ok
+test_large_integer_display_is_exact_and_nonmutating (test_dashboard.DashboardTests.test_large_integer_display_is_exact_and_nonmutating) ... ok
+test_aligned_and_partial_ranges (test_sc001.SyncPatternTests.test_aligned_and_partial_ranges) ... ok
+test_incomplete_delivery_and_fixtures_cannot_pass (test_sc001.SyncPatternTests.test_incomplete_delivery_and_fixtures_cannot_pass) ... ok
+test_other_selected_missing_coverage_prevents_pass (test_sc001.SyncPatternTests.test_other_selected_missing_coverage_prevents_pass) ... ok
+test_policy_is_required_and_validated (test_sc001.SyncPatternTests.test_policy_is_required_and_validated) ... ok
+test_shifted_origin_is_respected (test_sc001.SyncPatternTests.test_shifted_origin_is_respected) ... ok
+test_complete_fetch_and_no_fetch_do_not_show_subset (test_sc003.SelectiveFetchTests.test_complete_fetch_and_no_fetch_do_not_show_subset) ... ok
+test_missing_coverage_and_invalid_rule (test_sc003.SelectiveFetchTests.test_missing_coverage_and_invalid_rule) ... ok
+test_subset_requires_same_session_and_membership (test_sc003.SelectiveFetchTests.test_subset_requires_same_session_and_membership) ... ok
+test_window_and_upstream_boundaries (test_sc003.SelectiveFetchTests.test_window_and_upstream_boundaries) ... ok
+test_explicit_policy_required (test_sc004.TransparentFallbackTests.test_explicit_policy_required) ... ok
+test_fullprivacy_can_never_hide_transparent_execution (test_sc004.TransparentFallbackTests.test_fullprivacy_can_never_hide_transparent_execution) ... ok
+test_high_requires_matching_accepted_payload (test_sc004.TransparentFallbackTests.test_high_requires_matching_accepted_payload) ... ok
+test_only_specific_privacy_rejection_supplies_coverage (test_sc004.TransparentFallbackTests.test_only_specific_privacy_rejection_supplies_coverage) ... ok
+test_verified_shielded_execution_has_no_transparent_finding (test_sc004.TransparentFallbackTests.test_verified_shielded_execution_has_no_transparent_finding) ... ok
+test_cli_save_compare_test_baseline_and_exit (test_sc005.RegressionTests.test_cli_save_compare_test_baseline_and_exit) ... Baseline saved: /tmp/tmptia9upwv/1/baseline.json; evidence root: 2b3e6a7467a8d4ba720e01eebfa9195a1702304c855679ff9b64672f1086d4c0
+FAIL: 1 regression(s); report: /tmp/tmptia9upwv/comparison.json
+FAIL: 2 finding(s); report: /tmp/tmptia9upwv/test.json
+ok
+test_context_mismatch_and_tamper_rejected (test_sc005.RegressionTests.test_context_mismatch_and_tamper_rejected) ... ok
+test_forged_report_and_missing_coverage_rejected (test_sc005.RegressionTests.test_forged_report_and_missing_coverage_rejected) ... ok
+test_new_behavior_and_known_failure_not_exempted (test_sc005.RegressionTests.test_new_behavior_and_known_failure_not_exempted) ... ok
+test_new_failure_and_resolved_behavior (test_sc005.RegressionTests.test_new_failure_and_resolved_behavior) ... ok
+test_portable_baseline_and_incidental_fields (test_sc005.RegressionTests.test_portable_baseline_and_incidental_fields) ... ok
+test_severity_escalation_and_current_missing_coverage (test_sc005.RegressionTests.test_severity_escalation_and_current_missing_coverage) ... ok
+test_empty_or_incomplete_structure_cannot_qualify (test_shielded_structure.ShieldedStructureGuards.test_empty_or_incomplete_structure_cannot_qualify) ... ok
+test_transparent_input_cannot_be_labeled_fully_shielded (test_shielded_structure.ShieldedStructureGuards.test_transparent_input_cannot_be_labeled_fully_shielded) ... ok
+test_unshielding_cannot_be_labeled_fully_shielded (test_shielded_structure.ShieldedStructureGuards.test_unshielding_cannot_be_labeled_fully_shielded) ... ok
+test_cli_exit_and_reports (test_slice.VerticalSliceTests.test_cli_exit_and_reports) ... ok
+test_empty_and_uncovered_runs_cannot_pass (test_slice.VerticalSliceTests.test_empty_and_uncovered_runs_cannot_pass) ... ok
+test_evidence_never_overwritten (test_slice.VerticalSliceTests.test_evidence_never_overwritten) ... ok
+test_real_grpc_fixture_is_rejected_but_session_link_is_observed (test_slice.VerticalSliceTests.test_real_grpc_fixture_is_rejected_but_session_link_is_observed) ... ok
+test_tampered_evidence_is_rejected (test_slice.VerticalSliceTests.test_tampered_evidence_is_rejected) ... ok
+test_loopback_post_requires_token_and_fixed_scenario (test_submission.RunnerBoundaryTests.test_loopback_post_requires_token_and_fixed_scenario) ... ok
+test_runner_rejects_unknown_commands_and_non_checkouts (test_submission.RunnerBoundaryTests.test_runner_rejects_unknown_commands_and_non_checkouts) ... ok
+test_action_requires_explicit_evidence_source (test_submission.SubmissionTests.test_action_requires_explicit_evidence_source) ... ShadeCheck Action error: Supply exactly one of events or fixture. No fixture is selected implicitly.
+ok
+test_demo_without_evidence_fails_without_creating_events (test_submission.SubmissionTests.test_demo_without_evidence_fails_without_creating_events) ... ShadeCheck error: No recorded run. Run python scripts/acceptance.py first, or supply --suite PATH.
+ok
+test_markdown_escapes_untrusted_text (test_submission.SubmissionTests.test_markdown_escapes_untrusted_text) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 3.224s
+
+OK

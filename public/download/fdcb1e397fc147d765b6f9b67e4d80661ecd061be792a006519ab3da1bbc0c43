@@ -1,0 +1,139 @@
+{
+  "chain": "regtest",
+  "images": [
+    {
+      "Architecture": "amd64",
+      "Author": "",
+      "Comment": "buildkit.dockerfile.v0",
+      "Config": {
+        "AttachStderr": false,
+        "AttachStdin": false,
+        "AttachStdout": false,
+        "Cmd": null,
+        "Domainname": "",
+        "Entrypoint": [
+          "/entrypoint.sh"
+        ],
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "HOME=/srv/zcashd"
+        ],
+        "Hostname": "",
+        "Image": "",
+        "Labels": null,
+        "OnBuild": null,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Tty": false,
+        "User": "",
+        "Volumes": null,
+        "WorkingDir": "/srv/zcashd"
+      },
+      "Created": "2026-05-06T19:14:25.860814079Z",
+      "DockerVersion": "",
+      "GraphDriver": {
+        "Data": {
+          "LowerDir": "/var/lib/docker/overlay2/887b7b22a8c4558d612900b10135f17f51fb578f809f6d2508da00f2d29a04e2/diff:/var/lib/docker/overlay2/da06bc2d5c74e720611371b60b68372be45a70cfd468fe4c2277b74ae7b9fd0f/diff:/var/lib/docker/overlay2/8e640f1afaac29ca928f41ff1d8899cebc352386d5f0cd441902c7787c1d3a25/diff:/var/lib/docker/overlay2/4222e43a31c2cd6d419f192927ca9d04394bd8870d4266a8929d8fabf1864156/diff:/var/lib/docker/overlay2/18be9227773d6d245b6c560439d892e1cc245c37741a19f87edb4eff67e44236/diff:/var/lib/docker/overlay2/af2767adde192c3a08e22608f0a4756a62eea6995f97451399478488ca8fbb3f/diff:/var/lib/docker/overlay2/3f0f9bf67741088c3866600c57945c2f4aa0e436c0911aca96903b7d55390483/diff:/var/lib/docker/overlay2/8585253fe792869eb26c1ba4c39f7467d1474de09c219ad2c07fb9ea1d2f9bac/diff",
+          "MergedDir": "/var/lib/docker/overlay2/3ccf69f1482b71a5ec187cdb0c148a25a602d0f31e9c6a285fef30331c618bf1/merged",
+          "UpperDir": "/var/lib/docker/overlay2/3ccf69f1482b71a5ec187cdb0c148a25a602d0f31e9c6a285fef30331c618bf1/diff",
+          "WorkDir": "/var/lib/docker/overlay2/3ccf69f1482b71a5ec187cdb0c148a25a602d0f31e9c6a285fef30331c618bf1/work"
+        },
+        "Name": "overlay2"
+      },
+      "Id": "sha256:ed9ada7e8367de2fcc6d08be4985833399d6a39e557033b34c33f3fc7bd51f76",
+      "Metadata": {
+        "LastTagTime": "0001-01-01T00:00:00Z"
+      },
+      "Os": "linux",
+      "Parent": "",
+      "RepoDigests": [
+        "electriccoinco/zcashd@sha256:9fabdd354ae4196f2fbf1eae4db0ea5f02250944d5e362e2dd9d243fc0f00a3b"
+      ],
+      "RepoTags": [
+        "electriccoinco/zcashd:v6.12.2"
+      ],
+      "RootFS": {
+        "Layers": [
+          "sha256:e00d8ce3c17169953e3bf1631567a00d60e4ea23c9a49ca5b827d3ee5454a40f",
+          "sha256:1c664d1460f35fd56bbc6cab6b95777cc99a1bcf24c3fa88f357051f70c3d5a4",
+          "sha256:46820da3ae68b983ec9d201b1222b3c66b6023d0b1acb8a2113caa3ac3c65af8",
+          "sha256:ff8d7831d98b276b57bdd01aa10709acfe875bc62f0fb7ff95aad3a8f6965afa",
+          "sha256:82c95b64bdc3d4c2dfe0ebc29329d593408d9d3f200f77d6de9d2b778f7ac941",
+          "sha256:05e89748746fa24036dde65a557f510c4717123f1cf16c1607d533c4612a0a94",
+          "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+          "sha256:635abedbbde3656ea7748b4a985f6f29f44e36a6c655f7d91c65e81ce6b457ea",
+          "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+        ],
+        "Type": "layers"
+      },
+      "Size": 311177884
+    },
+    {
+      "Architecture": "amd64",
+      "Author": "",
+      "Comment": "buildkit.dockerfile.v0",
+      "Config": {
+        "ArgsEscaped": true,
+        "AttachStderr": false,
+        "AttachStdin": false,
+        "AttachStdout": false,
+        "Cmd": [
+          "--help"
+        ],
+        "Domainname": "",
+        "Entrypoint": [
+          "lightwalletd"
+        ],
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ],
+        "Hostname": "",
+        "Image": "",
+        "Labels": null,
+        "OnBuild": null,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Tty": false,
+        "User": "",
+        "Volumes": null,
+        "WorkingDir": "/srv/lightwalletd"
+      },
+      "Created": "2026-10-21T09:29:14.750679291Z",
+      "DockerVersion": "",
+      "GraphDriver": {
+        "Data": {
+          "LowerDir": "/var/lib/docker/overlay2/q9u8nvox9q9x2zu9dbdusnhhn/diff:/var/lib/docker/overlay2/2r3iqr3412pyeaajm5y292dp5/diff:/var/lib/docker/overlay2/oktine298zmviq4va1dtjt7gw/diff:/var/lib/docker/overlay2/083d0e053f0523daca621315705f84ef816ceb958ae6133673ff85a38e1b867b/diff",
+          "MergedDir": "/var/lib/docker/overlay2/3r35ln7p3eq3szo8sr8rvh8ah/merged",
+          "UpperDir": "/var/lib/docker/overlay2/3r35ln7p3eq3szo8sr8rvh8ah/diff",
+          "WorkDir": "/var/lib/docker/overlay2/3r35ln7p3eq3szo8sr8rvh8ah/work"
+        },
+        "Name": "overlay2"
+      },
+      "Id": "sha256:1752740d159b149f9618c8bed7f75b5fde744f58efd6595aeee510b1f5930ef2",
+      "Metadata": {
+        "LastTagTime": "2026-10-21T09:29:15.011086997Z"
+      },
+      "Os": "linux",
+      "Parent": "",
+      "RepoDigests": [],
+      "RepoTags": [
+        "shadecheck-regtest-lightwalletd:latest"
+      ],
+      "RootFS": {
+        "Layers": [
+          "sha256:a70f6272827f64e1427d048ced77491aab5d64ab95725e56920802ff391197d7",
+          "sha256:29aacf4def71e3c3ef1316203da76c176e1f8db660b1e14ed90ae2227cfc977d",
+          "sha256:bf646e5d2f8150e1ebdea3071180ec635a367c5e61df6047477a362a061ec500",
+          "sha256:46ca35cf310c2d72d4ea64dfe0873527fb4fef7a995588045efc586e126ddd6e",
+          "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+        ],
+        "Type": "layers"
+      },
+      "Size": 107708375
+    }
+  ],
+  "lightwalletd_revision": "d16d48124e9ad4157ebc2324b5090c6ba201470c",
+  "node_height": 128,
+  "node_subversion": "/MagicBean:6.12.2/",
+  "setup": "Existing volumes are preserved; CI starts on a fresh runner. Test spending keys remain in developer-owned local wallet volumes."
+}

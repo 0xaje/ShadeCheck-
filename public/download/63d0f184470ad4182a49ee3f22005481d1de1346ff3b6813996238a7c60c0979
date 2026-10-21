@@ -1,0 +1,1 @@
+SC-003: MEDIUM when the same connection requests a non-empty proper subset of IDs from an upstream compact block containing at least two transactions within 30 seconds. Block delivery is observable; wallet processing or ownership is not. PASS is limited to this rule and recorded trace.

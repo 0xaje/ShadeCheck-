@@ -113,6 +113,12 @@ Vercel serves the committed `public` directory using vercel.json; `/api/data` ma
 
 [Submission and two-minute video guide](docs/HACKATHON_PITCH.md) · [Deploy/reproduction guide](docs/submission.md)
 
+## Verified submission-hardening run
+
+[Run 39577173119](https://github.com/0xaje/ShadeCheck-/actions/runs/39577173119) is green at source commit `c3ce35f93979eae57fa91c394be2bf7ced3d3e1a`: 37 unit checks, actual Zcash acceptance, real positive/negative consumer Action gates, installed-wheel verification, local and static Chrome/mobile checks, and an actual dashboard-triggered sync job. Its 24 reports and 112 hashed acceptance artifacts were independently revalidated. The committed public snapshot contains those exact reports, downloadable artifacts, and source provenance; it is recorded evidence, not a live scan.
+
+[Validation record](docs/RELEASE_VALIDATION.md)
+
 ## Verification and scope
 
 ```sh

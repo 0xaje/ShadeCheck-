@@ -22,6 +22,20 @@
           "value": "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
         }
       ]
+    },
+    {
+      "source": "/download/bundle",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/zip"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"shadecheck-recorded-run.zip\""
+        }
+      ]
     }
-  ]
+  ],
+  "installCommand": ""
 }

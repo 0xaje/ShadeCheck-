@@ -1,0 +1,3 @@
+FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/sync-pattern/20261021T093122-101610fa/narrow/report.json
+PASS: 0 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/sync-pattern/20261021T093122-101610fa/aligned/report.json
+REAL SC-001 COMPARISON VERIFIED: narrow FAIL, aligned PASS. Reports: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/sync-pattern/20261021T093122-101610fa

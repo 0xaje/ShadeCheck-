@@ -1,0 +1,1 @@
+SC-001: MEDIUM for upstream block ranges that violate an explicit size/alignment policy. Complete actual range delivery is required for PASS coverage. No wallet history or identity is inferred.

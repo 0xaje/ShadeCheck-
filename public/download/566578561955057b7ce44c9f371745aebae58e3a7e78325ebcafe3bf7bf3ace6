@@ -1,0 +1,18 @@
+{
+  "construction": "zcashd raw transaction signing",
+  "decoded_structure": {
+    "transparent_inputs": 1,
+    "transparent_outputs": 1
+  },
+  "lightwalletd_revision": "d16d48124e9ad4157ebc2324b5090c6ba201470c",
+  "network": "regtest",
+  "node_mempool_contains_txid": true,
+  "node_raw_transaction_matches": true,
+  "node_subversion": "/MagicBean:6.12.2/",
+  "payload_sha256": "eff528ecb0f7818ca1ed41ade34cdba8afde05f2ed0b26015a78c6701ee05582",
+  "send_response_code": 0,
+  "send_response_message": "\"8a372d848dcf33c392acc6ac997cd5dddc1c4d1a5baf4a29d8c10d239bcdfce1\"",
+  "setup_transactions": {},
+  "transaction_kind": "transparent",
+  "txid": "8a372d848dcf33c392acc6ac997cd5dddc1c4d1a5baf4a29d8c10d239bcdfce1"
+}

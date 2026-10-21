@@ -1,0 +1,19 @@
+{
+  "block_hash": "0457319244481c06ceec67d0a404b3c2d5cb11d7ca02d4b4676301775a3812c4",
+  "block_height": 122,
+  "client_behavior": "fetch-one-compact-transaction",
+  "compact_transaction_ids_protocol_order": [
+    "34d9f7f1c6bf20dc75abdaada4690c397f3eac4f7f852c79668f55ed0820f078",
+    "f8d03d9f437ba410f659a8743958c948b519ee1e05f64cb7e6bd282835a75c2e"
+  ],
+  "fetches": [
+    {
+      "confirmed_block_matches": true,
+      "node_raw_transaction_matches": true,
+      "returned_height": 122,
+      "txid": "78f02008ed558f66792c857f4fac3e7f390c69a4addaab75dc20bfc6f1f7d934"
+    }
+  ],
+  "lightwalletd_revision": "d16d48124e9ad4157ebc2324b5090c6ba201470c",
+  "network": "regtest"
+}

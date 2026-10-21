@@ -46,3 +46,17 @@ Prepare the real backend before recording and disclose that preparation. Do not 
 4. Run the documented consumer Action against captured real evidence; positive and negative tests must preserve exit codes.
 
 Video, screenshots, and website must all refer to the same reviewed release commit/evidence run. Keep test keys local. Do not use real users' metadata as demo content.
+
+## Suggested narration (record footage from the actual run)
+
+“Zcash can shield a transaction while the application around it still exposes privacy-sensitive behavior. ShadeCheck gives developers a reproducible way to test defined behaviors before release.
+
+Here is a real Sapling transaction from our controlled Zcash environment. The observer captures its submission, the backend accepts it, and identical bytes appear in the mempool. ShadeCheck reports a link between those bytes and the broadcasting connection. This identifies a connection, not a person.
+
+Now look at payment policy. The permissive flow produces a transparent output under a requirement to remain shielded. FullPrivacy rejects that recipient, and a genuinely shielded payment changes the SC-004 result. That does not remove broadcast linkage.
+
+Next, we compare a saved baseline with an actual narrower sync request. The regression produces a finding and a strict failing exit. The consumer Action preserves that result and renders an inspectable summary.
+
+The dashboard can launch controlled local tests and show actual execution logs. The public viewer shows a labelled recorded run, its source CI commit, supporting events, and exact downloads. Judges can reproduce the full suite with one command.
+
+Passing ShadeCheck does not establish anonymity. It means no violation of the selected documented tests was observed with the required coverage in this environment.”

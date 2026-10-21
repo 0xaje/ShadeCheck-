@@ -1,0 +1,25 @@
+{
+  "complete": {
+    "evidence_root": "a01aec5bb806226eb9a8ac09e53b978144454c33c8a60f8e16a93c0fa2f6d02a",
+    "findings": 0,
+    "status": "PASS",
+    "strict_exit": 0
+  },
+  "limitations": [
+    "Protocol-authentic test client; this is not a full wallet relevance scanner.",
+    "Delivery does not prove internal wallet processing or transaction ownership.",
+    "Complete fetch covers only compact transactions returned in this block, not every chain transaction.",
+    "PASS applies only to SC-003 in this executed finite trace; it does not establish anonymity."
+  ],
+  "rule_id": "SC-003",
+  "setup_transactions": [
+    "78f02008ed558f66792c857f4fac3e7f390c69a4addaab75dc20bfc6f1f7d934",
+    "2e5ca7352828bde6b74cf6051eee19b548c9583974a859f610a47b439f3dd0f8"
+  ],
+  "subset": {
+    "evidence_root": "c4504de4503039610c2e4802b9b7c1a9c778b0134abe705a30809b3953a9b164",
+    "findings": 1,
+    "status": "FAIL",
+    "strict_exit": 1
+  }
+}

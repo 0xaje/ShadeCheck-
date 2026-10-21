@@ -1,0 +1,1 @@
+SC-002: MEDIUM for non-empty submission on an observable connection. HIGH requires upstream errorCode=0 plus identical transaction bytes returned by GetMempoolStream within 30 seconds. Strict policy fails any finding. Fixture replay never earns HIGH. No txid is inferred.

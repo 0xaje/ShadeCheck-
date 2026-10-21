@@ -1,0 +1,1 @@
+SC-005: compares validated current evidence with a portable, recomputed baseline under the same rules and test policy. Detects new failures, increased severity, and newly observed behavior categories. Incidental transaction IDs, sessions, and timestamps are excluded. Missing coverage cannot PASS; existing strict failures remain failures.

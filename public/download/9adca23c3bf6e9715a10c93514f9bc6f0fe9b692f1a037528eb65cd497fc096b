@@ -1,0 +1,158 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadeCheck evidence report</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:1050px;margin:40px auto;padding:0 24px;color:#17202a;background:#fafafa}h1,h2,h3{line-height:1.3}article{background:white;border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#eee;padding:16px}summary{cursor:pointer}small{overflow-wrap:anywhere}</style></head><body><h1>ShadeCheck: FAIL</h1><p>Defined observable behavior tests; passing does not establish anonymity.</p><p>Policy: strict · 1 findings</p><small>Evidence root: c4504de4503039610c2e4802b9b7c1a9c778b0134abe705a30809b3953a9b164</small><h2>Tested rules</h2><table><thead><tr><th>Rule</th><th>Coverage</th><th>Covered</th></tr></thead><tbody><tr><td>SC-003</td><td>multi-transaction-block-delivered</td><td>True</td></tr></tbody></table><h2>Findings</h2><article><h3>SC-003 · MEDIUM · Subset of delivered compact transactions fetched by ID</h3><p><strong>Observed behavior:</strong> The same transport session requested 1 of 2 delivered compact transaction IDs within the configured window.</p><p><strong>Possible consequence:</strong> The service can associate selected transaction IDs with this connection; relevance to a wallet or person is not proven.</p><p><strong>Affected component:</strong> lightwalletd transaction retrieval</p><p><strong>Investigation:</strong> Review transaction-specific fetches, local caching, and broader retrieval for the tested block; evaluate bandwidth and other privacy tradeoffs.</p><details><summary>Inspect current evidence (3 events)</summary><pre>[
+  {
+    &quot;elapsed_ns&quot;: 13004335,
+    &quot;event_hash&quot;: &quot;26311583703f71f2839c2c9036c82f69df419d4687b248de04cbd2b3b64e90b9&quot;,
+    &quot;metadata&quot;: {
+      &quot;block_hash&quot;: &quot;c412385a77016367b4d402cad711cbd5c2b304a4d067ecce061c484492315704&quot;,
+      &quot;height&quot;: 122,
+      &quot;request_sequence&quot;: 1,
+      &quot;serialized_sha256&quot;: &quot;62c24e5c63ecd1f30acd81d29f1f529a63c0a5a7512a1cd9043b7365c8eb0ba9&quot;,
+      &quot;transaction_ids&quot;: [
+        &quot;34d9f7f1c6bf20dc75abdaada4690c397f3eac4f7f852c79668f55ed0820f078&quot;,
+        &quot;f8d03d9f437ba410f659a8743958c948b519ee1e05f64cb7e6bd282835a75c2e&quot;
+      ]
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;d68075993f03acdf29e74b04e9c62c3c527bd0abfeaf733d02db2e00cf4ec05d&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 2,
+    &quot;session&quot;: &quot;27e906ed445bbc451b9f125f92d7d7d9cf348030e18a8fdd2b99282aa3c4c758&quot;,
+    &quot;timestamp_ns&quot;: 1792575080724089008
+  },
+  {
+    &quot;elapsed_ns&quot;: 265931095,
+    &quot;event_hash&quot;: &quot;0f2b89487ab2fbc5503ef71e754e94f54f04fc0d293af1e86559c64020412832&quot;,
+    &quot;metadata&quot;: {
+      &quot;transaction_id&quot;: &quot;34d9f7f1c6bf20dc75abdaada4690c397f3eac4f7f852c79668f55ed0820f078&quot;
+    },
+    &quot;method&quot;: &quot;GetTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;request&quot;,
+    &quot;previous_hash&quot;: &quot;26311583703f71f2839c2c9036c82f69df419d4687b248de04cbd2b3b64e90b9&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 3,
+    &quot;session&quot;: &quot;27e906ed445bbc451b9f125f92d7d7d9cf348030e18a8fdd2b99282aa3c4c758&quot;,
+    &quot;timestamp_ns&quot;: 1792575080977015818
+  },
+  {
+    &quot;elapsed_ns&quot;: 268871789,
+    &quot;event_hash&quot;: &quot;c4504de4503039610c2e4802b9b7c1a9c778b0134abe705a30809b3953a9b164&quot;,
+    &quot;metadata&quot;: {
+      &quot;height&quot;: 122,
+      &quot;payload_sha256&quot;: &quot;7fabfd167698708c035dcd69e1990304ad53dc8d128dd2a91aa2c17bac5711ad&quot;,
+      &quot;payload_size&quot;: 2373,
+      &quot;request_sequence&quot;: 3
+    },
+    &quot;method&quot;: &quot;GetTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;0f2b89487ab2fbc5503ef71e754e94f54f04fc0d293af1e86559c64020412832&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 4,
+    &quot;session&quot;: &quot;27e906ed445bbc451b9f125f92d7d7d9cf348030e18a8fdd2b99282aa3c4c758&quot;,
+    &quot;timestamp_ns&quot;: 1792575080979956662
+  }
+]</pre></details></article><h2>Limitations</h2><ul><li>Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.</li><li>A transport peer identifies a connection, not a person or wallet.</li><li>Local fixture replay is not consensus validation or network acceptance.</li><li>Transaction SHA-256 fingerprints are not Zcash transaction IDs.</li><li>No violation observed does not establish anonymity.</li></ul><details><summary>Complete JSON result</summary><pre>{
+  &quot;correlation_window_seconds&quot;: 30,
+  &quot;evidence_modes&quot;: [
+    &quot;upstream&quot;
+  ],
+  &quot;evidence_root&quot;: &quot;c4504de4503039610c2e4802b9b7c1a9c778b0134abe705a30809b3953a9b164&quot;,
+  &quot;findings&quot;: [
+    {
+      &quot;affected_component&quot;: &quot;lightwalletd transaction retrieval&quot;,
+      &quot;block_height&quot;: 122,
+      &quot;delivered_transaction_count&quot;: 2,
+      &quot;evidence&quot;: [
+        {
+          &quot;elapsed_ns&quot;: 13004335,
+          &quot;event_hash&quot;: &quot;26311583703f71f2839c2c9036c82f69df419d4687b248de04cbd2b3b64e90b9&quot;,
+          &quot;metadata&quot;: {
+            &quot;block_hash&quot;: &quot;c412385a77016367b4d402cad711cbd5c2b304a4d067ecce061c484492315704&quot;,
+            &quot;height&quot;: 122,
+            &quot;request_sequence&quot;: 1,
+            &quot;serialized_sha256&quot;: &quot;62c24e5c63ecd1f30acd81d29f1f529a63c0a5a7512a1cd9043b7365c8eb0ba9&quot;,
+            &quot;transaction_ids&quot;: [
+              &quot;34d9f7f1c6bf20dc75abdaada4690c397f3eac4f7f852c79668f55ed0820f078&quot;,
+              &quot;f8d03d9f437ba410f659a8743958c948b519ee1e05f64cb7e6bd282835a75c2e&quot;
+            ]
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;d68075993f03acdf29e74b04e9c62c3c527bd0abfeaf733d02db2e00cf4ec05d&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 2,
+          &quot;session&quot;: &quot;27e906ed445bbc451b9f125f92d7d7d9cf348030e18a8fdd2b99282aa3c4c758&quot;,
+          &quot;timestamp_ns&quot;: 1792575080724089008
+        },
+        {
+          &quot;elapsed_ns&quot;: 265931095,
+          &quot;event_hash&quot;: &quot;0f2b89487ab2fbc5503ef71e754e94f54f04fc0d293af1e86559c64020412832&quot;,
+          &quot;metadata&quot;: {
+            &quot;transaction_id&quot;: &quot;34d9f7f1c6bf20dc75abdaada4690c397f3eac4f7f852c79668f55ed0820f078&quot;
+          },
+          &quot;method&quot;: &quot;GetTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;request&quot;,
+          &quot;previous_hash&quot;: &quot;26311583703f71f2839c2c9036c82f69df419d4687b248de04cbd2b3b64e90b9&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 3,
+          &quot;session&quot;: &quot;27e906ed445bbc451b9f125f92d7d7d9cf348030e18a8fdd2b99282aa3c4c758&quot;,
+          &quot;timestamp_ns&quot;: 1792575080977015818
+        },
+        {
+          &quot;elapsed_ns&quot;: 268871789,
+          &quot;event_hash&quot;: &quot;c4504de4503039610c2e4802b9b7c1a9c778b0134abe705a30809b3953a9b164&quot;,
+          &quot;metadata&quot;: {
+            &quot;height&quot;: 122,
+            &quot;payload_sha256&quot;: &quot;7fabfd167698708c035dcd69e1990304ad53dc8d128dd2a91aa2c17bac5711ad&quot;,
+            &quot;payload_size&quot;: 2373,
+            &quot;request_sequence&quot;: 3
+          },
+          &quot;method&quot;: &quot;GetTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;0f2b89487ab2fbc5503ef71e754e94f54f04fc0d293af1e86559c64020412832&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 4,
+          &quot;session&quot;: &quot;27e906ed445bbc451b9f125f92d7d7d9cf348030e18a8fdd2b99282aa3c4c758&quot;,
+          &quot;timestamp_ns&quot;: 1792575080979956662
+        }
+      ],
+      &quot;first_fetch_delta_ns&quot;: 252926760,
+      &quot;observed_behavior&quot;: &quot;The same transport session requested 1 of 2 delivered compact transaction IDs within the configured window.&quot;,
+      &quot;possible_privacy_consequence&quot;: &quot;The service can associate selected transaction IDs with this connection; relevance to a wallet or person is not proven.&quot;,
+      &quot;requested_transaction_ids&quot;: [
+        &quot;34d9f7f1c6bf20dc75abdaada4690c397f3eac4f7f852c79668f55ed0820f078&quot;
+      ],
+      &quot;rule_id&quot;: &quot;SC-003&quot;,
+      &quot;severity&quot;: &quot;MEDIUM&quot;,
+      &quot;suggested_investigation&quot;: &quot;Review transaction-specific fetches, local caching, and broader retrieval for the tested block; evaluate bandwidth and other privacy tradeoffs.&quot;,
+      &quot;title&quot;: &quot;Subset of delivered compact transactions fetched by ID&quot;
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.&quot;,
+    &quot;A transport peer identifies a connection, not a person or wallet.&quot;,
+    &quot;Local fixture replay is not consensus validation or network acceptance.&quot;,
+    &quot;Transaction SHA-256 fingerprints are not Zcash transaction IDs.&quot;,
+    &quot;No violation observed does not establish anonymity.&quot;
+  ],
+  &quot;payment_policy&quot;: null,
+  &quot;policy&quot;: &quot;strict&quot;,
+  &quot;rules&quot;: [
+    {
+      &quot;coverage&quot;: &quot;multi-transaction-block-delivered&quot;,
+      &quot;covered&quot;: true,
+      &quot;executed&quot;: true,
+      &quot;rule_id&quot;: &quot;SC-003&quot;
+    }
+  ],
+  &quot;schema_version&quot;: 1,
+  &quot;status&quot;: &quot;FAIL&quot;,
+  &quot;sync_policy&quot;: null
+}</pre></details></body></html>

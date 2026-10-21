@@ -30,6 +30,13 @@ def render_html(result):
 
 
 def render_markdown(result):
+    def safe(value):
+        return html.escape(str(value)).replace('|', '&#124;').replace('\n', ' ')
+    # Findings can include upstream error text; escape values in Markdown/HTML.
+    result = json.loads(json.dumps(result))
+    for f in result.get('findings', []):
+        for key in ['title','affected_component','observed_behavior','possible_privacy_consequence','suggested_investigation']:
+            if key in f: f[key] = safe(f[key])
     status = result.get('status', 'UNKNOWN')
     status_icon = "🟢" if status == "PASS" else ("🟡" if status == "WARN" else "🔴")
     lines = [

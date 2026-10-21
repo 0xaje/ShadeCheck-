@@ -1,5 +1,7 @@
 """Check the dashboard against the just-created real acceptance suite in CI."""
 import json
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from functools import partial
 import os
 from pathlib import Path
 import shutil
@@ -37,6 +39,23 @@ def main():
             raise RuntimeError('A real browser is required for the UI integration check')
         env=dict(os.environ,SHADECHECK_DASHBOARD_URL=url,CHROME_EXECUTABLE=chrome,SHADECHECK_SCREENSHOT_DIR=str(output))
         subprocess.run(['node','tests/dashboard_browser.cjs'],cwd=ROOT,env=env,check=True,timeout=120)
+        site=ROOT/'out/site'
+        class StaticHandler(SimpleHTTPRequestHandler):
+            def do_GET(self):
+                if self.path=='/api/data':self.path='/api/data.json'
+                super().do_GET()
+            def log_message(self,*args):pass
+        static=ThreadingHTTPServer(('127.0.0.1',0),partial(StaticHandler,directory=str(site)))
+        worker=threading.Thread(target=static.serve_forever,daemon=True);worker.start()
+        try:
+            env['SHADECHECK_DASHBOARD_URL']=f'http://127.0.0.1:{static.server_port}'
+            subprocess.run(['node','tests/dashboard_browser.cjs'],cwd=ROOT,env=env,check=True,timeout=120)
+            exported=json.load(urllib.request.urlopen(env['SHADECHECK_DASHBOARD_URL']+'/api/data'))
+            for report in exported['reports']:
+                raw=urllib.request.urlopen(env['SHADECHECK_DASHBOARD_URL']+'/download/'+report['id']).read()
+                if raw!=(suite/report['path']).read_bytes():raise ValueError('Static download differs from actual report')
+        finally:static.shutdown();static.server_close();worker.join()
+        print('LOCAL AND STATIC RECORDED SITE VERIFIED: real reports, byte-exact downloads, browser filters and mobile layout.')
         print('All report downloads and bundle contents match real acceptance artifacts.')
         return 0
     finally:

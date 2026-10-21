@@ -69,16 +69,13 @@ def main(argv=None):
     dashboard = commands.add_parser("dashboard", help="Read-only localhost viewer of a validated acceptance snapshot")
     dashboard.add_argument("--suite", help="Acceptance directory; default is newest out/acceptance directory")
     dashboard.add_argument("--port", type=int, default=9070)
-    demo = commands.add_parser("demo", help="Run 60-second interactive leak vs. shielded demonstration")
+    demo = commands.add_parser("demo", help="Walk through validated recorded real-regtest evidence")
+    demo.add_argument("--suite", help="Completed acceptance directory")
     args = parser.parse_args(argv)
     try:
         if args.command == "demo":
-            import importlib.util
-            demo_path = Path(__file__).resolve().parent.parent / "scripts" / "demo.py"
-            spec = importlib.util.spec_from_file_location("demo", demo_path)
-            demo_mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(demo_mod)
-            return demo_mod.run_demo()
+            from .demo import run_demo
+            return run_demo(args.suite)
         if args.command == "dashboard":
             from .dashboard_server import latest_suite, serve
             root = Path(args.suite) if args.suite else latest_suite(Path("out/acceptance"))

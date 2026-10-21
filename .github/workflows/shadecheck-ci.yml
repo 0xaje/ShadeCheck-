@@ -1,33 +1,32 @@
-name: ShadeCheck Privacy CI
-
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-
+name: Action protocol conformance (not application privacy evidence)
+on: [push, pull_request]
 permissions:
   contents: read
-
 jobs:
-  privacy-check:
-    name: Zcash Privacy CI Gate
+  expected-rejection:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Run ShadeCheck Action
+      - uses: actions/checkout@v4
+      - name: Exercise explicit rejecting protocol fixture
+        id: fixture
         uses: ./
         with:
-          rules: 'SC-002'
-          policy: 'strict'
-          generate-summary: 'true'
-        continue-on-error: true # For demonstration: weak flow exits 1 but captures artifacts
-
-      - name: Upload Privacy Evidence & HTML Report
-        uses: actions/upload-artifact@v4
+          fixture: fixtures/transaction-v5.hex
+          rules: SC-002
+          output-dir: out/action-conformance
+        continue-on-error: true
+      - name: Require the expected strict failure, not an execution error
+        env:
+          STATUS: ${{ steps.fixture.outputs.status }}
+          EXIT_CODE: ${{ steps.fixture.outputs.exit-code }}
+          FINDINGS: ${{ steps.fixture.outputs.findings-count }}
+        run: |
+          test "$STATUS" = FAIL
+          test "$EXIT_CODE" = 1
+          test "$FINDINGS" = 1
+          python -c "import json; r=json.load(open('out/action-conformance/report.json')); assert r['findings'][0]['severity']=='MEDIUM'; assert r['evidence_modes']==['protocol-fixture']"
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: shadecheck-privacy-evidence
-          path: out/
+          name: action-protocol-conformance
+          path: out/action-conformance/

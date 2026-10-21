@@ -13,6 +13,10 @@ on:
       - 'scripts/dashboard_smoke.py'
       - 'tests/dashboard_browser.cjs'
       - 'pyproject.toml'
+      - 'action.yml'
+      - 'scripts/export_site.py'
+      - 'scripts/release_smoke.py'
+      - 'shadecheck/action_runner.py'
       - 'shadecheck/**'
       - '.github/workflows/regtest.yml'
   workflow_dispatch:
@@ -30,6 +34,50 @@ jobs:
       - run: python -m pip install .
       - name: Run consolidated real MVP acceptance
         run: python scripts/acceptance.py
+      - name: Locate real current-run consumer evidence
+        shell: bash
+        run: |
+          python - <<'PYCODE'
+          from pathlib import Path
+          import os
+          root=next(Path('out/acceptance').iterdir())
+          run=next((root/'sync-pattern').iterdir())
+          with open(os.environ['GITHUB_ENV'],'a') as f:
+              f.write(f"SC_REAL_ALIGNED={run/'aligned/events.jsonl'}\n")
+              f.write(f"SC_REAL_NARROW={run/'narrow/events.jsonl'}\n")
+              f.write(f"SC_REAL_CONFIG={run/'policy.json'}\n")
+              f.write(f"SC_REAL_SUITE={root}\n")
+          PYCODE
+      - name: Real aligned consumer gate must pass
+        uses: ./
+        with:
+          events: ${{ env.SC_REAL_ALIGNED }}
+          config: ${{ env.SC_REAL_CONFIG }}
+          rules: SC-001
+          output-dir: out/consumer-pass
+      - name: Real narrow consumer gate must fail
+        id: weak
+        uses: ./
+        with:
+          events: ${{ env.SC_REAL_NARROW }}
+          config: ${{ env.SC_REAL_CONFIG }}
+          rules: SC-001
+          output-dir: out/consumer-fail
+        continue-on-error: true
+      - name: Assert actual negative gate outcome
+        env:
+          OUTCOME: ${{ steps.weak.outcome }}
+          STATUS: ${{ steps.weak.outputs.status }}
+          EXIT_CODE: ${{ steps.weak.outputs.exit-code }}
+        run: |
+          test "$OUTCOME" = failure
+          test "$STATUS" = FAIL
+          test "$EXIT_CODE" = 1
+          python -c "import json; r=json.load(open('out/consumer-fail/report.json')); assert r['findings'][0]['rule_id']=='SC-001'"
+      - name: Export verified public recorded site
+        run: python scripts/export_site.py --suite "$SC_REAL_SUITE" --output out/site --source-run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" --source-commit "${{ github.sha }}"
+      - name: Verify installed wheel outside source checkout
+        run: python scripts/release_smoke.py
       - name: Install pinned browser-test driver
         run: npm install --prefix "$RUNNER_TEMP/shadecheck-browser" --no-audit --no-fund playwright@1.62.1
       - name: Verify dashboard with real acceptance reports in Chrome

@@ -2,233 +2,124 @@
 
 **Privacy CI for Zcash applications.**
 
-[![Privacy CI](https://github.com/0xaje/ShadeCheck-/actions/workflows/privacy.yml/badge.svg)](https://github.com/0xaje/ShadeCheck-/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](THIRD_PARTY_LICENSE)
-[![Python: 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](pyproject.toml)
-[![Rules: SC--001--SC--005](https://img.shields.io/badge/Rules-SC--001--SC--005-emerald.svg)](docs/threat-model.md)
+ShadeCheck evaluates defined observable Zcash application behaviors against documented privacy tests. Passing means no violation of the selected tests was observed with the required coverage. It does not establish anonymity.
 
-ShadeCheck evaluates defined observable Zcash application behaviors against documented privacy tests. *Passing does not establish anonymity.*
+A shielded transaction can still be associated with the connection broadcasting it. ShadeCheck records actual RPC behavior, evaluates deterministic rules, preserves inspectable evidence, compares baselines, and returns enforceable CI exit codes.
 
----
+## Run the real system
 
-## ⚡ 60-Second Interactive Demo
+Requirements: Git, Python 3.11+, and Docker Desktop with Linux containers (or Docker Engine/Compose on Linux). Start Docker and require both Client and Server in `docker version`.
 
-Run our zero-dependency interactive demonstration to see ShadeCheck intercept a leaky Zcash client flow (exit 1 / PR blocked) vs. a protected, fully shielded flow (exit 0 / PR approved):
-
-```bash
-# Clone and install
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e .
-
-# Run the 60-second interactive demonstration
-shadecheck demo
-```
-
-To view the generated evidence chains and reports in the local dashboard:
-```bash
-shadecheck dashboard
-# Open http://127.0.0.1:9070
-```
-
----
-
-## 🚀 Use in Your Repository (Turnkey GitHub Action)
-
-Add automated Privacy CI to any Zcash wallet or light-client repository by dropping this into `.github/workflows/privacy-ci.yml`:
-
-```yaml
-name: ShadeCheck Privacy CI
-on: [push, pull_request]
-
-permissions:
-  contents: read
-
-jobs:
-  privacy-gate:
-    name: Zcash Privacy CI Gate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run ShadeCheck Privacy Gate
-        uses: 0xaje/ShadeCheck-@main
-        with:
-          rules: 'SC-001 SC-002 SC-003 SC-004'
-          policy: 'strict'
-          generate-summary: 'true'
-```
-
-*Automatically generates a rich markdown Step Summary directly in your GitHub PR tab and blocks merges if privacy side-channels or regressions are detected.*
-
-> 💡 **Hackathon Judges:** See the [Hackathon Pitch & 2-Minute Demo Script](docs/HACKATHON_PITCH.md) for architecture, competitive comparison, and presentation talking points.
-
----
-
-## Current implementation
-
-This implements **all five initial rule families** within the documented observable-behavior boundaries. It captures actual gRPC requests using the official lightwalletd protobuf schema, writes inspectable JSONL evidence, evaluates sync-range policy, broadcast connection linkability, selective retrieval, and instrumented wallet payment privacy, and baseline regressions, and generates JSON/HTML reports with policy exit codes.
-
-The local protocol client replays an upstream transaction test vector to a controlled endpoint that explicitly rejects it. It never claims a fixture was network accepted, mined, or consensus valid. No spending keys are requested or stored.
-
-**SC-002 transport milestone verified:** the real regtest integration run accepted a genuinely signed transparent transaction, captured its exact bytes through lightwalletd's mempool stream, independently confirmed those bytes at the node, and verified HIGH plus strict CLI exit 1. Real Sapling-to-Sapling integration is also verified: two successive shielded transactions passed backend validation with zero transparent inputs or outputs and produced the same evidence-backed HIGH finding. The [real observer-role comparison](docs/broadcast-comparison.md) is verified: separated routing removes submission visibility from the read observer while the broadcast observer still reports HIGH. This is not a production mitigation or anonymity proof.
-
-## Run the consolidated acceptance suite
-
-See the [definition-of-done audit and fresh-machine guide](docs/acceptance.md). With Docker Desktop running:
+From the cloned repository in Windows PowerShell:
 
 ```powershell
-git pull --ff-only
+py -m venv .venv
 .\.venv\Scripts\python.exe -m pip install .
 .\.venv\Scripts\python.exe scripts/acceptance.py
 ```
 
-This single command starts the real backend, runs transparent/shielded proofs and all five rule families, checks strict exit codes, and independently audits the saved evidence, baselines, and JSON/HTML results. [Fresh CI run 37409730042](https://github.com/0xaje/ShadeCheck-/actions/runs/37409730042) passed the consolidated workflow: 18 steps, 24 recomputed reports, and 112 hashed artifacts. The downloaded artifact passed independent offline revalidation, and changed evidence was rejected. It saves one isolated out/acceptance run with suite.json, suite.html, individual reports, logs, artifact hashes, and actual image identities. Acceptance PASS means the test checks behaved as required; expected privacy failures remain FAIL. Offline revalidation: `python scripts/acceptance.py --verify <suite-directory>`.
-
-## View actual reports in the local dashboard
-
-After an acceptance run, start `shadecheck dashboard` (PowerShell: `.\.venv\Scripts\shadecheck.exe dashboard`) and open http://127.0.0.1:9070. It loads the newest acceptance run, validates its artifacts, and displays a fixed read-only snapshot with report filters, finding evidence, baseline changes, the five-rule library, and exact-file downloads. [Real CI and Chrome run 37411834768](https://github.com/0xaje/ShadeCheck-/actions/runs/37411834768) passed with actual acceptance data, exact downloads, and reviewed desktop/mobile screenshots. See the [dashboard guide](docs/dashboard.md). No Node installation or new runtime test is needed to view existing results. Empty or invalid data cannot produce a fabricated success state.
-
-## Run the real local backend
-
-See the [Windows PowerShell setup guide](docs/regtest-setup.md). After installing Docker Desktop and ShadeCheck:
+Linux/macOS Python commands:
 
 ```sh
-python scripts/regtest.py up
-python scripts/regtest.py prepare
-python scripts/regtest.py prove
-```
-
-The prove command starts the observer automatically and saves evidence and JSON/HTML reports in a unique out/regtest directory. The [real-backend CI run](https://github.com/0xaje/ShadeCheck-/actions/runs/37396184795) passed on October 6, 2026. Its artifacts contain the actual evidence. The [shielded setup guide](docs/shielded-regtest.md) adds a real local wallet and repeatable Sapling-to-Sapling proof. The [shielded and repeat-run CI proof](https://github.com/0xaje/ShadeCheck-/actions/runs/37401106271) passed, including inspectable JSON/HTML reports. The protocol fixture workflow remains a separate internal conformance test.
-
-## Setup
-
-Python 3.11 or newer:
-
-```sh
-python -m venv .venv
-# Linux/macOS:
+python3 -m venv .venv
 . .venv/bin/activate
-# Windows PowerShell instead:
-# .venv\Scripts\Activate.ps1
 python -m pip install .
-python -m unittest discover -s tests -v
+python scripts/acceptance.py
 ```
 
-## Real SC-001 sync-range comparison
+The command starts a dedicated regtest node and pinned lightwalletd source, constructs real signed transparent and Sapling transactions, captures actual events, runs all five rule families, and verifies expected policy outcomes. The first build/proof construction takes several minutes. Existing developer-owned local wallet/chain volumes are preserved; do not run two suites concurrently.
 
-See the [SC-001 rule and Windows guide](docs/sc001.md). Run `python scripts/sync_pattern.py` with the backend running. The script evaluates actual block-range requests against an explicit 20-block aligned policy and independently checks each compact block against the canonical node. [Real CI run 37406302451](https://github.com/0xaje/ShadeCheck-/actions/runs/37406302451) verified narrow MEDIUM/FAIL with strict exit 1 and aligned PASS for the declared SC-001 policy with exit 0. Select SC-001 with `--rules SC-001 --config <policy.json>`; the comparison saves its exact policy beside the evidence. This policy does not establish anonymity or infer wallet history.
+Acceptance PASS means the checks produced their required outcomes. Aggregate privacy remains FAIL because deliberately weak flows and broadcast linkage are exercised. No fabricated runtime events or backend acceptance are used.
 
-## Real SC-003 retrieval comparison
+[Setup and troubleshooting](docs/regtest-setup.md) · [Acceptance audit](docs/acceptance.md) · [Threat model](docs/threat-model.md)
 
-See the [SC-003 rule and Windows guide](docs/sc003.md). Run `python scripts/selective_fetch.py` with the backend running. It records actual compact-block delivery and transaction retrieval, independently checks returned bytes and inclusion against the node, and compares fetching one compact transaction with fetching every compact transaction in the same confirmed block.
+## Inspect a recorded real run
 
-[Real CI run 37403356091](https://github.com/0xaje/ShadeCheck-/actions/runs/37403356091) verified subset MEDIUM/FAIL with strict exit 1 and complete fetch PASS for SC-003 with exit 0. Full events, JSON/HTML reports, and node confirmation are inspectable in the uploaded artifact. Select SC-003 explicitly using `shadecheck test --events <path> --rules SC-003`; the existing default remains SC-002. Passing this narrow executed rule does not establish anonymity.
+```powershell
+.\.venv\Scripts\shadecheck.exe demo
+.\.venv\Scripts\shadecheck.exe dashboard
+```
 
-## Real SC-004 payment-policy comparison
+Open http://127.0.0.1:9070. Both commands validate the newest completed out/acceptance run. `demo --suite PATH` gives a **recorded evidence walkthrough**, not new network execution. With no saved evidence it fails clearly. It never invents a transaction or a PASS result.
 
-See the [SC-004 rule and Windows guide](docs/sc004.md). Run `python scripts/transparent_fallback.py` with the backend running. It compares an actual Sapling-to-transparent payment permitted by AllowRevealedRecipients with FullPrivacy rejecting that recipient and then accepting a shielded payment. The tested flow explicitly requires shielding.
+The dashboard shows report filters, findings, source events, baseline changes, rule coverage/limits, and byte-exact downloads. Large integers are displayed as decimal strings to preserve nanosecond precision; original downloads retain their exact numeric types. No Node installation is needed for the CLI/dashboard. Optional `npm run dev`, `npm run demo`, and `npm test` launch the same Python commands on Windows and POSIX systems.
 
-[Real CI run 37407689623](https://github.com/0xaje/ShadeCheck-/actions/runs/37407689623) verified permissive HIGH/FAIL with strict exit 1 and FullPrivacy PASS for SC-004 with exit 0. Saved event hash chains and recomputed reports were checked, including native privacy error -8, actual decoded transaction components, exact mempool bytes, and independent node acceptance. Select `--rules SC-004 --config <policy.json>`. Native-wallet adapter evidence is explicitly distinguished from observed RPC evidence. Automatic Unified Address fallback is not implemented; this tests the explicit transparent recipient path.
+[Dashboard guide](docs/dashboard.md)
 
-## SC-005 baselines and regression checks
+## Five initial rule families
 
-See the [SC-005 rule, baseline format, and Windows guide](docs/sc005.md). `shadecheck baseline save` stores the full validated trace and recomputed result; `shadecheck test --baseline` and `shadecheck compare` evaluate new failures, higher severity, and newly observed behavior categories. Named evidence/report paths can be supplied explicitly. Comparisons require compatible rule selection, policy, and evidence modes. A saved known failure remains a strict failure.
+| Rule | Implemented test | Boundary |
+| --- | --- | --- |
+| SC-001 | Block-range size/alignment against an explicit policy | Does not infer wallet birthday/history or cover timing fingerprints |
+| SC-002 | Broadcast connection-to-payload association; HIGH adds accepted submission and exact mempool bytes | A connection is not a person; shielding does not remove broadcast linkage |
+| SC-003 | Non-empty proper subset of IDs from a delivered multi-transaction compact block | Delivery/retrieval does not establish ownership or internal wallet processing |
+| SC-004 | Explicit transparent recipient selection/execution under a shielded requirement | Trusted local adapter; automatic Unified Address fallback is not implemented |
+| SC-005 | New failures, behavior categories, and severity increases against a compatible baseline | Stronger observation can increase severity without a code change |
 
-Run `python scripts/privacy_regression.py` with the real backend running and a prior actual `regtest.py prove` trace available. It checks fresh aligned versus unaligned requests, a newly observed sync violation category, and MEDIUM-to-HIGH escalation using an explicitly labeled prefix and the complete actual broadcast trace. [Real CI run 37408670341](https://github.com/0xaje/ShadeCheck-/actions/runs/37408670341) passed all five comparison cases; the saved reports were reproduced exactly from the artifact. JSON/HTML comparisons include inspectable evidence and portable baselines. The prefix does not assert rejection or acceptance before those outcomes were observed.
+[SC-001](docs/sc001.md) · [SC-002](docs/threat-model.md) · [SC-003](docs/sc003.md) · [SC-004](docs/sc004.md) · [SC-005](docs/sc005.md)
 
-## Local protocol slice — internal test only
+The proxy forwards GetLatestBlock, GetBlockRange, GetTransaction, SendTransaction, and GetMempoolStream. Other methods return UNIMPLEMENTED. This is a native local wallet/protocol-client integration, not universal wallet compatibility.
+
+## Evaluate your captured evidence in CI
+
+Your integration test must first exercise its client through the ShadeCheck observer and save actual events. The Action does not automatically inspect a wallet's source code or run an application merely because it is installed.
+
+```yaml
+- uses: actions/checkout@v4
+# Run your integration test through the observer and capture events.jsonl first.
+- name: Evaluate captured broadcast evidence
+  uses: 0xaje/ShadeCheck-@main # Pin a reviewed release commit for reproducible use.
+  with:
+    events: out/client/events.jsonl
+    rules: SC-002
+    policy: strict
+    output-dir: out/privacy-gate
+- uses: actions/upload-artifact@v4
+  if: always()
+  with:
+    name: privacy-evidence
+    path: out/privacy-gate/
+```
+
+For SC-001/SC-004 supply `config`; for comparisons supply `baseline` with compatible rules/policies. The Action defaults to **no source** and exits 2 unless exactly one explicit source is supplied. A fixture is available only as explicitly selected protocol conformance input; it is not real-backend acceptance or application privacy evidence.
+
+Strict findings return 1. Invalid execution or strict missing coverage returns 2. Configure the job as a required repository check to enforce merge restrictions. A PASS does not automatically approve or merge a pull request. The real acceptance workflow exercises the Action on actual aligned and narrow traces and requires exact success/failure outcomes. The separate fixture workflow asserts its expected rejection instead of ignoring errors.
+
+## Baselines and reports
 
 ```sh
-shadecheck test --fixture fixtures/transaction-v5.hex --policy strict
+shadecheck test --events events.jsonl --rules SC-002 --output out/report.json
 shadecheck report --format json
 shadecheck report --format html --output out/report.html
-shadecheck explain SC-002
+shadecheck report --format markdown
+shadecheck baseline save --events events.jsonl --input out/report.json --output baseline.json
+shadecheck test --events new-events.jsonl --rules SC-002 --baseline baseline.json
+shadecheck explain SC-003
 ```
 
-Expected: **MEDIUM SC-002**, **FAIL**, exit **1**. Submission bytes were observed on an identifiable connection; the endpoint explicitly rejects the submission. Each finding embeds the actual recorded request and response.
+Baselines include the full validated trace and recomputed result. Existing baselines are not silently overwritten; known strict failures remain failures. Evidence SHA-256 values are fingerprints, not Zcash transaction IDs. Hash chains detect inconsistent editing; they are not signatures and do not prevent a malicious author rewriting the whole trace.
 
-This path is an internal protocol/conformance test. It is not the judge-visible proof of ShadeCheck's real-world capability.
+## Public deployment and judging
 
-Evidence creation is exclusive. Use a fresh `--record` path for each run; existing evidence is never silently overwritten.
-
-## Real SC-002 milestone
-
-The live path must use a real controlled backend. Zebra regtest or a controlled Zcash Testnet node backed by official `zcash/lightwalletd` is appropriate. The raw transaction must be genuinely signed by a wallet/client for that environment; ShadeCheck does not generate fake transaction bytes.
-
-Terminal 1 — run the observer in front of the controlled lightwalletd instance:
+The public site is a **recorded real-regtest evidence viewer**. It must be exported from a validated acceptance directory, with its source CI run and commit. It does not execute a scan when someone changes a tab.
 
 ```sh
-shadecheck observe \
-  --upstream 127.0.0.1:9067 \
-  --plaintext-upstream \
-  --output out/live-events.jsonl
+python scripts/export_site.py --suite out/acceptance/RUN --output public --source-run-url https://github.com/0xaje/ShadeCheck-/actions/runs/RUN_ID --source-commit FULL_40_CHARACTER_SHA
 ```
 
-The observer listens on `127.0.0.1:9068`.
+Vercel serves the committed `public` directory using vercel.json; `/api/data` maps to generated data and `/download/ID` maps to original artifact bytes. Export refuses an existing output directory. The CI workflow exports `out/site` as a reproducible deployment artifact. Runtime keys/credentials are never required to view recorded evidence.
 
-Terminal 2 — send a genuinely signed raw transaction through the observer and require exact mempool re-observation:
+[Submission and two-minute video guide](docs/HACKATHON_PITCH.md) · [Deploy/reproduction guide](docs/submission.md)
+
+## Verification and scope
 
 ```sh
-shadecheck live-sc002 \
-  --observer 127.0.0.1:9068 \
-  --transaction /path/to/real-signed-transaction.hex \
-  --timeout 30
+python -m unittest discover -s tests -v
+python scripts/acceptance.py --verify out/acceptance/RUN
 ```
 
-A successful live milestone requires **both**:
+Unit/conformance fixtures are explicitly separated from real runtime evidence. Node and wallet-adapter records depend on trusted local test components. Spending keys stay in developer-owned local wallet volumes. Only dedicated regtest services are used; no arbitrary network scanning or production privacy guarantee is offered.
 
-1. the real backend returns `errorCode=0` for `SendTransaction`; and
-2. `GetMempoolStream` returns the exact same raw transaction bytes within the timeout.
+Node release and lightwalletd source revision are pinned; upstream base-image tags/package repositories may change. Actual image identities are recorded; builds are not claimed byte-identical or fully hermetic.
 
-Stop the observer with Ctrl-C after the live probe, then evaluate the evidence:
-
-```sh
-shadecheck test \
-  --events out/live-events.jsonl \
-  --policy strict \
-  --output out/live-report.json
-```
-
-Only this upstream-backed evidence can produce **HIGH**. A fixture can never produce HIGH.
-
-## Controlled lightwalletd integration
-
-`GetLatestBlock`, `GetBlockRange`, `GetTransaction`, `SendTransaction`, and `GetMempoolStream` are forwarded in the current observer. Other RPCs return UNIMPLEMENTED. This is not yet a full wallet sync proxy.
-
-The observer itself changes routing and timing. SC-002 therefore makes a narrow claim: the service receiving the broadcast can associate submitted raw transaction bytes with the transport connection it observed. A connection is not a person or stable wallet identity.
-
-## SC-002 deterministic severity
-
-| Observation | Result |
-| --- | --- |
-| Non-empty SendTransaction payload associated with transport peer | MEDIUM |
-| Above plus real upstream `errorCode=0` and identical bytes returned by `GetMempoolStream` within 30 seconds | HIGH |
-| No non-empty broadcast request captured | WARN: missing coverage |
-| Invalid/empty evidence or execution error | Exit 2 |
-
-Strict policy rejects any SC-002 finding (exit 1); missing coverage also returns non-zero (exit 2). Advisory policy returns WARN with exit 0. A HIGH finding is a statement about this RPC observer's capability, not proof of user deanonymization. Server-reported acceptance plus byte-for-byte mempool observation is evidence of backend acceptance/propagation in the controlled environment; it is not proof of mining or finality.
-
-## Evidence
-
-Each event includes sequence, wall clock and monotonic elapsed time, hashed transport peer, RPC/phase, payload size/fingerprint, mode, and hash chain. A SHA-256 payload fingerprint is **not** a Zcash transaction ID. Full raw transaction bytes are forwarded without being stored in proxy events. The SC-004 backend proof additionally saves the actual decoded local test transaction; native adapter events include test receiver addresses and wallet operation results. Hash chaining detects accidental editing; it is not a signature or protection against an author rewriting the complete chain.
-
-Reports may contain privacy-sensitive connection and transaction fingerprints. Treat them as controlled test artifacts.
-
-## No-fake implementation rule
-
-ShadeCheck's product claims must come from real protocol behavior:
-
-- no fabricated transactions;
-- no dummy backend success;
-- no mocked privacy findings in the judge-visible workflow;
-- no hard-coded HIGH severity;
-- no claim of network acceptance unless the backend actually accepted the transaction;
-- no claim of mempool propagation unless identical raw bytes were actually observed.
-
-Fixtures remain only for deterministic unit/protocol tests and are labeled as such.
-
-## Acceptance status
-
-The core CLI MVP passed its defined acceptance suite on a fresh Linux CI runner. All individual real milestones, including SC-005, are also verified on the developer's Windows machine. The consolidated Windows workflow was also verified from the developer's terminal output. The local dashboard is secondary and displays validated saved artifacts. Passing this acceptance suite means the expected checks and exit codes were verified; it does not mean the tested architecture passed every privacy requirement or establish production readiness or anonymity. Broader rule-family behaviors and wallet support remain outside the documented coverage.
-
-See [threat model](docs/threat-model.md) and [fixture provenance](fixtures/PROVENANCE.md).
+[MIT project license](LICENSE). Upstream notices are preserved in [THIRD_PARTY_LICENSE](THIRD_PARTY_LICENSE) and [fixture provenance](fixtures/PROVENANCE.md).

@@ -6,20 +6,11 @@ Privacy CI for Zcash applications. A correctly shielded transaction can still be
 
 Primary user: a wallet/SDK developer who needs evidence that a release did not introduce a tested privacy regression. Track choice: Core & Tooling, subject to the organizer's current form/rules.
 
-The implemented integration uses a controlled regtest zcashd wallet and protocol-authentic lightwalletd clients. It does not claim support for every wallet or discovery of new protocol vulnerabilities.
+The implementation uses a controlled regtest zcashd wallet, protocol-authentic lightwalletd clients, and a separately verified pinned independent Zingo CLI synchronization workflow. It does not claim support for every wallet or discovery of new protocol vulnerabilities.
 
 ## Demonstration
 
-Prepare the real backend before recording and disclose that preparation. Do not pretend the initial Docker build and shielded proof construction took sixty seconds. A recorded walkthrough must be labeled recorded; it must reference actual saved traces.
-
-| Time | Picture / explanation |
-| --- | --- |
-| 0–15s | A shielded transaction can still expose broadcast linkage. Developers need reproducible behavior checks, not an anonymity score. |
-| 15–40s | Actual signed shielded transaction submitted through observer; matching mempool bytes and independent node confirmation; SC-002 HIGH and strict exit 1. This links a connection to bytes, not a person. |
-| 40–70s | SC-004 actual permissive payment has a transparent output; FullPrivacy rejects that recipient, then a shielded payment passes SC-004. SC-002 linkage is not claimed fixed. |
-| 70–95s | Saved compatible baseline compared with a real narrower sync request; SC-005 regression and exact failing CI exit. Keep the same rule selection/policy. |
-| 95–115s | Public recorded-run viewer: source CI link, evidence root, event inspection and an actual download. |
-| 115–120s | Passing means no tested violation was observed in this environment. Repository contains the reproduction command and limitations. |
+Use the [final step-by-step recording guide](VIDEO_RECORDING_GUIDE.md) as the primary script. It includes the deployed recorded-evidence viewer, exact filters, a fresh local sync comparison, saved baseline navigation, the verified independent Zingo sync experiment, narration, captions, and recording checks. Keep the opening brief and prioritize inspectable evidence.
 
 ## Claims that are supported
 
@@ -47,16 +38,6 @@ Prepare the real backend before recording and disclose that preparation. Do not 
 
 Video, screenshots, and website must all refer to the same reviewed release commit/evidence run. Keep test keys local. Do not use real users' metadata as demo content.
 
-## Suggested narration (record footage from the actual run)
+## Narration and navigation
 
-“Zcash can shield a transaction while the application around it still exposes privacy-sensitive behavior. ShadeCheck gives developers a reproducible way to test defined behaviors before release.
-
-Here is a real Sapling transaction from our controlled Zcash environment. The observer captures its submission, the backend accepts it, and identical bytes appear in the mempool. ShadeCheck reports a link between those bytes and the broadcasting connection. This identifies a connection, not a person.
-
-Now look at payment policy. The permissive flow produces a transparent output under a requirement to remain shielded. FullPrivacy rejects that recipient, and a genuinely shielded payment changes the SC-004 result. That does not remove broadcast linkage.
-
-Next, we compare a saved baseline with an actual narrower sync request. The regression produces a finding and a strict failing exit. The consumer Action preserves that result and renders an inspectable summary.
-
-The dashboard can launch controlled local tests and show actual execution logs. The public viewer shows a labelled recorded run, its source CI commit, supporting events, and exact downloads. Judges can reproduce the full suite with one command.
-
-Passing ShadeCheck does not establish anonymity. It means no violation of the selected documented tests was observed with the required coverage in this environment.”
+The authoritative narration and screen sequence are in the [recording guide](VIDEO_RECORDING_GUIDE.md). Do not combine multiple scripts into one short video.

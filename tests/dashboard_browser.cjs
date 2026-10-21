@@ -35,9 +35,13 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
   await page.screenshot({path:process.env.SHADECHECK_SCREENSHOT_DIR+'/dashboard-mobile.png',fullPage:true});
   if(data.runner?.enabled){
     await page.locator('#run-sync').click();
-    await page.waitForFunction(async()=>{const r=await fetch('/api/job');const j=await r.json();return ['completed','failed'].includes(j.status);},{},{timeout:120000});
-    const job=await page.evaluate(()=>fetch('/api/job').then(r=>r.json()));
-    assert.equal(job.status,'completed');assert.equal(job.exit_code,0);
+    let job;const deadline=Date.now()+110000;
+    while(Date.now()<deadline){
+      job=await page.evaluate(()=>fetch('/api/job',{cache:'no-store'}).then(r=>r.json()));
+      if(['completed','failed'].includes(job.status))break;
+      await new Promise(resolve=>setTimeout(resolve,400));
+    }
+    assert.equal(job.status,'completed',JSON.stringify(job));assert.equal(job.exit_code,0);
     assert.deepEqual(job.results.map(r=>r.status).sort(),['FAIL','PASS']);
     console.log('REAL DASHBOARD EXECUTION VERIFIED: actual sync job, real FAIL/PASS reports and process exit 0.');
   }

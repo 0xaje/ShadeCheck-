@@ -59,6 +59,7 @@ def main():
         print('All report downloads and bundle contents match real acceptance artifacts.')
         return 0
     finally:
+        if server.runner:server.runner.close()
         server.shutdown();server.server_close();thread.join()
 
 

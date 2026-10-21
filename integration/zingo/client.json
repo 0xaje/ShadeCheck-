@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/zingolabs/zingolib.git",
+  "release": "zingolib_v3.0.1",
+  "revision": "31da83657d88fbb3b57bf45996023850e8aaf9da",
+  "rust": "1.90.0",
+  "build": ["cargo", "build", "--locked", "--release", "-p", "zingo-cli", "--features", "regtest"],
+  "scope": "Unmodified upstream CLI; fresh local wallet synchronization; explicit direct regtest transport"
+}

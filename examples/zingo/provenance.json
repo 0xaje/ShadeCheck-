@@ -1,0 +1,9 @@
+{
+  "kind": "recorded-real-regtest-evidence",
+  "source_run_url": "https://github.com/0xaje/ShadeCheck-/actions/runs/39599061669",
+  "shadecheck_revision": "48e11f0b006fa2ad4fe4cefba027e6ea8a235196",
+  "upstream_revision": "31da83657d88fbb3b57bf45996023850e8aaf9da",
+  "artifact_id": 12345877216,
+  "archive_sha256": "df27331727aebb1230daa8eb198fed565f6ce0c3db81bf58f944c126451ef4f9",
+  "evidence_root": "6cad22c50b84d1e5767b63a335ace981e051b07c4358343ecb030817c8046428"
+}

@@ -33,3 +33,7 @@ The [acceptance suite](acceptance.md) executes the real local backend and the de
 ## Dashboard boundary
 
 The [local dashboard](dashboard.md) uses the same acceptance artifact validator before serving an immutable snapshot on loopback. By default it displays existing evidence and comparison results. The opt-in local runner launches fixed regtest drivers, validates their actual output, and keeps execution status separate from privacy results; no arbitrary commands or targets are accepted. The public static viewer exposes no runner or execution token. It does not imply anonymity. Display-only large integers use exact decimal strings, while downloads retain original bytes. It is not a remotely hosted authenticated service. Artifact hashes do not authenticate authors, and local node/adapter trust remains unchanged.
+
+## Independent-client compatibility boundary
+
+The [pinned Zingo CLI experiment](zingo-integration.md) uses a separate chain and unmodified historical upstream client. Direct and observed block scanning must both complete, and delivered compact blocks must match the canonical node before the integration can be labelled VERIFIED. Compatibility-only RPC forwarding adds no rule coverage; raw addresses and tree messages are not exported by these handlers. The selected fixed-chunk sync policy is an experiment requirement, not a universal privacy standard or a claim of a Zingo vulnerability. Fresh unfunded wallet sync does not cover receiving, spending, production transport defaults, other releases, adoption, or endorsement.

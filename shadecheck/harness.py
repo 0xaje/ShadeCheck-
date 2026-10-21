@@ -102,6 +102,72 @@ class Observer(rpc.CompactTxStreamerServicer):
             context.abort(error.code(), error.details())
 
 
+def _compatibility_method(method):
+    """Forward additional schema-defined RPCs without pretending rules cover them.
+
+    Only message fingerprints/sizes are retained: tree material, addresses, and
+    wallet keys are not copied into the compatibility event metadata.
+    """
+    def fingerprint(message):
+        data = message.SerializeToString(deterministic=True)
+        return {"message_sha256": hashlib.sha256(data).hexdigest(),
+                "message_size": len(data), "coverage_role": "compatibility-only"}
+
+    def invoke(self, request, context):
+        if self.upstream is None:
+            context.abort(grpc.StatusCode.UNIMPLEMENTED, "Compatibility RPC requires an actual backend")
+        seq = self.recorder.record(method.name, "request", context.peer(),
+                                   **({"coverage_role": "compatibility-only"} if method.client_streaming
+                                      else fingerprint(request)))
+        if method.client_streaming:
+            def requests():
+                for item in request:
+                    self.recorder.record(method.name, "request-item", context.peer(),
+                                         request_sequence=seq, **fingerprint(item))
+                    yield item
+            outgoing = requests()
+        else:
+            outgoing = request
+        remaining = context.time_remaining()
+        timeout = min(120, remaining) if remaining is not None else 120
+        call = getattr(self.upstream, method.name)
+        try:
+            if method.server_streaming:
+                response = call(outgoing, timeout=timeout)
+                context.add_callback(response.cancel)
+                for item in response:
+                    self.recorder.record(method.name, "response", context.peer(),
+                                         request_sequence=seq, **fingerprint(item))
+                    yield item
+            else:
+                response = call.future(outgoing, timeout=timeout)
+                context.add_callback(response.cancel)
+                item = response.result()
+                self.recorder.record(method.name, "response", context.peer(),
+                                     request_sequence=seq, **fingerprint(item))
+                yield item
+        except grpc.RpcError as error:
+            self.recorder.record(method.name, "error", context.peer(),
+                                 request_sequence=seq, grpc_code=error.code().name)
+            context.abort(error.code(), error.details())
+        except grpc.FutureCancelledError:
+            context.abort(grpc.StatusCode.CANCELLED, "Downstream call cancelled")
+
+    if method.server_streaming:
+        return invoke
+
+    def unary(self, request, context):
+        return next(invoke(self, request, context))
+    return unary
+
+
+# Keep the five evidence-rich rule RPCs above; forward the remaining methods in
+# the vendored protocol schema. Unknown methods stay UNIMPLEMENTED in gRPC.
+for _method in pb.DESCRIPTOR.services_by_name["CompactTxStreamer"].methods:
+    if _method.name not in Observer.__dict__:
+        setattr(Observer, _method.name, _compatibility_method(_method))
+
+
 def start_server(recorder, bind="127.0.0.1:0", upstream=None):
     server = grpc.server(ThreadPoolExecutor(max_workers=4))
     rpc.add_CompactTxStreamerServicer_to_server(Observer(recorder, upstream), server)

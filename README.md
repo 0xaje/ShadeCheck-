@@ -60,7 +60,15 @@ To run actual controlled tests from the local dashboard, use `shadecheck dashboa
 
 [SC-001](docs/sc001.md) · [SC-002](docs/threat-model.md) · [SC-003](docs/sc003.md) · [SC-004](docs/sc004.md) · [SC-005](docs/sc005.md)
 
-The proxy forwards GetLatestBlock, GetBlockRange, GetTransaction, SendTransaction, and GetMempoolStream. Other methods return UNIMPLEMENTED. This is a native local wallet/protocol-client integration, not universal wallet compatibility.
+The proxy records rule-specific evidence for GetLatestBlock, GetBlockRange, GetTransaction, SendTransaction, and GetMempoolStream. Additional RPCs in the vendored protocol schema are forwarded with compatibility-only fingerprints and sizes; unknown methods remain UNIMPLEMENTED. Forwarding does not imply privacy rule coverage or universal wallet compatibility. See the [pinned independent Zingo CLI integration](docs/zingo-integration.md) for its real-execution gate and limitations.
+
+**Independent-client gate verified:** unmodified Zingo CLI from zingolib release
+`zingolib_v3.0.1` completed direct and observed regtest scanning. The run checked
+101 canonical blocks and captured 124 events. See [real CI](https://github.com/0xaje/ShadeCheck-/actions/runs/39599061669)
+and [recorded evidence](examples/zingo/README.md). Coverage is fresh unfunded
+wallet synchronization under a declared SC-001 policy; this is not current-version
+production validation, all-wallet support, adoption, endorsement, or an anonymity claim.
+
 
 ## Evaluate your captured evidence in CI
 

@@ -34,3 +34,25 @@ A Vercel deployment URL has not been verified from this environment. The reposit
 Record the submission video and complete the organizer's submission form using the reviewed code/data. Keep evidence labelled recorded where applicable. Configure required checks in a consumer repository to enforce merge restrictions; ShadeCheck does not approve or merge PRs itself.
 
 These checks demonstrate the documented test scope. They are not a claim of complete anonymity, universal wallet support, authenticated evidence authorship, or production security certification.
+
+## Independent-client gate — October 21, 2026
+
+Source revision: `48e11f0b006fa2ad4fe4cefba027e6ea8a235196`.
+
+[Dedicated real Zingo CI](https://github.com/0xaje/ShadeCheck-/actions/runs/39599061669)
+passed with 42 unit/boundary tests, an unmodified pinned upstream source build,
+and successful direct and observed block scanning. Both clients scanned heights
+10–110; 124 events were recorded and all 101 delivered compact block hashes
+matched the separate canonical node. The report returned FAIL/strict exit 1 with
+two SC-001 MEDIUM findings under the explicit 20-block policy. Other selected
+families remained uncovered; SC-005 was not selected. This is a compatibility
+and defined-policy experiment, not a Zingo vulnerability or production audit.
+
+The original 89,718-byte CI artifact is committed under `examples/zingo`, with
+archive SHA-256 `df27331727aebb1230daa8eb198fed565f6ce0c3db81bf58f944c126451ef4f9`.
+It was downloaded, hash checked, extracted, and revalidated offline. No wallet
+files/keys are included. Full scope and reproduction: [Zingo integration](zingo-integration.md).
+
+The observer change also passed the existing [real MVP acceptance workflow](https://github.com/0xaje/ShadeCheck-/actions/runs/39597614943),
+including real backend scenarios and dashboard/browser checks. This new separate
+integration does not replace or merge the original 24-report acceptance snapshot.

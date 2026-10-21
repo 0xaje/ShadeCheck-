@@ -7,6 +7,7 @@ from collections import Counter
 from contextlib import ExitStack
 import hashlib
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -15,7 +16,7 @@ import uuid
 
 import grpc
 import regtest as backend
-from shadecheck.core import Recorder, load_events
+from shadecheck.core import Recorder, load_events, evaluate
 from shadecheck.generated import service_pb2 as pb
 from shadecheck.generated import service_pb2_grpc as rpc
 from shadecheck.harness import start_server
@@ -32,8 +33,12 @@ def command(args, timeout=180):
 
 
 def node(method, *args):
-    return json.loads(command(COMPOSE + ["exec", "-T", "zcashd", "zcash-cli",
-        "-conf=/etc/zcash/shadecheck.conf", "-datadir=/data", method, *map(str, args)]))
+    output = command(COMPOSE + ["exec", "-T", "zcashd", "zcash-cli",
+        "-conf=/etc/zcash/shadecheck.conf", "-datadir=/data", method, *map(str, args)])
+    try:
+        return json.loads(output)
+    except json.JSONDecodeError:
+        return output.strip()
 
 
 def wait_backend():
@@ -72,7 +77,8 @@ def parse_sync_status(output):
         raise RuntimeError("Zingo did not return a sync status document")
     status = candidates[-1]
     if (status.get("percentage_total_blocks_scanned") != 100
-            or status.get("total_blocks_scanned", 0) <= 0):
+            or type(status.get("total_blocks_scanned")) is not int
+            or status["total_blocks_scanned"] <= 0):
         raise RuntimeError(f"Zingo did not complete block scanning: {status}")
     return status
 
@@ -87,20 +93,75 @@ def run_wallet(binary, endpoint, wallet_dir, artifacts):
     # local on failure; only export the parsed, nonsecret sync status on success.
     if run.returncode:
         (wallet_dir / "failure.log").write_text(run.stdout + "\n" + run.stderr)
-        raise RuntimeError(f"Zingo exited {run.returncode}; private diagnostics: {wallet_dir / 'failure.log'}")
+        # Export only bounded error/panic lines, never general wallet output.
+        safe_errors = [line[:500] for line in run.stderr.splitlines()
+                       if re.search(r"(?i)(^error:|panicked at|^failed to)", line)
+                       and not re.search(r"(?i)(seed|mnemonic|secret|spending|private|ufvk|viewkey)", line)]
+        raise RuntimeError(f"Zingo exited {run.returncode}: {'; '.join(safe_errors[:5])}; private diagnostics: {wallet_dir / 'failure.log'}")
     try:
         status = parse_sync_status(run.stdout)
-    except RuntimeError:
+    except RuntimeError as error:
         (wallet_dir / "failure.log").write_text(run.stdout + "\n" + run.stderr)
-        raise RuntimeError(f"Zingo sync validation failed; private diagnostics: {wallet_dir / 'failure.log'}")
+        raise RuntimeError(f"{error}; private diagnostics: {wallet_dir / 'failure.log'}") from error
     backend.write_json(artifacts / "client-sync.json", {"process_exit": run.returncode, "sync_status": status})
     return status
 
 
+
+def verify_saved(directory):
+    """Recompute saved evidence/report integrity; does not rerun the wallet/node."""
+    manifest = json.loads((directory / "integration.json").read_text())
+    if manifest.get("integration_status") != "VERIFIED" or manifest.get("network") != "regtest":
+        raise ValueError("Integration is not verified")
+    pin = json.loads((backend.ROOT / "integration/zingo/client.json").read_text())
+    if manifest["client"]["revision"] != pin["revision"]:
+        raise ValueError("Client pin mismatch")
+    recorded_paths = {entry["path"] for entry in manifest["artifacts"]}
+    actual_paths = {str(p.relative_to(directory)) for p in directory.rglob("*")
+                    if p.is_file() and p.name != "integration.json"}
+    if recorded_paths != actual_paths or len(recorded_paths) != len(manifest["artifacts"]):
+        raise ValueError("Artifact inventory mismatch")
+    for artifact in manifest["artifacts"]:
+        path = (directory / artifact["path"]).resolve()
+        if not path.is_relative_to(directory.resolve()) or hashlib.sha256(path.read_bytes()).hexdigest() != artifact["sha256"]:
+            raise ValueError("Artifact path or digest mismatch")
+    config = json.loads((directory / "policy.json").read_text())
+    events = load_events(directory / "observed/events.jsonl")
+    recomputed = evaluate(events, "strict", rules=["SC-001", "SC-002", "SC-003", "SC-004"],
+                          sync_policy=config["sync"], payment_policy=config["payment"])
+    saved = json.loads((directory / "observed/report.json").read_text())
+    if recomputed != saved or saved["evidence_root"] != manifest["evidence_root"]:
+        raise ValueError("Report differs from recorded evidence")
+    if (manifest["privacy_status"] != saved["status"] or manifest["coverage"] != saved["rules"]
+            or manifest["strict_exit"] != {"PASS": 0, "FAIL": 1, "WARN": 2}[saved["status"]]):
+        raise ValueError("Manifest privacy result differs from report")
+    delivered = {str(e["metadata"]["height"]): bytes.fromhex(e["metadata"]["block_hash"])[::-1].hex()
+                 for e in events if e["method"] == "GetBlockRange" and e["phase"] == "response"}
+    if not delivered or delivered != manifest["canonical_blocks_verified"]:
+        raise ValueError("Delivered blocks differ from recorded canonical checks")
+    for mode, key in [("direct", "direct_sync_status"), ("observed", "observed_sync_status")]:
+        status = json.loads((directory / mode / "client-sync.json").read_text())
+        parse_sync_status(json.dumps(status["sync_status"]))
+        if status["process_exit"] != 0 or status["sync_status"] != manifest[key]:
+            raise ValueError("Client status/exit mismatch")
+    print(f"SAVED ZINGO EVIDENCE VERIFIED: {directory}")
+    return manifest
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", required=True, type=Path, help="Pinned upstream checkout with built target/release/zingo-cli")
+    parser.add_argument("--verify", type=Path, help="Verify saved evidence offline; no wallet or Docker execution")
+    parser.add_argument("--source", type=Path, help="Pinned upstream checkout with built target/release/zingo-cli")
     args = parser.parse_args()
+    if args.verify:
+        try:
+            verify_saved(args.verify.resolve())
+            return 0
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            print(f"Zingo evidence error: {error}", file=sys.stderr)
+            return 2
+    if args.source is None:
+        parser.error("--source or --verify is required")
     pin = json.loads((backend.ROOT / "integration/zingo/client.json").read_text())
     source = args.source.resolve()
     binary = source / "target/release/zingo-cli"
@@ -142,6 +203,8 @@ def main():
             server, port = start_server(recorder, upstream=rpc.CompactTxStreamerStub(channel))
             stack.callback(lambda: server.stop(0).wait())
             proxied = run_wallet(binary, f"127.0.0.1:{port}", private / "observed", observed)
+        if any(direct[key] != proxied[key] for key in ("sync_start_height", "total_blocks_scanned")):
+            raise RuntimeError("Direct and observed clients scanned different block spans")
         events = load_events(observed / "events.jsonl")
         responses = [e for e in events if e["method"] == "GetBlockRange" and e["phase"] == "response"]
         if not responses:
@@ -177,7 +240,10 @@ def main():
             "rpc_requests": dict(Counter(e["method"] for e in events if e["phase"] == "request")),
             "rpc_errors": dict(Counter(e["metadata"].get("grpc_code") for e in events if e["phase"] == "error")),
             "privacy_status": result["status"], "strict_exit": gate.returncode, "coverage": result["rules"],
-            "evidence_root": result["evidence_root"], "limitations": [
+            "evidence_root": result["evidence_root"],
+            "artifacts": [{"path": str(p.relative_to(directory)), "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+                          for p in sorted(directory.rglob("*")) if p.is_file()],
+            "limitations": [
                 "Pinned historical release; no claim about latest Zingo, mobile clients, or default production behavior.",
                 "Fresh, unfunded wallets on local regtest; no independent-client payment/broadcast tested.",
                 "SC-001 uses an explicitly chosen test policy, not a universal Zcash or Zingo requirement.",
@@ -185,6 +251,7 @@ def main():
                 "Compatibility RPC forwarding does not add privacy rule coverage.",
                 "No SC-005 comparison in this integration; missing coverage cannot establish anonymity.",
                 "An independently developed client integration is not third-party adoption or endorsement."]})
+        verify_saved(directory)
         print(f"INDEPENDENT ZINGO SYNC VERIFIED: direct and observed scanning completed; {len(verified)} canonical blocks. Privacy {result['status']}. Reports: {directory}")
         return 0
     except (OSError, ValueError, RuntimeError, KeyError, grpc.RpcError, subprocess.SubprocessError) as error:

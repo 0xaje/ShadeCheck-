@@ -24,7 +24,8 @@ jobs:
         run: |
           git clone --no-checkout https://github.com/zingolabs/zingolib.git "$RUNNER_TEMP/zingolib"
           git -C "$RUNNER_TEMP/zingolib" checkout --detach 31da83657d88fbb3b57bf45996023850e8aaf9da
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
+        id: zingo-cache
         with:
           path: |
             ~/.cargo/registry
@@ -35,6 +36,16 @@ jobs:
       - name: Build unmodified pinned Zingo CLI
         working-directory: ${{ runner.temp }}/zingolib
         run: cargo build --locked --release -p zingo-cli --features regtest
+      - name: Save successful upstream build before runtime checks
+        if: steps.zingo-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.zcash-params
+            ${{ runner.temp }}/zingolib/target
+          key: zingo-regtest-${{ runner.os }}-31da83657d88fbb3b57bf45996023850e8aaf9da-rust190-v1
       - name: Check observer and integration boundaries
         run: python -m unittest discover -s tests -v
       - name: Real direct and observed wallet synchronization

@@ -21,6 +21,8 @@ class SyntheticBackend(rpc.CompactTxStreamerServicer):
 
     def GetSubtreeRoots(self, request, context):
         yield pb.SubtreeRoot(rootHash=b"synthetic-root")
+        if request.startIndex:
+            context.abort(grpc.StatusCode.RESOURCE_EXHAUSTED, "synthetic stream failure")
 
     def GetTaddressBalanceStream(self, request_iterator, context):
         return pb.Balance(valueZat=sum(len(x.address) for x in request_iterator))
@@ -45,6 +47,12 @@ class CompatibilityBoundaries(unittest.TestCase):
                     self.assertEqual(info, pb.LightdInfo(chainName="regtest", blockHeight=123))
                     roots = list(client.GetSubtreeRoots(pb.GetSubtreeRootsArg(), timeout=5))
                     self.assertEqual(roots, [pb.SubtreeRoot(rootHash=b"synthetic-root")])
+                    partial = client.GetSubtreeRoots(pb.GetSubtreeRootsArg(startIndex=1), timeout=5)
+                    self.assertEqual(next(partial).rootHash, b"synthetic-root")
+                    with self.assertRaises(grpc.RpcError) as stream_failure:
+                        next(partial)
+                    self.assertEqual(stream_failure.exception.code(), grpc.StatusCode.RESOURCE_EXHAUSTED)
+                    self.assertEqual(stream_failure.exception.details(), "synthetic stream failure")
                     balance = client.GetTaddressBalanceStream(iter([pb.Address(address="private-address")]), timeout=5)
                     self.assertEqual(balance.valueZat, 15)
                     with self.assertRaises(grpc.RpcError) as failure:

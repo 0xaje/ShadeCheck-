@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="340" viewBox="0 0 1280 340" role="img" aria-labelledby="title desc">
+<title id="title">ShadeCheck — Privacy CI for Zcash applications</title>
+<desc id="desc">Observe. Inspect. Verify. Deterministic rules, inspectable evidence, and CI gates.</desc>
+<rect width="1280" height="340" rx="20" fill="#111b15"/>
+<path d="M900 0h380v340H900z" fill="#19271e"/>
+<path d="M1010 0v340M1120 0v340M1230 0v340M900 85h380M900 170h380M900 255h380" stroke="#2c3a2e" stroke-width="1"/>
+<rect x="58" y="55" width="62" height="62" rx="7" fill="#dcff9f"/>
+<text x="70" y="97" fill="#111b15" font-family="Arial,sans-serif" font-size="33" font-weight="700">S/</text>
+<text x="142" y="98" fill="#dcff9f" font-family="monospace" font-size="17" letter-spacing="2">ZCASH DEVELOPER TOOLING</text>
+<text x="58" y="194" fill="#f3f6ed" font-family="Arial,sans-serif" font-size="74" font-weight="700">ShadeCheck</text>
+<text x="60" y="241" fill="#c6d1c4" font-family="Arial,sans-serif" font-size="28">Privacy CI for Zcash applications.</text>
+<text x="60" y="293" fill="#dcff9f" font-family="monospace" font-size="18">OBSERVE. INSPECT. VERIFY.</text>
+<rect x="940" y="72" width="288" height="194" rx="12" fill="#111b15" stroke="#60764b"/>
+<text x="965" y="112" fill="#dcff9f" font-family="monospace" font-size="15">DEFINED BEHAVIOR TESTS</text>
+<text x="965" y="153" fill="#f3f6ed" font-family="Arial,sans-serif" font-size="21">Deterministic rules</text>
+<text x="965" y="192" fill="#f3f6ed" font-family="Arial,sans-serif" font-size="21">Inspectable evidence</text>
+<text x="965" y="231" fill="#f3f6ed" font-family="Arial,sans-serif" font-size="21">CI policy gates</text>
+</svg>

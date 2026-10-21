@@ -2,7 +2,7 @@
 
 Target: approximately two minutes, landscape 16:9, readable 1080p footage.
 This is the primary recording plan. Rehearse timing before the final export.
-It is not a statement of an independently verified organizer video-length limit.
+The organizer submission form requests a two-minute video; keep the complete export at or below two minutes.
 
 ## 1. Understand the demonstration
 

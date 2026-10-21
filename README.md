@@ -1,10 +1,61 @@
+<p align="center">
+  <img src="docs/assets/shadecheck-banner.svg" alt="ShadeCheck — Privacy CI for Zcash applications. Observe. Inspect. Verify." width="100%" />
+</p>
+
+<p align="center">
+  <a href="https://shade-check-nu.vercel.app/"><img alt="Open evidence demo" src="https://img.shields.io/badge/Demo-Explore%20real%20evidence-dcff9f?style=for-the-badge&amp;labelColor=142019" /></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-dcff9f?style=for-the-badge&amp;labelColor=142019" /></a>
+  <a href="docs/acceptance.md"><img alt="Five documented rule families" src="https://img.shields.io/badge/Rules-5%20families-dcff9f?style=for-the-badge&amp;labelColor=142019" /></a>
+</p>
+
+<p align="center">
+  <a href="https://shade-check-nu.vercel.app/"><strong>Open demo</strong></a> ·
+  <a href="#run-the-real-system">Run locally</a> ·
+  <a href="docs/threat-model.md">Threat model</a> ·
+  <a href="docs/zingo-integration.md">Zingo integration</a> ·
+  <a href="https://github.com/0xaje/ShadeCheck-/actions">CI evidence</a>
+</p>
+
 # ShadeCheck
 
-**Privacy CI for Zcash applications.**
+**Privacy CI for Zcash applications. Built for ZECATHON · Core &amp; Tooling.**
 
-ShadeCheck evaluates defined observable Zcash application behaviors against documented privacy tests. Passing means no violation of the selected tests was observed with the required coverage. It does not establish anonymity.
+A transaction can be correctly shielded while application requests still expose clues. ShadeCheck helps Zcash wallet and SDK developers catch defined privacy-sensitive behaviors before release: capture real protocol events, evaluate deterministic rules, inspect the evidence, and compare against a baseline.
 
-A shielded transaction can still be associated with the connection broadcasting it. ShadeCheck records actual RPC behavior, evaluates deterministic rules, preserves inspectable evidence, compares baselines, and returns enforceable CI exit codes.
+> Passing ShadeCheck means no violation of the tested rule was observed in the executed environment with the required coverage. **It does not establish anonymity.**
+
+## Start here
+
+| What you want to do | Where to go |
+| --- | --- |
+| Explore findings immediately | [Open the public evidence viewer](https://shade-check-nu.vercel.app/) — saved real regtest reports; no setup required |
+| Execute fresh tests | [Run locally](#run-the-real-system) with Python and Docker |
+| Check what was actually verified | [Acceptance audit](docs/acceptance.md) and [validation record](docs/RELEASE_VALIDATION.md) |
+| Inspect an independent client integration | [Pinned, unmodified Zingo synchronization](docs/zingo-integration.md) and [recorded artifacts](examples/zingo/README.md) |
+| Understand the limits | [Threat model](docs/threat-model.md) and [rule boundaries](#five-initial-rule-families) |
+
+<!-- Add the ShadeCheck-specific YouTube thumbnail/link here once its URL is supplied. Do not reuse another project's video. -->
+
+## What the demo proves
+
+- **Real controlled backend:** a local Zcash regtest node and lightwalletd, with actual signed transparent and Sapling transactions in the native-wallet scenarios.
+- **Evidence-backed findings:** recorded RPC events support each finding; JSON and HTML reports are available for inspection.
+- **Behavior comparisons:** deliberately weak flows fail the declared policy; controlled alternatives change selected results.
+- **Regression gates:** saved baselines identify new failures, behavior categories, and increased severity; strict policy failures return nonzero exit codes.
+- **Independent synchronization:** a separate unmodified, pinned Zingo client completed direct and observed scanning, with 101 canonical blocks checked and 124 recorded events. This integration covers synchronization, not Zingo payments or broadcast.
+
+The public website displays recorded evidence. Fresh execution runs on the developer's computer through the CLI or optional local dashboard runner.
+
+```mermaid
+flowchart TD
+    Client["Client under test"] --> Observer["ShadeCheck observer"]
+    Observer --> Backend["Controlled lightwalletd + Zcash regtest"]
+    Observer --> Events["Normalized protocol evidence"]
+    Events --> Rules["Deterministic privacy rules"]
+    Baseline["Saved baseline"] --> Rules
+    Rules --> Reports["Findings + JSON / HTML reports"]
+    Rules --> Policy["PASS / WARN / FAIL + CI exit code"]
+```
 
 ## Run the real system
 
@@ -121,7 +172,7 @@ Vercel serves the committed `public` directory using vercel.json; `/api/data` ma
 
 [Submission and two-minute video guide](docs/HACKATHON_PITCH.md) · [Deploy/reproduction guide](docs/submission.md)
 
-## Verified submission-hardening run
+## Verified execution records
 
 [Run 39577173119](https://github.com/0xaje/ShadeCheck-/actions/runs/39577173119) is green at source commit `c3ce35f93979eae57fa91c394be2bf7ced3d3e1a`: 37 unit checks, actual Zcash acceptance, real positive/negative consumer Action gates, installed-wheel verification, local and static Chrome/mobile checks, and an actual dashboard-triggered sync job. Its 24 reports and 112 hashed acceptance artifacts were independently revalidated. The committed public snapshot contains those exact reports, downloadable artifacts, and source provenance; it is recorded evidence, not a live scan.
 
@@ -138,4 +189,10 @@ Unit/conformance fixtures are explicitly separated from real runtime evidence. N
 
 Node release and lightwalletd source revision are pinned; upstream base-image tags/package repositories may change. Actual image identities are recorded; builds are not claimed byte-identical or fully hermetic.
 
-[MIT project license](LICENSE). Upstream notices are preserved in [THIRD_PARTY_LICENSE](THIRD_PARTY_LICENSE) and [fixture provenance](fixtures/PROVENANCE.md).
+## License and attribution
+
+ShadeCheck's original code is released under the [MIT License](LICENSE), copyright © 2026 Aje Oluwaseun Isaac ([@0xaje](https://github.com/0xaje)).
+
+[THIRD_PARTY_LICENSE](THIRD_PARTY_LICENSE) contains Electric Coin Company's MIT notice for vendored lightwalletd protocol material. It is an upstream attribution notice, not a second project license or a duplicate to delete. See [third-party attribution](docs/third-party-attribution.md) and [fixture provenance](fixtures/PROVENANCE.md).
+
+Built for [ZECATHON](https://thezecathon.com/), **Core & Tooling**. Zcash and Zingo names identify the ecosystem and tested upstream software; no endorsement is implied.

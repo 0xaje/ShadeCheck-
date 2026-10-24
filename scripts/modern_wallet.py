@@ -20,7 +20,7 @@ import grpc
 from shadecheck.core import Recorder, evaluate, load_events
 from shadecheck.generated import service_pb2 as pb, service_pb2_grpc as rpc
 from shadecheck.harness import start_server
-from shadecheck.privacy import private_write
+from shadecheck.privacy import private_write, private_directory
 from shadecheck.reporting import render_html
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -85,8 +85,17 @@ def wait_indexer(height):
     raise RuntimeError('Zaino synchronization timed out')
 
 
+def recipient_balance(text):
+    balance={k:int(v.replace('_','')) for k,v in re.findall(r'(total_(?:ironwood|orchard|sapling|transparent)_balance):\s*([0-9_]+)',text)}
+    if sum(balance.get('total_'+pool+'_balance',0) for pool in ['ironwood','orchard','sapling'])!=100000:
+        raise RuntimeError('Recipient did not receive the exact 100000 shielded zatoshis')
+    if balance.get('total_transparent_balance',0)!=0:
+        raise RuntimeError('Recipient unexpectedly received transparent value')
+    return balance
+
+
 def wallet(binary,directory,*command,endpoint=None):
-    directory.mkdir(parents=True,exist_ok=True,mode=0o700)
+    private_directory(directory)
     args=[str(binary),'--chain','regtest','--data-dir',str(directory),'--birthday','1']
     args+=['--server',f'http://{endpoint}','--waitsync'] if endpoint else ['--offline']
     result=subprocess.run(args+list(command),cwd=directory,capture_output=True,text=True,timeout=360)
@@ -112,7 +121,7 @@ def observe_mempool(stub,data):
     raise RuntimeError('Identical transaction not observed in real mempool stream')
 
 
-def confirm_transmission(text,stub):
+def confirm_transmission(text,stub, *, require_shielded=False):
     # The CLI reports its actual txid(s). Never derive Zcash txids with SHA-256.
     txids=object_with(text,'txids')['txids']
     if not txids or not all(isinstance(x,str) and re.fullmatch('[0-9a-f]{64}',x) for x in txids):
@@ -122,9 +131,13 @@ def confirm_transmission(text,stub):
         if txid not in node('getrawmempool'): raise RuntimeError('Zebra did not accept wallet transmission')
         raw=node('getrawtransaction',txid)
         data=bytes.fromhex(raw)
+        decoded=node('getrawtransaction',txid,1)
+        structure={'transparent_inputs':len(decoded['vin']),'transparent_outputs':len(decoded['vout'])}
+        if require_shielded and any(structure.values()):
+            raise RuntimeError('Independent shielded send unexpectedly has transparent components')
         observe_mempool(stub,data)
         receipts.append({'txid':txid,'payload_sha256':hashlib.sha256(data).hexdigest(),
-                         'node_mempool_confirmed':True,'payload_size':len(data)})
+                         'node_mempool_confirmed':True,'payload_size':len(data),'decoded_structure':structure})
     node('generate',1)
     height=node('getblockchaininfo')['blocks']
     block=node('getblock',node('getblockhash',height),1)
@@ -157,6 +170,11 @@ def verify(directory):
         receipts=manifest[phase]
         if not receipts or any(r['payload_sha256'] not in high or not r['node_mempool_confirmed'] for r in receipts):
             raise ValueError('Wallet transmission lacks HIGH evidence')
+    if any(any(r['decoded_structure'].values()) for r in manifest['shielded_send']):
+        raise ValueError('Shielded send has transparent components')
+    receipt=json.loads((directory/'recipient-receipt.json').read_text())
+    if sum(receipt['balance'].get('total_'+p+'_balance',0) for p in ['ironwood','orchard','sapling'])!=100000:
+        raise ValueError('Incorrect shielded recipient amount')
     if result['status']!='FAIL' or manifest['strict_exit']!=1: raise ValueError('Incorrect strict result')
     for mode in ['direct','observed']:
         status=json.loads((directory/f'{mode}-sync.json').read_text())
@@ -188,7 +206,7 @@ def main():
     miner=object_with(wallet(binary,observed,'new_taddress'),'encoded_address')['encoded_address']
     if not re.fullmatch(r't[0-9A-Za-z]{30,60}',miner): raise ValueError('Invalid local mining receiver')
     env={**os.environ,'SHADECHECK_MODERN_MINER':miner}
-    directory.mkdir(parents=True,mode=0o700)
+    private_directory(directory)
     try:
         print('Starting current Zebra/Zaino local backend...',flush=True)
         run(COMPOSE+['up','-d','zebra'],env=env,timeout=600)
@@ -217,14 +235,10 @@ def main():
             sync(binary,observed,endpoint)
             receiver=object_with(wallet(binary,private/'recipient','new_address','o'),'encoded_address')['encoded_address']
             print('Sending real shielded wallet funds through ShadeCheck...',flush=True)
-            sent=confirm_transmission(wallet(binary,observed,'quicksend',receiver,'100000',endpoint=endpoint),stub)
+            sent=confirm_transmission(wallet(binary,observed,'quicksend',receiver,'100000',endpoint=endpoint),stub,require_shielded=True)
             recipient=sync(binary,private/'recipient',INDEXER)
-            balance=next((v for v in documents(wallet(binary,private/'recipient','balance')) if isinstance(v,dict)),None)
-            if balance is None: raise RuntimeError('Recipient balance missing')
-            # Prove a positive received amount rather than merely completing a scan.
-            def positive(value):
-                return any(positive(x) for x in value.values()) if isinstance(value,dict) else (any(positive(x) for x in value) if isinstance(value,list) else type(value) is int and value>0)
-            if not positive(balance): raise RuntimeError('Recipient has no received balance')
+            output=wallet(binary,private/'recipient','balance')
+            balance=recipient_balance(output)
             write(directory/'recipient-receipt.json',{'sync_status':recipient,'balance':balance})
         events=load_events(directory/'events.jsonl')
         verified={}

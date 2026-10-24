@@ -6,16 +6,22 @@ import os
 from pathlib import Path
 
 
-def private_open(path, *, exclusive=False):
+def private_directory(path):
     path = Path(path)
     # Only change directories we create, not an existing developer-owned tree.
     missing = []
-    parent = path.parent
+    parent = path
     while not parent.exists():
         missing.append(parent)
         parent = parent.parent
     for directory in reversed(missing):
         directory.mkdir(mode=0o700, exist_ok=True)
+    return path
+
+
+def private_open(path, *, exclusive=False):
+    path = Path(path)
+    private_directory(path.parent)
     flags = os.O_WRONLY | os.O_CREAT | (os.O_EXCL if exclusive else os.O_TRUNC)
     flags |= getattr(os, "O_NOFOLLOW", 0)
     descriptor = os.open(path, flags, 0o600)

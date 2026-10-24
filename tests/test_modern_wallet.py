@@ -1,0 +1,22 @@
+"""Synthetic parser boundaries; these tests are not wallet execution evidence."""
+import importlib.util
+from pathlib import Path
+import unittest
+
+spec=importlib.util.spec_from_file_location('modern_wallet',Path(__file__).resolve().parents[1]/'scripts/modern_wallet.py')
+modern=importlib.util.module_from_spec(spec);spec.loader.exec_module(modern)
+
+
+class ModernWalletBoundaries(unittest.TestCase):
+    def test_missing_or_unrelated_numeric_fields_cannot_prove_receipt(self):
+        for text in ['account: 1\nheight: 110', 'total_transparent_balance: 100_000', 'total_ironwood_balance: 99_999']:
+            with self.assertRaises(RuntimeError): modern.recipient_balance(text)
+
+    def test_exact_shielded_amount_and_no_transparent_value_required(self):
+        self.assertEqual(modern.recipient_balance('total_ironwood_balance: 100_000\ntotal_transparent_balance: 0')['total_ironwood_balance'],100000)
+        with self.assertRaises(RuntimeError):
+            modern.recipient_balance('total_ironwood_balance: 100_000\ntotal_transparent_balance: 1')
+
+    def test_command_without_actual_txids_does_not_become_a_submission(self):
+        with self.assertRaises(RuntimeError): modern.object_with('process completed successfully','txids')
+        self.assertEqual(modern.object_with('notice\n{"txids":["actual-parser-value"]}\n','txids')['txids'],['actual-parser-value'])

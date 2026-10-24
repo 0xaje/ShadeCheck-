@@ -57,6 +57,12 @@ flowchart TD
     Rules --> Policy["PASS / WARN / FAIL + CI exit code"]
 ```
 
+## Evidence privacy and useful policies
+
+Fresh recordings use per-run keyed session identifiers and omit arbitrary broadcast response text. Local evidence files are private by default on POSIX; metadata remains sensitive and public export requires explicit acknowledgement. See [evidence handling](docs/evidence-privacy.md).
+
+Select requirements that match your actual observer and workflow. A finding is not automatically a newly discovered vulnerability. See [rule applicability and developer actions](docs/rule-applicability.md).
+
 ## Run the real system
 
 Requirements: Git, Python 3.11+, and Docker Desktop with Linux containers (or Docker Engine/Compose on Linux). Start Docker and require both Client and Server in `docker version`.

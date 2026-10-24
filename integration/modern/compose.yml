@@ -1,7 +1,7 @@
 name: shadecheck-modern-regtest
 services:
   zebra:
-    image: zfnd/zebra:7.0.0
+    image: zfnd/zebra:7.0.0@sha256:a70d2be8ffef3a4b6e37355724e36a0e6c1838e46baa28bfb216739f00cf2d34
     platform: linux/amd64
     environment:
       ZEBRA_NETWORK__NETWORK: Regtest
@@ -15,7 +15,7 @@ services:
       - "127.0.0.1:29032:18232"
     networks: [regtest]
   zaino:
-    image: zingodevops/zainod:0.10.1-no-tls
+    image: zingodevops/zainod:0.10.1-no-tls@sha256:c8428a39d510fd59a9182a5e19cf473d6af6a4b6a672aff8b1a690e9c23c17b9
     platform: linux/amd64
     environment:
       ZAINO_BACKEND: fetch

@@ -17,6 +17,9 @@ def export(suite, output, run_url, commit, *, acknowledge_public_evidence=False)
     if not re.fullmatch(r'[0-9a-f]{40}',commit):
         raise ValueError('A full source commit SHA is required')
     payload, files = snapshot(suite)
+    environment = json.loads((Path(suite) / "environment.json").read_text())
+    if environment.get("chain") != "regtest":
+        raise ValueError("Public exporter accepts only reviewed controlled regtest suites")
     payload['suite']['source']={'run_url':run_url,'commit':commit,'kind':'recorded-regtest-acceptance'}
     output=Path(output)
     output.mkdir(parents=True,exist_ok=False)

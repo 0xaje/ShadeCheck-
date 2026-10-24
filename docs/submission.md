@@ -29,3 +29,7 @@ Import this GitHub repository into your Vercel account (or redeploy its existing
 Check the deployment URL Vercel actually assigns; no deployed URL is assumed or fabricated in this repository. Open `/api/data`, inspect source commit/run metadata, download a report and the run ZIP, and run offline validation on the extracted suite. The static site is not a hosted execution service. Use `shadecheck dashboard --enable-runner --project .` for local controlled execution, or fork/run the existing GitHub Actions workflow for fresh remote execution.
 
 The committed recorded export was generated and browser-tested by the source CI run documented in RELEASE_VALIDATION.md. Regenerate exports from a new verified suite when replacing its recorded data; do not hand-author findings or status values.
+
+## Public evidence review
+
+The exporter now requires `--acknowledge-public-evidence` and a validated controlled regtest suite. Read [evidence handling](evidence-privacy.md), review the full artifact inventory, and publish only disposable local test data. Public downloads intentionally retain original bytes; this is not an automatic redaction service.

@@ -12,6 +12,22 @@ The [current-release funded-wallet gate](modern-wallet.md) passed [run 400999047
 
 This unmodified upstream source build explicitly uses local test transport, not default production mixnet transport. Its SC-002 coverage stays separate from the five-family regression suite. The historical checks below remain an audit record, not claims that their older components are the recommended current production stack.
 
+## Merged-code validation
+
+PR #2 merged as `bbbbd166279edcbb92819dddaac6dc2443d6432e`. All three real execution gates passed again on that merged code:
+
+- [Five-family acceptance, consumer gates, installed wheel and browser/local-runner checks](https://github.com/0xaje/ShadeCheck-/actions/runs/40100737822).
+- [Current funded Zingo / Zebra / Zaino execution](https://github.com/0xaje/ShadeCheck-/actions/runs/40100737831).
+- [Historical independent Zingo synchronization compatibility](https://github.com/0xaje/ShadeCheck-/actions/runs/40100737844).
+
+The merged code also passed unit and protocol-conformance workflows. The later documentation-only update records these outcomes and pins the consumer Action example; it does not change the tested implementation or replace the separately sourced recorded artifacts.
+
+## Public deployment verification — October 24
+
+The production site at https://shade-check-nu.vercel.app/ was verified after merging PR #2. Its provenance points to acceptance run 40081554868 and source `74d2f8f199ed2b631c899aef8a25c722f4deeee4`; its API serves 24 saved reports. All 115 public downloads, including the original run ZIP, were fetched and compared byte-for-byte with the validated export. The run ZIP SHA-256 is `b8e14c9fa607b84dc25858a4195bc2cf84bc4f6b9693ba006a34a1a47c4912da`.
+
+This is a public recorded-evidence viewer. Fresh execution remains available through the local CLI/runner and the repository's real CI workflows. The current funded-wallet archive is a separate documented CI record under `examples/modern`.
+
 ---
 
 ## Historical submission-hardening validation — October 21, 2026
@@ -41,11 +57,11 @@ The downloaded CI artifact was independently audited: 24 reports and 112 hashed 
 - Added opt-in loopback execution of fixed regtest commands with actual logs, single-job concurrency, timeout/termination, and validation before report download.
 - Rewrote submission claims to preserve the actual observer, adapter, integrity, and coverage boundaries.
 
-## Remaining human/account checks
+## Historical human/account checks at the time of the October 21 record
 
 A Windows user should pull/install and exercise the new local runner on their own Docker Desktop installation. The earlier core acceptance suite was verified on Windows; this newer runner has been verified in Linux CI, not represented as already tested on the user's Windows machine.
 
-A Vercel deployment URL has not been verified from this environment. The repository contains the complete static public export and configuration. Deploy in the account that owns the project, then test that assigned URL and downloads.
+At the time of this historical record, a Vercel deployment URL had not been verified from this environment. The October 24 verification above supersedes that deployment check. The repository contains the complete static public export and configuration. Deploy in the account that owns the project, then test that assigned URL and downloads.
 
 Record the submission video and complete the organizer's submission form using the reviewed code/data. Keep evidence labelled recorded where applicable. Configure required checks in a consumer repository to enforce merge restrictions; ShadeCheck does not approve or merge PRs itself.
 

@@ -144,7 +144,7 @@ Your integration test must first exercise its client through the ShadeCheck obse
 - uses: actions/checkout@v4
 # Run your integration test through the observer and capture events.jsonl first.
 - name: Evaluate captured broadcast evidence
-  uses: 0xaje/ShadeCheck-@main # Pin a reviewed release commit for reproducible use.
+  uses: 0xaje/ShadeCheck-@bbbbd166279edcbb92819dddaac6dc2443d6432e # Reviewed integration revision.
   with:
     events: out/client/events.jsonl
     rules: SC-002

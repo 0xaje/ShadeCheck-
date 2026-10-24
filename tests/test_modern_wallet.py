@@ -1,6 +1,7 @@
 """Synthetic parser boundaries; these tests are not wallet execution evidence."""
 import importlib.util
 from pathlib import Path
+from unittest.mock import patch
 import unittest
 
 spec=importlib.util.spec_from_file_location('modern_wallet',Path(__file__).resolve().parents[1]/'scripts/modern_wallet.py')
@@ -16,6 +17,13 @@ class ModernWalletBoundaries(unittest.TestCase):
         self.assertEqual(modern.recipient_balance('total_ironwood_balance: 100_000\ntotal_transparent_balance: 0')['total_ironwood_balance'],100000)
         with self.assertRaises(RuntimeError):
             modern.recipient_balance('total_ironwood_balance: 100_000\ntotal_transparent_balance: 1')
+
+    def test_public_testnet_label_cannot_bypass_regtest_genesis_guard(self):
+        with patch.object(modern,'node',side_effect=[{'chain':'test'},'public-testnet-genesis']):
+            with self.assertRaisesRegex(ValueError,'regtest genesis'): modern.wait_node()
+        info={'chain':'test','blocks':0}
+        with patch.object(modern,'node',side_effect=[info,modern.REGTEST_GENESIS]):
+            self.assertEqual(modern.wait_node(),info)
 
     def test_command_without_actual_txids_does_not_become_a_submission(self):
         with self.assertRaises(RuntimeError): modern.object_with('process completed successfully','txids')

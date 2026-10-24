@@ -1,0 +1,7 @@
+# Fixed credentials are only for the isolated unauthenticated regtest validator.
+# Zaino deliberately forbids password fields in environment variables.
+backend = "fetch"
+network = "Regtest"
+[validator_settings]
+validator_user = "local-regtest-only"
+validator_password = "local-regtest-only"

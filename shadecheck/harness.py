@@ -214,7 +214,6 @@ def live_sc002_probe(endpoint, transaction, timeout_seconds=30):
                 "mempool_match": False,
                 "payload_sha256": fingerprint,
                 "backend_error_code": response.errorCode,
-                "backend_error_message": response.errorMessage,
             }
 
         matched = False
@@ -233,6 +232,5 @@ def live_sc002_probe(endpoint, transaction, timeout_seconds=30):
             "mempool_match": matched,
             "payload_sha256": fingerprint,
             "backend_error_code": response.errorCode,
-            "backend_error_message": response.errorMessage,
             "timeout_seconds": timeout_seconds,
         }

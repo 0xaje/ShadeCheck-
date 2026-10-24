@@ -5,6 +5,7 @@ import sys
 import time
 import uuid
 import regtest as backend
+from shadecheck.privacy import private_write
 import sync_pattern
 from shadecheck.core import canonical, load_events
 
@@ -76,7 +77,7 @@ def main():
         request = next(e for e in events if e["method"] == "SendTransaction" and e["phase"] == "request")
         partial = root / "broadcast-request-snapshot"
         partial.mkdir()
-        (partial / "events.jsonl").write_text("\n".join(canonical(e) for e in events[:request["sequence"]]) + "\n")
+        private_write(partial / "events.jsonl", "\n".join(canonical(e) for e in events[:request["sequence"]]) + "\n")
         backend.write_json(partial / "provenance.json", {
             "kind": "actual-event-prefix", "source_events": str(source / "events.jsonl"),
             "source_evidence_root": events[-1]["event_hash"], "last_sequence": request["sequence"],
@@ -87,7 +88,7 @@ def main():
         save(partial, severity_baseline)
         full = root / "broadcast-full-observation"
         full.mkdir()
-        (full / "events.jsonl").write_text("\n".join(canonical(e) for e in events) + "\n")
+        private_write(full / "events.jsonl", "\n".join(canonical(e) for e in events) + "\n")
         backend.write_json(full / "provenance.json", {"kind": "actual-event-copy", "source_events": str(source / "events.jsonl"),
                                                      "source_evidence_root": events[-1]["event_hash"]})
         cli(["test", "--events", str(full / "events.jsonl"), "--output", str(full / "report.json")], 1)

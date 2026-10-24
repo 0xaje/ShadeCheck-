@@ -320,7 +320,7 @@ def prove():
                 stub = rpc.CompactTxStreamerStub(channel)
                 response = stub.SendTransaction(pb.RawTransaction(data=data), timeout=15)
                 if response.errorCode != 0:
-                    raise RuntimeError(f"Backend rejected the real transaction: {response.errorCode} {response.errorMessage}")
+                    raise RuntimeError(f"Backend rejected the real transaction: {response.errorCode}")
                 height = observe_matching_mempool(stub, data)
                 if height != 0:
                     raise RuntimeError("Returned transaction is not reported as mempool data")

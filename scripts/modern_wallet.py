@@ -212,6 +212,9 @@ def main():
     directory=ROOT/'out/modern'/run_id
     private=ROOT/'.shadecheck/modern-wallets'/run_id
     observed=private/'observed'
+    # Both controls must be created offline at the same birthday before mining.
+    # A new online wallet otherwise chooses a tip-relative birthday.
+    wallet(binary,private/'direct','new_address','o')
     miner=object_with(wallet(binary,observed,'new_taddress_allow_gap'),'encoded_address')['encoded_address']
     if not re.fullmatch(r't[0-9A-Za-z]{30,60}',miner): raise ValueError('Invalid local mining receiver')
     env={**os.environ,'SHADECHECK_MODERN_MINER':miner}

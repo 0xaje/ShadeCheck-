@@ -1,5 +1,6 @@
 """Security boundaries with synthetic inputs, never runtime acceptance evidence."""
 import hashlib
+import json
 import importlib.util
 import os
 from pathlib import Path
@@ -10,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 import grpc
 from shadecheck.core import Recorder, load_events, evaluate
 from shadecheck.generated import service_pb2 as pb, service_pb2_grpc as rpc
-from shadecheck.harness import start_server
+from shadecheck.harness import start_server, live_sc002_probe
 from shadecheck.privacy import private_write
 
 
@@ -65,6 +66,9 @@ class EvidencePrivacy(unittest.TestCase):
                     with grpc.insecure_channel(f'127.0.0.1:{port}') as channel:
                         result=rpc.CompactTxStreamerStub(channel).SendTransaction(pb.RawTransaction(data=b'synthetic'),timeout=5)
                         self.assertIn('secret-sentinel',result.errorMessage)
+                    probe=live_sc002_probe(f'127.0.0.1:{port}',b'synthetic',1)
+                    self.assertFalse(probe['accepted'])
+                    self.assertNotIn('sentinel',json.dumps(probe))
                 finally: observer.stop(0).wait();recorder.close()
             events=load_events(recorder.path)
             self.assertEqual(events[-1]['metadata']['error_code'],7)

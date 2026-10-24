@@ -122,7 +122,7 @@ def exercise(directory, config_path, hardened):
         client = rpc.CompactTxStreamerStub(channel)
         response = client.SendTransaction(pb.RawTransaction(data=raw), timeout=15)
         if response.errorCode != 0:
-            raise RuntimeError(f"Verifier rejected payment bytes: {response.errorMessage}")
+            raise RuntimeError(f"Verifier rejected payment bytes: {response.errorCode}")
         backend.observe_matching_mempool(client, raw)
         in_pool = txid in backend.node("getrawmempool")
         matches = bytes.fromhex(backend.node("getrawtransaction", txid)) == raw
@@ -133,7 +133,7 @@ def exercise(directory, config_path, hardened):
             "decoded_transaction": decoded, "decoded_structure": structure,
             "payment_policy": POLICY, "wallet_privacy_policy": privacy,
             "node_mempool_contains_txid": in_pool, "node_raw_transaction_matches": matches,
-            "send_response_code": response.errorCode, "send_response_message": response.errorMessage,
+            "send_response_code": response.errorCode,
             "payload_sha256": hashlib.sha256(raw).hexdigest(),
             "construction": "real local zcashd wallet, locally accepted before first verifier submission",
             "lightwalletd_revision": backend.lightd_info().gitCommit,

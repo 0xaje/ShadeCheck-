@@ -34,13 +34,22 @@ python3 -m venv .venv
 ./.venv/bin/python -m pip install .
 ```
 
-The commands below use `python` as shorthand for your new environment's Python. On PowerShell substitute `.\.venv\Scripts\python.exe`; on Bash substitute `./.venv/bin/python`. Activation is optional.
+The first-run commands below use the environment's Python explicitly; activation is unnecessary. In the deeper integration guide, `python` means this same environment's interpreter.
 
 ## 2. Inspect real recorded wallet evidence first
 
+PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m zipfile -e examples/modern/recorded-regtest-20261024.zip out/modern-recorded
+.\.venv\Scripts\python.exe scripts/modern_wallet.py --verify out/modern-recorded/20261024T135437-8bcfe43c
+```
+
+Bash/WSL:
+
 ```bash
-python -m zipfile -e examples/modern/recorded-regtest-20261024.zip out/modern-recorded
-python scripts/modern_wallet.py --verify out/modern-recorded/20261024T135437-8bcfe43c
+./.venv/bin/python -m zipfile -e examples/modern/recorded-regtest-20261024.zip out/modern-recorded
+./.venv/bin/python scripts/modern_wallet.py --verify out/modern-recorded/20261024T135437-8bcfe43c
 ```
 
 Expect `MODERN WALLET ARTIFACTS VERIFIED`. Open that directory's `report.html`. The two HIGH SC-002 findings describe observable broadcasts in explicit upstream local test transport. Verification success means saved evidence recomputed correctly; it does not mean the privacy report passed or that a fresh wallet ran on your computer. [Exact source CI and limits](../examples/modern/README.md).
@@ -51,9 +60,18 @@ If you want to inspect the baseline-to-regression decision without Docker, the [
 
 Start Docker Desktop with Linux containers, or Docker Engine with Compose v2. Then:
 
+PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m shadecheck.cli doctor
+.\.venv\Scripts\python.exe scripts/developer_walkthrough.py
+```
+
+Bash/WSL:
+
 ```bash
-python -m shadecheck.cli doctor
-python scripts/developer_walkthrough.py
+./.venv/bin/python -m shadecheck.cli doctor
+./.venv/bin/python scripts/developer_walkthrough.py
 ```
 
 `doctor` must report READY. This checks prerequisites only. The walkthrough starts the dedicated frozen regression backend, checks its regtest network, then runs a separate client process outside the checkout. The initial image build can take several minutes; keep the terminal open. It uses actual locally generated blocks and no public funds. No new transaction or wallet integration is claimed by this range-client example.

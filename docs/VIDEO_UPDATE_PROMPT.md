@@ -1,42 +1,29 @@
-# Antigravity prompt: update the submitted ShadeCheck video
+# Paste this prompt into Antigravity
 
-Edit the existing ShadeCheck footage. Do not invent application screens, command output, findings or transaction data. Generate the voiceover in your existing voice workflow and import the resulting audio into the edit. Keep the final exported video at or below 120 seconds, landscape 1080p, with readable UI and quiet or absent music. Preserve the existing problem, real evidence, controlled comparison and baseline scenes. Shorten navigation pauses to make room for the update.
+Prepare the final ShadeCheck hackathon video using this repository's `docs/VIDEO_RECORDING_GUIDE.md` as the single authoritative script. It contains the exact 0:00–2:00 timeline, narration, real evidence sources and files to show. Replace earlier scripts rather than appending extra narration.
 
-## Replace the old independent-client segment
+## Inputs and truth boundary
 
-Replace the segment showing only the historical unfunded Zingo sync with approximately 22 seconds of actual current funded-wallet evidence. Use screen captures from this completed CI run and the original saved artifacts:
+Use the existing genuine ShadeCheck screen recording, supplemented by actual captures of the documented reports and completed CI jobs. Locate the user's existing footage in the editing workspace. If required footage is unavailable, identify the missing scene and request the real asset; do not generate substitute application screens or pretend a render is finished.
 
-- https://github.com/0xaje/ShadeCheck-/actions/runs/40099904709
-- Job: modern; step: Real funded wallet receive and send through observer.
-- The actual final log says CURRENT INDEPENDENT WALLET RECEIVE/SEND VERIFIED and strict SC-002 HIGH. This is a previously completed CI run, not live execution during the video.
-- Original artifact instructions: examples/modern/README.md in the repository.
+Generate the narration through your available voice workflow, save/import the actual audio and align it to the scenes. The user does not need to record their own voice. Keep the voice clear and natural. Do not claim voice generation succeeded unless an actual audio file exists.
 
-Screen sequence:
+The developer walkthrough, funded wallet and public acceptance viewer are separate real records. Preserve their labels and source boundaries. The protocol client's changed seven-block request is not a modification to Zingo. The funded wallet gate evaluates SC-002 using explicit upstream local test transport, not the default production mixnet. Green CI means expected outcomes were verified, including deliberate policy failures.
 
-1. Show the successful CI job and the real shielding/sending verification lines. Caption: “Recorded real CI · Zebra 7 / Zaino 0.10.1 / Zingolib 7”. The release is the source release; do not claim the binary's CLI version is 7.
-2. Show the extracted recipient-receipt.json: total_ironwood_balance 100000, total_transparent_balance 0, completed scan. Caption: “Real recipient receipt · 100,000 shielded zatoshis”.
-3. Show the original report.json or report.html: two HIGH SC-002 findings, privacy FAIL. Caption: “Observable broadcasts · strict exit 1”. Keep “Explicit upstream local test transport” visible for the segment.
+## Edit
 
-Exact narration:
+1. Extract and verify both committed evidence archives using the master guide. Capture their original generated reports and the actual completed CI output.
+2. Reuse valid existing footage. Replace the old sync-only wallet segment with the current funded workflow; make the baseline → unchanged → changed-request → CI decision visible.
+3. Follow the master guide's exact narration and sequence. Generate the voice and measure its actual duration before finalizing timing. The script is approximately 203 words; this is not a guarantee of voice length.
+4. Use a clean 16:9 layout at 1920×1080. Keep code and findings readable; use restrained transitions and short captions. Do not obscure evidence with large titles. Music should be absent or quiet under speech.
+5. Label historical/CI captures “Recorded real execution”. Label any edited wait “Wait shortened”. If a fresh test is shown, preserve the real action and its own result.
+6. Keep the wallet caption “Explicit upstream local test transport · SC-002” visible for that segment. Keep “Controlled protocol client” visible in the developer-example segment.
+7. End with the repository and public demo links, and the scoped anonymity boundary from the script.
 
-“An unmodified Zingo release now shields real regtest funds and sends a shielded payment on Zebra and Zaino. The recipient verifies receipt. ShadeCheck detects both observable broadcasts and enforces strict failure. This uses upstream’s explicit local test transport.”
+Do not add a privacy score, token animation, fake live scan, anonymity guarantee, invented receipt, adoption claim or claim of a newly discovered production wallet vulnerability. Do not show seeds, wallet files, spending/viewing keys, credentials or unrelated accounts. The unfamiliar-reader exercise is still unperformed; do not claim a user study or external adoption.
 
-If the original video already contains this exact funded integration and its correct scope, do not replace it just to change aesthetics.
+## Output and verification
 
-## Preserve the claim boundaries
+Export an actual MP4 with a total duration at or below 120 seconds, including the end card and transitions. Check the final file's measured duration, audio intelligibility, readable evidence and truthful scene transitions. Keep the editing project, actual voice audio and original footage. Report the output file's real location and measured duration; if export fails, report the failure instead of a success message.
 
-The public dashboard shows the separate recorded five-rule acceptance suite. Do not imply its 24 reports were all generated by this one Zingo trace. The funded wallet gate evaluates SC-002 only. Green CI means its expected outcomes were verified; privacy FAIL means the selected observed behavior violates the test requirement. This does not identify a person, discover a new production wallet vulnerability, or test Zingo's default production mixnet transport.
-
-Finish with: “Privacy CI for Zcash applications. Passing ShadeCheck does not establish anonymity.” Label any edited wait “Wait shortened”. Do not expose wallet files, seeds, keys, browser credentials or unrelated accounts. Do not add a privacy score, anonymity guarantee, token animation or fake live scan button.
-
-## Delivery and submission
-
-Export MP4, confirm duration at or below two minutes, and watch the whole file for readability and truthful transitions. Upload the revised video if needed. If changing the hackathon video URL or description, press SUBMIT again after editing; the supplied form says saving a draft alone removes submitted status. Repository-only changes do not themselves change that form. Add the actual ShadeCheck video URL to README after it is supplied; never reuse another project's video.
-
-## Make the developer decision visible
-
-The new developer walkthrough in docs/GETTING_STARTED.md can replace the older generic local sync-comparison scene. Capture an actual completed local run, or clearly label its completed CI record as recorded evidence. Show the declared 20-block historical batching policy, the compliant baseline, a fresh unchanged request with zero regressions, and the changed seven-block request with SC-001 plus one SC-005 regression. Use the original generated reports; do not type statuses into an animation.
-
-Suggested short narration: “Our example client promises fixed historical block batches. An unchanged run passes. A narrower request violates that requirement, and the baseline comparison catches the regression. CI returns failure with inspectable evidence.”
-
-Keep a caption saying “Controlled protocol client · declared range policy”. This is separate from the funded Zingo test; do not claim the range-client change modified Zingo. Fetching additional blocks has a cost, and the example policy needs exceptions for tip, reorg and resume workflows. Preserve the two-minute total by shortening navigation and pauses. The independent reader exercise remains unperformed until a real unfamiliar person completes it.
+Suggested video title: “ShadeCheck — Privacy CI for Zcash Applications”. Use the real uploaded ShadeCheck URL; never reuse another project's video. If the submission form's video link or description changes, the user must press SUBMIT again rather than only saving a draft.

@@ -10,7 +10,7 @@ The implementation has a five-family controlled regression suite and a separate 
 
 ## Demonstration
 
-Use the [step-by-step recording guide](VIDEO_RECORDING_GUIDE.md), with the [current funded-wallet replacement segment](VIDEO_UPDATE_PROMPT.md). It includes the deployed recorded-evidence viewer, exact filters, a fresh local sync comparison, saved baseline navigation, the verified independent Zingo sync experiment, narration, captions, and recording checks. Keep the opening brief and prioritize inspectable evidence.
+Use the [final two-minute master recording guide](VIDEO_RECORDING_GUIDE.md) and matching [Antigravity editing prompt](VIDEO_UPDATE_PROMPT.md). The story is a declared developer requirement, a real baseline and changed request, an enforceable consumer CI decision, separate funded-wallet evidence, and inspectable public reports. The guide contains one exact narration and scene sequence; it replaces the historical sync-only script.
 
 ## Claims that are supported
 
@@ -36,7 +36,7 @@ Use the [step-by-step recording guide](VIDEO_RECORDING_GUIDE.md), with the [curr
 3. Revalidate the saved output offline with `python scripts/acceptance.py --verify PATH`.
 4. Run the documented consumer Action against captured real evidence; positive and negative tests must preserve exit codes.
 
-Video, screenshots, and website must all refer to the same reviewed release commit/evidence run. Keep test keys local. Do not use real users' metadata as demo content.
+Each scene must identify its own verified source record and scope. The protocol-client walkthrough, funded-wallet gate and public five-family snapshot are separate runs at documented revisions; do not present them as one wallet trace. Keep test keys local. Do not use real users' metadata as demo content.
 
 ## Narration and navigation
 

@@ -25,6 +25,8 @@ def _read_hex_transaction(path):
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="shadecheck")
     commands = parser.add_subparsers(dest="command", required=True)
+    doctor = commands.add_parser("doctor", help="Check local Python, Docker Linux engine and Compose prerequisites without starting services")
+    doctor.add_argument("--json", action="store_true", dest="as_json")
     test = commands.add_parser("test", help="Evaluate captured evidence or execute a local protocol fixture probe")
     source = test.add_mutually_exclusive_group(required=True)
     source.add_argument("--events")
@@ -76,6 +78,17 @@ def main(argv=None):
     demo.add_argument("--suite", help="Completed acceptance directory")
     args = parser.parse_args(argv)
     try:
+        if args.command == "doctor":
+            from .doctor import inspect
+            result = inspect()
+            if args.as_json:
+                print(canonical(result))
+            else:
+                print("Local setup: " + result["status"])
+                for check in result["checks"]:
+                    print(("OK: " if check["ok"] else "BLOCKED: ") + check["name"] + " — " + check["detail"])
+                print(result["scope"])
+            return 0 if result["status"] == "READY" else 2
         if args.command == "demo":
             from .demo import run_demo
             return run_demo(args.suite)

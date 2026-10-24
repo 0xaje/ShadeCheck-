@@ -72,6 +72,7 @@ From the cloned repository in Windows PowerShell:
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\python.exe -m pip install .
+.\.venv\Scripts\python.exe -m shadecheck.cli doctor
 .\.venv\Scripts\python.exe scripts/acceptance.py
 ```
 
@@ -81,6 +82,7 @@ Linux/macOS Python commands:
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install .
+python -m shadecheck.cli doctor
 python scripts/acceptance.py
 ```
 
@@ -104,6 +106,10 @@ The dashboard shows report filters, findings, source events, baseline changes, r
 To run actual controlled tests from the local dashboard, use `shadecheck dashboard --enable-runner --project .` with Docker running. It launches fixed sync/acceptance drivers, shows actual logs/status, validates the new reports, and exposes their downloads. No arbitrary scan targets or shell commands are accepted. Default and public static views remain recorded-evidence viewers.
 
 [Dashboard guide](docs/dashboard.md)
+
+## Current-release wallet integration
+
+The [Zebra/Zaino funded-wallet gate](docs/modern-wallet.md) targets the pinned current Zingo release with an explicit upstream local transport test feature. Its workflow must verify funding, shielding, sending, receipt and strict SC-002 evidence before a completed gate is claimed. See its exact pins, coverage and execution status; the older five-family regression backend remains a separate compatibility target.
 
 ## Five initial rule families
 

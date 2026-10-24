@@ -32,3 +32,11 @@ Finish with: “Privacy CI for Zcash applications. Passing ShadeCheck does not e
 ## Delivery and submission
 
 Export MP4, confirm duration at or below two minutes, and watch the whole file for readability and truthful transitions. Upload the revised video if needed. If changing the hackathon video URL or description, press SUBMIT again after editing; the supplied form says saving a draft alone removes submitted status. Repository-only changes do not themselves change that form. Add the actual ShadeCheck video URL to README after it is supplied; never reuse another project's video.
+
+## Make the developer decision visible
+
+The new developer walkthrough in docs/GETTING_STARTED.md can replace the older generic local sync-comparison scene. Capture an actual completed local run, or clearly label its completed CI record as recorded evidence. Show the declared 20-block historical batching policy, the compliant baseline, a fresh unchanged request with zero regressions, and the changed seven-block request with SC-001 plus one SC-005 regression. Use the original generated reports; do not type statuses into an animation.
+
+Suggested short narration: “Our example client promises fixed historical block batches. An unchanged run passes. A narrower request violates that requirement, and the baseline comparison catches the regression. CI returns failure with inspectable evidence.”
+
+Keep a caption saying “Controlled protocol client · declared range policy”. This is separate from the funded Zingo test; do not claim the range-client change modified Zingo. Fetching additional blocks has a cost, and the example policy needs exceptions for tip, reorg and resume workflows. Preserve the two-minute total by shortening navigation and pauses. The independent reader exercise remains unperformed until a real unfamiliar person completes it.

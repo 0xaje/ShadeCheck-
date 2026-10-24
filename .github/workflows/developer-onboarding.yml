@@ -1,0 +1,80 @@
+name: Real developer onboarding and consumer gates
+on:
+  push:
+    paths:
+      - 'examples/range-client/**'
+      - 'scripts/developer_walkthrough.py'
+      - '.github/workflows/developer-onboarding.yml'
+      - 'shadecheck/**'
+      - 'action.yml'
+      - 'pyproject.toml'
+      - 'docs/GETTING_STARTED.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  onboarding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build wheel and install into a clean consumer environment
+        run: |
+          python -m pip wheel . --wheel-dir "$RUNNER_TEMP/shadecheck-wheels"
+          python -m venv "$RUNNER_TEMP/shadecheck-consumer"
+          "$RUNNER_TEMP/shadecheck-consumer/bin/python" -m pip install --no-index --find-links "$RUNNER_TEMP/shadecheck-wheels" shadecheck
+      - name: Check clean consumer prerequisites
+        run: '"$RUNNER_TEMP/shadecheck-consumer/bin/python" -m shadecheck.cli doctor --json'
+      - name: Execute external client baseline and changed behavior on real blocks
+        run: '"$RUNNER_TEMP/shadecheck-consumer/bin/python" scripts/developer_walkthrough.py --output out/onboarding-ci'
+      - name: Recompute original evidence without new RPCs
+        run: '"$RUNNER_TEMP/shadecheck-consumer/bin/python" scripts/developer_walkthrough.py --verify out/onboarding-ci'
+      - name: Compliant consumer gate must pass
+        uses: ./
+        with:
+          events: out/onboarding-ci/unchanged-run/events.jsonl
+          config: out/onboarding-ci/policy.json
+          baseline: out/onboarding-ci/baseline.json
+          rules: SC-001
+          output-dir: out/onboarding-action-pass
+      - name: Changed consumer gate must fail
+        uses: ./
+        id: changed
+        continue-on-error: true
+        with:
+          events: out/onboarding-ci/changed-run/events.jsonl
+          config: out/onboarding-ci/policy.json
+          baseline: out/onboarding-ci/baseline.json
+          rules: SC-001
+          output-dir: out/onboarding-action-fail
+      - name: Require a real policy failure and regression, not an execution error
+        env:
+          ACTUAL_OUTCOME: ${{ steps.changed.outcome }}
+          ACTUAL_STATUS: ${{ steps.changed.outputs.status }}
+          ACTUAL_EXIT: ${{ steps.changed.outputs.exit-code }}
+        run: |
+          test "$ACTUAL_OUTCOME" = failure
+          test "$ACTUAL_STATUS" = FAIL
+          test "$ACTUAL_EXIT" = 1
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('out/onboarding-action-fail/report.json').read_text())
+          assert {f['rule_id'] for f in r['findings']} == {'SC-001','SC-005'}
+          assert r['baseline_comparison']['regressions'] == 1
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-developer-onboarding
+          path: |
+            out/onboarding-ci/
+            out/onboarding-action-pass/
+            out/onboarding-action-fail/
+          retention-days: 30
+      - name: Stop dedicated regression backend, preserving local data
+        if: always()
+        run: docker compose -f integration/compose.yml down

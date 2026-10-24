@@ -88,3 +88,11 @@ files/keys are included. Full scope and reproduction: [Zingo integration](zingo-
 The observer change also passed the existing [real MVP acceptance workflow](https://github.com/0xaje/ShadeCheck-/actions/runs/39597614943),
 including real backend scenarios and dashboard/browser checks. This new separate
 integration does not replace or merge the original 24-report acceptance snapshot.
+
+## Developer onboarding and useful CI decision — October 24
+
+[Real onboarding run 40103273814](https://github.com/0xaje/ShadeCheck-/actions/runs/40103273814), source `a21f4ed8f46e70d704477e9e90467b11fcbcc0b1`, built an actual wheel, installed it into a fresh consumer virtual environment and ran a separate client process outside the checkout. The client exercised actual local block retrieval through ShadeCheck; all 47 returned block responses were checked against the canonical node. Fifty events were captured across three independent traces.
+
+A compliant baseline and fresh unchanged request both returned PASS/strict exit 0. The changed seven-block request returned SC-001 FAIL/exit 1; compatible baseline comparison returned one SC-005 regression. Both consumer Actions were executed, and the negative gate required exact exit 1 plus the expected SC-001 and SC-005 findings. Execution errors could not satisfy the negative gate.
+
+The original archive was downloaded, SHA-256 checked and revalidated offline; [evidence and provenance](../examples/range-client/README.md#original-recorded-onboarding-proof). All 59 local unit/boundary checks passed. New offline boundary tests replay the original real CI evidence and reject unknown manifest versions, unlisted nested files and altered receipts/comparisons even when their inventory hashes are updated. The example demonstrates a declared completed-range policy; it does not validate a full wallet algorithm or justify this policy for every architecture. Independent unfamiliar-reader testing remains explicitly unperformed; [exercise and recording instructions](ONBOARDING_REVIEW.md).

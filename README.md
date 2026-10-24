@@ -29,7 +29,9 @@ A transaction can be correctly shielded while application requests still expose 
 | What you want to do | Where to go |
 | --- | --- |
 | Explore findings immediately | [Open the public evidence viewer](https://shade-check-nu.vercel.app/) — saved real regtest reports; no setup required |
-| Execute fresh tests | [Run locally](#run-the-real-system) with Python and Docker |
+| Try the first developer workflow | [Getting started](docs/GETTING_STARTED.md): saved proof or fresh baseline → unchanged → changed-request test |
+| Connect your client and enforce CI | [Observer, requirement and consumer integration](docs/CLIENT_INTEGRATION.md) |
+| Execute the full five-family suite | [Run locally](#run-the-real-system) with Python and Docker |
 | Check what was actually verified | [Acceptance audit](docs/acceptance.md) and [validation record](docs/RELEASE_VALIDATION.md) |
 | Inspect an independent client integration | [Current funded Zingo / Zebra / Zaino test](docs/modern-wallet.md) and [original evidence](examples/modern/README.md) |
 | Understand the limits | [Threat model](docs/threat-model.md), [rule applicability](docs/rule-applicability.md), and [submission review](docs/JUDGE_REVIEW.md) |
@@ -62,6 +64,10 @@ flowchart TD
 Fresh recordings use per-run keyed session identifiers and omit arbitrary broadcast response text. Local evidence files are private by default on POSIX; metadata remains sensitive and public export requires explicit acknowledgement. See [evidence handling](docs/evidence-privacy.md).
 
 Select requirements that match your actual observer and workflow. A finding is not automatically a newly discovered vulnerability. See [rule applicability and developer actions](docs/rule-applicability.md).
+
+## First developer workflow
+
+Follow [getting started](docs/GETTING_STARTED.md) for Windows and Bash commands, expected outputs and troubleshooting. A separate example client retrieves real completed block ranges through the observer. The walkthrough validates a compliant baseline, a fresh unchanged run and an actual changed request, then asserts the resulting policy and regression exits. The [real onboarding CI](.github/workflows/developer-onboarding.yml) installs a wheel into a clean environment and tests the consumer Action against those traces. [Real onboarding CI](https://github.com/0xaje/ShadeCheck-/actions/runs/40103273814) passed; its [original evidence](examples/range-client/README.md#original-recorded-onboarding-proof) is committed for offline inspection. This is automated clean-environment validation, not a claim of independent user adoption.
 
 ## Run the real system
 

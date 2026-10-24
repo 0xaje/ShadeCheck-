@@ -105,11 +105,19 @@ def recipient_balance(text):
     return balance
 
 
-def wallet(binary,directory,*command,endpoint=None):
+def wallet(binary,directory,*command,endpoint=None,initialize=False):
     private_directory(directory)
     args=[str(binary),'--chain','regtest','--data-dir',str(directory),'--birthday','1']
     args+=['--server',f'http://{endpoint}','--waitsync'] if endpoint else ['--offline']
-    result=subprocess.run(args+list(command),cwd=directory,capture_output=True,text=True,timeout=360)
+    if initialize:
+        if not endpoint: raise ValueError('Initialize online to persist completion-mode sync settings')
+        args+=['--nosync']
+    try:
+        result=subprocess.run(args+list(command),cwd=directory,capture_output=True,text=True,timeout=360)
+    except subprocess.TimeoutExpired as error:
+        def text(value): return value.decode(errors='replace') if isinstance(value,bytes) else value or ''
+        private_write(directory/'private-failure.log',text(error.stdout)+'\n'+text(error.stderr))
+        raise RuntimeError(f'Zingo command {command[0]} timed out; private diagnostics retained locally') from None
     if result.returncode:
         private_write(directory/'private-failure.log',result.stdout+'\n'+result.stderr)
         categories=[word for word in ['gap','offline','indexer','birthday','panicked','permission','unknown','unrecognized','network','wallet'] if word in (result.stdout+result.stderr).lower()]
@@ -155,6 +163,9 @@ def confirm_transmission(text,stub, *, require_shielded=False):
     block=node('getblock',node('getblockhash',height),1)
     if not set(txids).issubset(set(block['tx'])): raise RuntimeError('Transmitted wallet transaction not mined')
     for receipt in receipts: receipt['confirmed_height']=height
+    # Upstream wallet default requires three confirmations before spending.
+    node('generate',2)
+    height+=2
     wait_indexer(height)
     return receipts
 
@@ -215,21 +226,29 @@ def main():
     directory=ROOT/'out/modern'/run_id
     private=ROOT/'.shadecheck/modern-wallets'/run_id
     observed=private/'observed'
-    # Both controls must be created offline at the same birthday before mining.
-    # A new online wallet otherwise chooses a tip-relative birthday.
-    wallet(binary,private/'direct','new_address','o')
-    miner=object_with(wallet(binary,observed,'new_taddress_allow_gap'),'encoded_address')['encoded_address']
-    if not re.fullmatch(r't[0-9A-Za-z]{30,60}',miner): raise ValueError('Invalid local mining receiver')
-    env={**os.environ,'SHADECHECK_MODERN_MINER':miner}
+    env=dict(COMPOSE_ENV)
     COMPOSE_ENV.update(env)
     private_directory(directory)
     try:
         print('Starting current Zebra/Zaino local backend...',flush=True)
         run(COMPOSE+['up','-d','zebra'],env=env,timeout=600)
         initial=wait_node()
-        node('generate',110)
-        height=initial['blocks']+110
+        # Establish an unfunded setup tip before creating both controls. The
+        # release persists sync settings at creation; --waitsync on a loaded
+        # offline-created wallet does not override continuous sync settings.
+        if initial['blocks']<100: node('generate',100-initial['blocks'])
+        height=node('getblockchaininfo')['blocks']
         run(COMPOSE+['up','-d','zaino'],env=env,timeout=600)
+        wait_indexer(height)
+        wallet(binary,private/'direct','new_address','o',endpoint=INDEXER,initialize=True)
+        miner=object_with(wallet(binary,observed,'new_taddress_allow_gap',endpoint=INDEXER,initialize=True),'encoded_address')['encoded_address']
+        if not re.fullmatch(r't[0-9A-Za-z]{30,60}',miner): raise ValueError('Invalid local mining receiver')
+        env['SHADECHECK_MODERN_MINER']=miner
+        COMPOSE_ENV.update(env)
+        run(COMPOSE+['up','-d','zebra'],env=env,timeout=600)
+        wait_node()
+        node('generate',110)
+        height+=110
         info=wait_indexer(height)
         print('Checking direct and observed current-release client synchronization...',flush=True)
         direct=sync(binary,private/'direct',INDEXER)
@@ -249,7 +268,7 @@ def main():
             print('Shielding real mined funds through the observed independent wallet...',flush=True)
             shield=confirm_transmission(wallet(binary,observed,'quickshield',endpoint=endpoint),stub)
             sync(binary,observed,endpoint)
-            receiver=object_with(wallet(binary,private/'recipient','new_address','o'),'encoded_address')['encoded_address']
+            receiver=object_with(wallet(binary,private/'recipient','new_address','o',endpoint=INDEXER,initialize=True),'encoded_address')['encoded_address']
             print('Sending real shielded wallet funds through ShadeCheck...',flush=True)
             sent=confirm_transmission(wallet(binary,observed,'quicksend',receiver,'100000',endpoint=endpoint),stub,require_shielded=True)
             recipient=sync(binary,private/'recipient',INDEXER)

@@ -11,8 +11,6 @@ services:
     volumes:
       - ./zebra.toml:/home/zebra/.config/zebrad.toml:ro
       - zebra-data:/home/zebra/.cache/zebra
-    ports:
-      - "127.0.0.1:29032:18232"
     networks: [regtest]
   zaino:
     image: zingodevops/zainod:0.10.1-no-tls@sha256:c8428a39d510fd59a9182a5e19cf473d6af6a4b6a672aff8b1a690e9c23c17b9

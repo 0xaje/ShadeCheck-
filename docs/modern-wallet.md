@@ -38,7 +38,7 @@ cd ../ShadeCheck-
 python scripts/modern_wallet.py --source ../shadecheck-modern-zingo
 ```
 
-The driver uses a distinct Compose project, `shadecheck-modern-regtest`, volumes and localhost ports 29032 (node RPC) and 29067 (indexer). It does not modify the existing regression backend. It may append blocks to its dedicated modern chain on repeat runs. Wallets and private client failure logs stay in `.shadecheck/modern-wallets`, outside `out/modern` artifacts. Local test node RPC is unencrypted and unauthenticated on loopback; this is not a production deployment configuration.
+The driver uses a distinct Compose project, `shadecheck-modern-regtest`, volumes and localhost port 29067 (indexer); node RPC stays internal and the driver queries it through Docker exec. It does not modify the existing regression backend. It may append blocks to its dedicated modern chain on repeat runs. Wallets and private client failure logs stay in `.shadecheck/modern-wallets`, outside `out/modern` artifacts. Local test node RPC is unencrypted and unauthenticated inside its isolated container network, with no published host RPC or P2P port. This is not a production deployment configuration.
 
 The driver sets the miner address only for the child Compose processes. To stop this stack while preserving its local volumes, a placeholder valid regtest address is sufficient for Compose substitution:
 

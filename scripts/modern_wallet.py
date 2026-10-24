@@ -13,7 +13,6 @@ import re
 import subprocess
 import sys
 import time
-import urllib.request
 import uuid
 
 import grpc
@@ -25,7 +24,9 @@ from shadecheck.reporting import render_html
 
 ROOT=Path(__file__).resolve().parents[1]
 COMPOSE=['docker','compose','-f',str(ROOT/'integration/modern/compose.yml')]
+COMPOSE_ENV={**os.environ,'SHADECHECK_MODERN_MINER':'tmSRd1r8gs77Ja67Fw1JcdoXytxsyrLTPJm'}
 INDEXER='127.0.0.1:29067'
+REGTEST_GENESIS='029f11d80ef9765602235e1bc9727e3eb6ba20839319f761fee920d63401e327'
 
 
 def write(path,value):
@@ -55,8 +56,12 @@ def object_with(text,key):
 
 def node(method,*params):
     body=json.dumps({'jsonrpc':'2.0','id':1,'method':method,'params':list(params)}).encode()
-    req=urllib.request.Request('http://127.0.0.1:29032',data=body,headers={'Content-Type':'application/json'})
-    with urllib.request.urlopen(req,timeout=30) as response: value=json.load(response)
+    # Keep validator RPC inside the isolated Docker network. No host RPC port
+    # or public endpoint is needed for mining and independent verification.
+    output=run(COMPOSE+['exec','-T','zebra','curl','--fail','--silent','--show-error',
+                       '--max-time','30','-H','Content-Type: application/json',
+                       '--data-binary',body.decode(),'http://127.0.0.1:18232'],env=COMPOSE_ENV)
+    value=json.loads(output)
     if value.get('error'): raise RuntimeError(f'Zebra RPC {method} failed: {value["error"].get("code")}')
     return value['result']
 
@@ -66,7 +71,10 @@ def wait_node():
     while time.monotonic()<deadline:
         try:
             info=node('getblockchaininfo')
-            if info.get('chain')!='regtest': raise ValueError('Refusing non-regtest chain')
+            # Zebra reports chain='test' for regtest too. Check its unique
+            # genesis rather than accepting the public testnet by that label.
+            if info.get('chain') not in {'regtest','test'} or node('getblockhash',0)!=REGTEST_GENESIS:
+                raise ValueError('Refusing a chain without the pinned regtest genesis')
             return info
         except (OSError,RuntimeError): time.sleep(2)
     raise RuntimeError('Zebra startup timed out')
@@ -207,6 +215,7 @@ def main():
     miner=object_with(wallet(binary,observed,'new_taddress_allow_gap'),'encoded_address')['encoded_address']
     if not re.fullmatch(r't[0-9A-Za-z]{30,60}',miner): raise ValueError('Invalid local mining receiver')
     env={**os.environ,'SHADECHECK_MODERN_MINER':miner}
+    COMPOSE_ENV.update(env)
     private_directory(directory)
     try:
         print('Starting current Zebra/Zaino local backend...',flush=True)

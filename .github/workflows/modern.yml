@@ -56,6 +56,15 @@ jobs:
           key: modern-zingo-${{ runner.os }}-bfb0a215-rust199-v1
       - name: Real funded wallet receive and send through observer
         run: python scripts/modern_wallet.py --source "$RUNNER_TEMP/modern-zingo"
+      - name: Preserve unmodified upstream binary for failed-run diagnosis
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: modern-upstream-cli-diagnostic
+          path: |
+            ${{ runner.temp }}/modern-zingo/target/release/zingo-cli
+            ${{ runner.temp }}/modern-zingo/LICENSE
+          retention-days: 3
       - name: Backend diagnostics
         if: always()
         env:

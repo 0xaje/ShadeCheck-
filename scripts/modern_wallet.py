@@ -85,8 +85,11 @@ def wait_indexer(height):
     while time.monotonic()<deadline:
         try:
             with grpc.insecure_channel(INDEXER) as channel:
-                info=rpc.CompactTxStreamerStub(channel).GetLightdInfo(pb.Empty(),timeout=5)
-            if info.chainName.lower()!='regtest': raise ValueError('Refusing non-regtest indexer')
+                stub=rpc.CompactTxStreamerStub(channel)
+                info=stub.GetLightdInfo(pb.Empty(),timeout=5)
+                genesis=stub.GetBlock(pb.BlockID(height=0),timeout=5)
+            if info.chainName.lower() not in {'test','regtest'} or genesis.hash[::-1].hex()!=REGTEST_GENESIS:
+                raise ValueError('Refusing indexer without the pinned regtest genesis')
             if info.blockHeight>=height: return info
         except grpc.RpcError: pass
         time.sleep(2)
@@ -267,7 +270,8 @@ def main():
         images=json.loads(run(COMPOSE+['images','--format','json'],env=env))
         write(directory/'integration.json',{
             'integration_status':'VERIFIED','network':'regtest','client':{**pin,'binary_sha256':hashlib.sha256(binary.read_bytes()).hexdigest()},
-            'node':node('getnetworkinfo'),'indexer_revision':info.gitCommit,'images':images,
+            'node':node('getnetworkinfo'),'indexer_revision':info.gitCommit,'indexer_reported_chain':info.chainName,
+            'regtest_genesis':REGTEST_GENESIS,'images':images,
             'shielding':shield,'shielded_send':sent,'canonical_blocks_verified':verified,'strict_exit':gate.returncode,
             'evidence_root':result['evidence_root'],
             'artifacts':[{'path':str(p.relative_to(directory)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(directory.rglob('*')) if p.is_file()],

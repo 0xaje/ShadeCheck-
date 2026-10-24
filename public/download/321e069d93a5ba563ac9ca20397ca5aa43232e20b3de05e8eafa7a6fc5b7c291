@@ -2,7 +2,7 @@ Starting isolated local wallet node...
 Funding wallet with a real setup payment and importing canonical blocks...
 Building real Sapling funding transaction on wallet node...
 Building fully shielded Sapling-to-Sapling transaction with real proofs...
-Real shielded transaction constructed and accepted on isolated wallet node: 2c5b2dc79a3a0255ba8ccc4f478d09387c3ce6f9b256ea1cb0be4a4f0f954c97
+Real shielded transaction constructed and accepted on isolated wallet node: 84a8c0530d6249a897809af0197bc1389513dd9df68a802d1561e378bcd85133
 NOT submitted to the verification backend. Next: prove
 {
   "transparent_inputs": 0,
@@ -12,12 +12,12 @@ NOT submitted to the verification backend. Next: prove
   "sprout_joinsplits": 0
 }
 State: /home/runner/work/ShadeCheck-/ShadeCheck-/.shadecheck/regtest/transaction.json
-FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/comparison/20261021T093037-c3a7eb36/unified/read-observer/report.json
+FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261024T092038-3b255dfc/comparison/20261024T092249-1c2a2643/unified/read-observer/report.json
 Starting isolated local wallet node...
 Funding wallet with a real setup payment and importing canonical blocks...
 Building real Sapling funding transaction on wallet node...
 Building fully shielded Sapling-to-Sapling transaction with real proofs...
-Real shielded transaction constructed and accepted on isolated wallet node: 22628d95ade21fc070ab1a9b8ba737e9cccb07ceb49ce7406d7ff7a72b48b96a
+Real shielded transaction constructed and accepted on isolated wallet node: 259e098b4d189d59b95c3f7044be7977ee70caf98b9bc350d436ae0458f1aeb1
 NOT submitted to the verification backend. Next: prove
 {
   "transparent_inputs": 0,
@@ -27,8 +27,8 @@ NOT submitted to the verification backend. Next: prove
   "sprout_joinsplits": 0
 }
 State: /home/runner/work/ShadeCheck-/ShadeCheck-/.shadecheck/regtest/transaction.json
-WARN: 0 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/comparison/20261021T093037-c3a7eb36/separated/read-observer/report.json
-FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/comparison/20261021T093037-c3a7eb36/separated/broadcast-observer/report.json
+WARN: 0 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261024T092038-3b255dfc/comparison/20261024T092249-1c2a2643/separated/read-observer/report.json
+FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261024T092038-3b255dfc/comparison/20261024T092249-1c2a2643/separated/broadcast-observer/report.json
 {
   "schema_version": 1,
   "unified": {
@@ -37,12 +37,12 @@ FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/accept
       "findings": 1,
       "submission_requests": 1,
       "matching_mempool_events": 1,
-      "evidence_root": "b7f5c5f08c738f7d9dfe6ebb1c0b9c23e73844d4e90c94b6fe49c7f6202cc578"
+      "evidence_root": "796a465c22b0f03ad8e00b6dc260033eb40e3789871f295c8361f4531499b290"
     },
     "broadcast_observer": {
       "status": "FAIL",
       "findings": 1,
-      "evidence_root": "b7f5c5f08c738f7d9dfe6ebb1c0b9c23e73844d4e90c94b6fe49c7f6202cc578"
+      "evidence_root": "796a465c22b0f03ad8e00b6dc260033eb40e3789871f295c8361f4531499b290"
     }
   },
   "separated": {
@@ -51,12 +51,12 @@ FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/accept
       "findings": 0,
       "submission_requests": 0,
       "matching_mempool_events": 1,
-      "evidence_root": "473580ee133266f9064ccb074dedfb13663224e79b2d1dbc40e673132ba3f556"
+      "evidence_root": "c1c4549e00348814cf5466e8471eb976195ff14a9e9d9d4d95327cc726067085"
     },
     "broadcast_observer": {
       "status": "FAIL",
       "findings": 1,
-      "evidence_root": "f70b216ac8c25583992b73706c983df320fc306bd70c4f68d77d00e36d0cd7f6"
+      "evidence_root": "82985a6c62e416f4050ef76ad3714930bf0248be4d114e5ac7634b046bb3c12d"
     }
   },
   "limitations": [
@@ -67,4 +67,4 @@ FAIL: 1 finding(s); report: /home/runner/work/ShadeCheck-/ShadeCheck-/out/accept
     "This controlled routing comparison does not establish anonymity or production mitigation."
   ]
 }
-REAL OBSERVER-ROLE COMPARISON VERIFIED: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261021T092813-ba806513/comparison/20261021T093037-c3a7eb36
+REAL OBSERVER-ROLE COMPARISON VERIFIED: /home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261024T092038-3b255dfc/comparison/20261024T092249-1c2a2643

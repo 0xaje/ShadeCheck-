@@ -1,0 +1,5 @@
+{
+  "kind": "actual-event-copy",
+  "source_events": "/home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261024T092038-3b255dfc/regtest/20261024T092248-b9b26289/events.jsonl",
+  "source_evidence_root": "107be3aabb11f4e34e916cbdabf341d0c133dbf4c1d23e5a7bf06c04d3d5e54e"
+}

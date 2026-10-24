@@ -1,0 +1,113 @@
+{
+  "lightwalletd_revision": "d16d48124e9ad4157ebc2324b5090c6ba201470c",
+  "network": "regtest",
+  "node_subversion": "/MagicBean:6.12.2/",
+  "requested_end": 119,
+  "requested_start": 100,
+  "returned_blocks": [
+    {
+      "block_hash": "0298488df2349a20650cbc73f297601fb8b5daa834cd4c5264b06b4f9774e0a8",
+      "height": 100,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "030e639bba376da48c0dbdb62e39695458cc3fe02124b61709ef9508134d8418",
+      "height": 101,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "078cb644e1e71980468de71c4b23bd5bc139e66939c405ba826dfe5d7ed394e6",
+      "height": 102,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "020ded26eb861034cf7791b8d9daeb0e15be8d2ea4e93fdb5d0c1066766e4df2",
+      "height": 103,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0bbd36718a7a7831c55e1abbcfad236eb49af16ccdfda597f52fb329e0d1d19b",
+      "height": 104,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0b14269bf3aefe9098621244d10d766aa6948e09be3d071c4af70b3a2776d4f1",
+      "height": 105,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "095a16016719e2a32309362a50bf7aa873bf0381f1ce6d72b4cb289016b3db58",
+      "height": 106,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0a95d9be755662716939f6e4ad24e90ce311beca264249017232933e06c2e75f",
+      "height": 107,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0ba4918a8f8ac53e5c8ac2a041c27d3096ccae3d2024e7612b5a1fd5d9758b39",
+      "height": 108,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "08111b1e8176d65709416e7054aafa0939e7e6f539539481eb7b9fd247b10802",
+      "height": 109,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "009a539a33010298bc8a99739f614166fddaafbdc5da777ff5ab91f22b2319d7",
+      "height": 110,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "01173625cf89161352eaae27cc60805a509c6fe0eb8f7d6159cb62b77cd87929",
+      "height": 111,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0c43beca911c891da332f9d9bf6f8a562c476b3fca31a8b658614cd96999ef0f",
+      "height": 112,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0ac001cf9e8210a9ae5566ecf766761a864ada9d628718e58c6a6e59f62f5572",
+      "height": 113,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "04e11579b0c33adae2bf4c691c6d16f1d64c7dc08470bb7e46c01fa8d367ef94",
+      "height": 114,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0b498cd912dfc96bf467da96d05731ccb634f73cd8cdfd7830a987de182a09f4",
+      "height": 115,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0d6c7ff4726e31297c79d731381a7588bfecf1e797da2a711466c546e14f0727",
+      "height": 116,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0d7c622a3af5b06e154260b20ec2fe595531672fb493ed02d8b02c05e6f2b242",
+      "height": 117,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0906be6862cf57e1a89cc9cb56db823f3b9790417b336a4246f6feb0e3f57514",
+      "height": 118,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0b0f4253d6e733a27f6af96094347d12c74acf1c8221465c30f3546d525c87b8",
+      "height": 119,
+      "node_block_hash_matches": true
+    }
+  ],
+  "sync_policy": {
+    "alignment_height": 0,
+    "chunk_size": 20
+  }
+}

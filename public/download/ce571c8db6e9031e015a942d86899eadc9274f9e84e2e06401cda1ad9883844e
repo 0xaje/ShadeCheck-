@@ -1,0 +1,297 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadeCheck evidence report</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:1050px;margin:40px auto;padding:0 24px;color:#17202a;background:#fafafa}h1,h2,h3{line-height:1.3}article{background:white;border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#eee;padding:16px}summary{cursor:pointer}small{overflow-wrap:anywhere}</style></head><body><h1>ShadeCheck: FAIL</h1><p>Defined observable behavior tests; passing does not establish anonymity.</p><p>Policy: strict · 1 findings</p><small>Evidence root: c9cd3fc432909f6f62d6a9faef141b6498eb73c07316033bd608ffa25bc02e9c</small><h2>Tested rules</h2><table><thead><tr><th>Rule</th><th>Coverage</th><th>Covered</th></tr></thead><tbody><tr><td>SC-004</td><td>verified-payment-outcomes</td><td>True</td></tr></tbody></table><h2>Findings</h2><article><h3>SC-004 · HIGH · Transparent payment path under a shielded requirement</h3><p><strong>Observed behavior:</strong> The wallet created a transaction with transparent components and the verification backend accepted its exact payload.</p><p><strong>Possible consequence:</strong> Transparent transaction components can publicly expose addresses and amounts despite the tested flow&#x27;s shielded requirement.</p><p><strong>Affected component:</strong> instrumented local zcashd wallet payment adapter</p><p><strong>Investigation:</strong> Reject transparent recipient selection when shielding is required and enforce an appropriate wallet privacy policy; inspect the actual transaction before submission.</p><details><summary>Inspect current evidence (5 events)</summary><pre>[
+  {
+    &quot;elapsed_ns&quot;: 107466053,
+    &quot;event_hash&quot;: &quot;64a17fd742067dc12a7ef8ccab2ff0a7782b86f9bdd1764f1c883ece7dcd77bb&quot;,
+    &quot;metadata&quot;: {
+      &quot;amount&quot;: &quot;0.1&quot;,
+      &quot;fee&quot;: &quot;0.0002&quot;,
+      &quot;flow_id&quot;: &quot;32b915fd7edf46418a8efa43fe1d7379&quot;,
+      &quot;privacy_policy&quot;: &quot;AllowRevealedRecipients&quot;,
+      &quot;receiver&quot;: &quot;tmHEg8kURVWERz7DaCmxRwpxwwe1y72fTKZ&quot;,
+      &quot;receiver_type&quot;: &quot;transparent&quot;,
+      &quot;receiver_validation&quot;: {
+        &quot;address&quot;: &quot;tmHEg8kURVWERz7DaCmxRwpxwwe1y72fTKZ&quot;,
+        &quot;ismine&quot;: false,
+        &quot;isscript&quot;: false,
+        &quot;isvalid&quot;: true,
+        &quot;iswatchonly&quot;: false,
+        &quot;scriptPubKey&quot;: &quot;76a91452850e2c394144c824644988011757b951cdacc088ac&quot;
+      },
+      &quot;require_shielded&quot;: true,
+      &quot;source_rpc&quot;: &quot;z_sendmany&quot;
+    },
+    &quot;method&quot;: &quot;WalletPayment&quot;,
+    &quot;mode&quot;: &quot;wallet-adapter&quot;,
+    &quot;phase&quot;: &quot;request&quot;,
+    &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 1,
+    &quot;session&quot;: &quot;b2966fe57482c7cf664a555cb96ee23df730655def5112e118dc91405f44cb60&quot;,
+    &quot;timestamp_ns&quot;: 1792833826508322984
+  },
+  {
+    &quot;elapsed_ns&quot;: 5088295172,
+    &quot;event_hash&quot;: &quot;12a1ffd3307dd7d3fc91be05408f80d95c583b2852f563954a8ace7d94c4abda&quot;,
+    &quot;metadata&quot;: {
+      &quot;flow_id&quot;: &quot;32b915fd7edf46418a8efa43fe1d7379&quot;,
+      &quot;operation_result&quot;: {
+        &quot;creation_time&quot;: 1792833826,
+        &quot;execution_secs&quot;: &quot;4.266667&quot;,
+        &quot;id&quot;: &quot;opid-2a40ff15-d68f-48db-b2ac-9ed2854c9eee&quot;,
+        &quot;method&quot;: &quot;z_sendmany&quot;,
+        &quot;params&quot;: {
+          &quot;amounts&quot;: [
+            {
+              &quot;address&quot;: &quot;tmHEg8kURVWERz7DaCmxRwpxwwe1y72fTKZ&quot;,
+              &quot;amount&quot;: &quot;0.1&quot;
+            }
+          ],
+          &quot;fee&quot;: &quot;0.00020000&quot;,
+          &quot;fromaddress&quot;: &quot;zregtestsapling1w470defy6ya5uwwtlrv6jlpznltyw7zdahqrqthgks9zqnz6uehvqn7f2jk2y4t9h98uwj2nd54&quot;,
+          &quot;minconf&quot;: 1
+        },
+        &quot;result&quot;: {
+          &quot;txid&quot;: &quot;2431d7ed7afdcdf2a93ffc95577a7b0f8f7802b2b4fb3c91d4e6b6d6da35dd9a&quot;
+        },
+        &quot;status&quot;: &quot;success&quot;
+      },
+      &quot;request_sequence&quot;: 1,
+      &quot;source_rpc&quot;: &quot;z_getoperationstatus&quot;,
+      &quot;txid&quot;: &quot;2431d7ed7afdcdf2a93ffc95577a7b0f8f7802b2b4fb3c91d4e6b6d6da35dd9a&quot;
+    },
+    &quot;method&quot;: &quot;WalletPayment&quot;,
+    &quot;mode&quot;: &quot;wallet-adapter&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;64a17fd742067dc12a7ef8ccab2ff0a7782b86f9bdd1764f1c883ece7dcd77bb&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 2,
+    &quot;session&quot;: &quot;b2966fe57482c7cf664a555cb96ee23df730655def5112e118dc91405f44cb60&quot;,
+    &quot;timestamp_ns&quot;: 1792833831489152454
+  },
+  {
+    &quot;elapsed_ns&quot;: 5405405443,
+    &quot;event_hash&quot;: &quot;9f3edb0f14481b7d69e89bb74dd4d8b03aa520d08082bcad92ed64346114577d&quot;,
+    &quot;metadata&quot;: {
+      &quot;flow_id&quot;: &quot;32b915fd7edf46418a8efa43fe1d7379&quot;,
+      &quot;payload_sha256&quot;: &quot;330514c526d65a1075a9f3cd22a42b1a1c2072ca18f26fed006a27a42d03a0f1&quot;,
+      &quot;request_sequence&quot;: 1,
+      &quot;sapling_outputs&quot;: 2,
+      &quot;sapling_spends&quot;: 1,
+      &quot;source_rpc&quot;: &quot;decoderawtransaction&quot;,
+      &quot;transparent_inputs&quot;: 0,
+      &quot;transparent_outputs&quot;: 1,
+      &quot;txid&quot;: &quot;2431d7ed7afdcdf2a93ffc95577a7b0f8f7802b2b4fb3c91d4e6b6d6da35dd9a&quot;
+    },
+    &quot;method&quot;: &quot;WalletTransaction&quot;,
+    &quot;mode&quot;: &quot;wallet-adapter&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;12a1ffd3307dd7d3fc91be05408f80d95c583b2852f563954a8ace7d94c4abda&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 3,
+    &quot;session&quot;: &quot;b2966fe57482c7cf664a555cb96ee23df730655def5112e118dc91405f44cb60&quot;,
+    &quot;timestamp_ns&quot;: 1792833831806262664
+  },
+  {
+    &quot;elapsed_ns&quot;: 5411896053,
+    &quot;event_hash&quot;: &quot;3d4734e0b7a479405cabff028fb4039fa21687a363c20a128c3e04edb4e4b476&quot;,
+    &quot;metadata&quot;: {
+      &quot;payload_sha256&quot;: &quot;330514c526d65a1075a9f3cd22a42b1a1c2072ca18f26fed006a27a42d03a0f1&quot;,
+      &quot;payload_size&quot;: 2407
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;request&quot;,
+    &quot;previous_hash&quot;: &quot;9f3edb0f14481b7d69e89bb74dd4d8b03aa520d08082bcad92ed64346114577d&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 4,
+    &quot;session&quot;: &quot;51e39d925518affbba08fbd8309ad9f9b2cf9419d0fed21953380c1bae530264&quot;,
+    &quot;timestamp_ns&quot;: 1792833831812753596
+  },
+  {
+    &quot;elapsed_ns&quot;: 5434552287,
+    &quot;event_hash&quot;: &quot;423b77b9363fbf4d167c7fe750769e57c6a2db03e81450b6cc7b758fa4ff0967&quot;,
+    &quot;metadata&quot;: {
+      &quot;error_code&quot;: 0,
+      &quot;request_sequence&quot;: 4
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;3d4734e0b7a479405cabff028fb4039fa21687a363c20a128c3e04edb4e4b476&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 5,
+    &quot;session&quot;: &quot;51e39d925518affbba08fbd8309ad9f9b2cf9419d0fed21953380c1bae530264&quot;,
+    &quot;timestamp_ns&quot;: 1792833831835409739
+  }
+]</pre></details></article><h2>Limitations</h2><ul><li>Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.</li><li>A transport peer identifies a connection, not a person or wallet.</li><li>Local fixture replay is not consensus validation or network acceptance.</li><li>Transaction SHA-256 fingerprints are not Zcash transaction IDs.</li><li>No violation observed does not establish anonymity.</li></ul><details><summary>Complete JSON result</summary><pre>{
+  &quot;correlation_window_seconds&quot;: 30,
+  &quot;evidence_modes&quot;: [
+    &quot;upstream&quot;,
+    &quot;wallet-adapter&quot;
+  ],
+  &quot;evidence_root&quot;: &quot;c9cd3fc432909f6f62d6a9faef141b6498eb73c07316033bd608ffa25bc02e9c&quot;,
+  &quot;findings&quot;: [
+    {
+      &quot;affected_component&quot;: &quot;instrumented local zcashd wallet payment adapter&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;elapsed_ns&quot;: 107466053,
+          &quot;event_hash&quot;: &quot;64a17fd742067dc12a7ef8ccab2ff0a7782b86f9bdd1764f1c883ece7dcd77bb&quot;,
+          &quot;metadata&quot;: {
+            &quot;amount&quot;: &quot;0.1&quot;,
+            &quot;fee&quot;: &quot;0.0002&quot;,
+            &quot;flow_id&quot;: &quot;32b915fd7edf46418a8efa43fe1d7379&quot;,
+            &quot;privacy_policy&quot;: &quot;AllowRevealedRecipients&quot;,
+            &quot;receiver&quot;: &quot;tmHEg8kURVWERz7DaCmxRwpxwwe1y72fTKZ&quot;,
+            &quot;receiver_type&quot;: &quot;transparent&quot;,
+            &quot;receiver_validation&quot;: {
+              &quot;address&quot;: &quot;tmHEg8kURVWERz7DaCmxRwpxwwe1y72fTKZ&quot;,
+              &quot;ismine&quot;: false,
+              &quot;isscript&quot;: false,
+              &quot;isvalid&quot;: true,
+              &quot;iswatchonly&quot;: false,
+              &quot;scriptPubKey&quot;: &quot;76a91452850e2c394144c824644988011757b951cdacc088ac&quot;
+            },
+            &quot;require_shielded&quot;: true,
+            &quot;source_rpc&quot;: &quot;z_sendmany&quot;
+          },
+          &quot;method&quot;: &quot;WalletPayment&quot;,
+          &quot;mode&quot;: &quot;wallet-adapter&quot;,
+          &quot;phase&quot;: &quot;request&quot;,
+          &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 1,
+          &quot;session&quot;: &quot;b2966fe57482c7cf664a555cb96ee23df730655def5112e118dc91405f44cb60&quot;,
+          &quot;timestamp_ns&quot;: 1792833826508322984
+        },
+        {
+          &quot;elapsed_ns&quot;: 5088295172,
+          &quot;event_hash&quot;: &quot;12a1ffd3307dd7d3fc91be05408f80d95c583b2852f563954a8ace7d94c4abda&quot;,
+          &quot;metadata&quot;: {
+            &quot;flow_id&quot;: &quot;32b915fd7edf46418a8efa43fe1d7379&quot;,
+            &quot;operation_result&quot;: {
+              &quot;creation_time&quot;: 1792833826,
+              &quot;execution_secs&quot;: &quot;4.266667&quot;,
+              &quot;id&quot;: &quot;opid-2a40ff15-d68f-48db-b2ac-9ed2854c9eee&quot;,
+              &quot;method&quot;: &quot;z_sendmany&quot;,
+              &quot;params&quot;: {
+                &quot;amounts&quot;: [
+                  {
+                    &quot;address&quot;: &quot;tmHEg8kURVWERz7DaCmxRwpxwwe1y72fTKZ&quot;,
+                    &quot;amount&quot;: &quot;0.1&quot;
+                  }
+                ],
+                &quot;fee&quot;: &quot;0.00020000&quot;,
+                &quot;fromaddress&quot;: &quot;zregtestsapling1w470defy6ya5uwwtlrv6jlpznltyw7zdahqrqthgks9zqnz6uehvqn7f2jk2y4t9h98uwj2nd54&quot;,
+                &quot;minconf&quot;: 1
+              },
+              &quot;result&quot;: {
+                &quot;txid&quot;: &quot;2431d7ed7afdcdf2a93ffc95577a7b0f8f7802b2b4fb3c91d4e6b6d6da35dd9a&quot;
+              },
+              &quot;status&quot;: &quot;success&quot;
+            },
+            &quot;request_sequence&quot;: 1,
+            &quot;source_rpc&quot;: &quot;z_getoperationstatus&quot;,
+            &quot;txid&quot;: &quot;2431d7ed7afdcdf2a93ffc95577a7b0f8f7802b2b4fb3c91d4e6b6d6da35dd9a&quot;
+          },
+          &quot;method&quot;: &quot;WalletPayment&quot;,
+          &quot;mode&quot;: &quot;wallet-adapter&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;64a17fd742067dc12a7ef8ccab2ff0a7782b86f9bdd1764f1c883ece7dcd77bb&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 2,
+          &quot;session&quot;: &quot;b2966fe57482c7cf664a555cb96ee23df730655def5112e118dc91405f44cb60&quot;,
+          &quot;timestamp_ns&quot;: 1792833831489152454
+        },
+        {
+          &quot;elapsed_ns&quot;: 5405405443,
+          &quot;event_hash&quot;: &quot;9f3edb0f14481b7d69e89bb74dd4d8b03aa520d08082bcad92ed64346114577d&quot;,
+          &quot;metadata&quot;: {
+            &quot;flow_id&quot;: &quot;32b915fd7edf46418a8efa43fe1d7379&quot;,
+            &quot;payload_sha256&quot;: &quot;330514c526d65a1075a9f3cd22a42b1a1c2072ca18f26fed006a27a42d03a0f1&quot;,
+            &quot;request_sequence&quot;: 1,
+            &quot;sapling_outputs&quot;: 2,
+            &quot;sapling_spends&quot;: 1,
+            &quot;source_rpc&quot;: &quot;decoderawtransaction&quot;,
+            &quot;transparent_inputs&quot;: 0,
+            &quot;transparent_outputs&quot;: 1,
+            &quot;txid&quot;: &quot;2431d7ed7afdcdf2a93ffc95577a7b0f8f7802b2b4fb3c91d4e6b6d6da35dd9a&quot;
+          },
+          &quot;method&quot;: &quot;WalletTransaction&quot;,
+          &quot;mode&quot;: &quot;wallet-adapter&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;12a1ffd3307dd7d3fc91be05408f80d95c583b2852f563954a8ace7d94c4abda&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 3,
+          &quot;session&quot;: &quot;b2966fe57482c7cf664a555cb96ee23df730655def5112e118dc91405f44cb60&quot;,
+          &quot;timestamp_ns&quot;: 1792833831806262664
+        },
+        {
+          &quot;elapsed_ns&quot;: 5411896053,
+          &quot;event_hash&quot;: &quot;3d4734e0b7a479405cabff028fb4039fa21687a363c20a128c3e04edb4e4b476&quot;,
+          &quot;metadata&quot;: {
+            &quot;payload_sha256&quot;: &quot;330514c526d65a1075a9f3cd22a42b1a1c2072ca18f26fed006a27a42d03a0f1&quot;,
+            &quot;payload_size&quot;: 2407
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;request&quot;,
+          &quot;previous_hash&quot;: &quot;9f3edb0f14481b7d69e89bb74dd4d8b03aa520d08082bcad92ed64346114577d&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 4,
+          &quot;session&quot;: &quot;51e39d925518affbba08fbd8309ad9f9b2cf9419d0fed21953380c1bae530264&quot;,
+          &quot;timestamp_ns&quot;: 1792833831812753596
+        },
+        {
+          &quot;elapsed_ns&quot;: 5434552287,
+          &quot;event_hash&quot;: &quot;423b77b9363fbf4d167c7fe750769e57c6a2db03e81450b6cc7b758fa4ff0967&quot;,
+          &quot;metadata&quot;: {
+            &quot;error_code&quot;: 0,
+            &quot;request_sequence&quot;: 4
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;3d4734e0b7a479405cabff028fb4039fa21687a363c20a128c3e04edb4e4b476&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 5,
+          &quot;session&quot;: &quot;51e39d925518affbba08fbd8309ad9f9b2cf9419d0fed21953380c1bae530264&quot;,
+          &quot;timestamp_ns&quot;: 1792833831835409739
+        }
+      ],
+      &quot;flow_id&quot;: &quot;32b915fd7edf46418a8efa43fe1d7379&quot;,
+      &quot;observed_behavior&quot;: &quot;The wallet created a transaction with transparent components and the verification backend accepted its exact payload.&quot;,
+      &quot;payment_policy&quot;: {
+        &quot;require_shielded&quot;: true
+      },
+      &quot;possible_privacy_consequence&quot;: &quot;Transparent transaction components can publicly expose addresses and amounts despite the tested flow&#x27;s shielded requirement.&quot;,
+      &quot;rule_id&quot;: &quot;SC-004&quot;,
+      &quot;severity&quot;: &quot;HIGH&quot;,
+      &quot;suggested_investigation&quot;: &quot;Reject transparent recipient selection when shielding is required and enforce an appropriate wallet privacy policy; inspect the actual transaction before submission.&quot;,
+      &quot;title&quot;: &quot;Transparent payment path under a shielded requirement&quot;
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.&quot;,
+    &quot;A transport peer identifies a connection, not a person or wallet.&quot;,
+    &quot;Local fixture replay is not consensus validation or network acceptance.&quot;,
+    &quot;Transaction SHA-256 fingerprints are not Zcash transaction IDs.&quot;,
+    &quot;No violation observed does not establish anonymity.&quot;
+  ],
+  &quot;payment_policy&quot;: {
+    &quot;require_shielded&quot;: true
+  },
+  &quot;policy&quot;: &quot;strict&quot;,
+  &quot;rules&quot;: [
+    {
+      &quot;coverage&quot;: &quot;verified-payment-outcomes&quot;,
+      &quot;covered&quot;: true,
+      &quot;executed&quot;: true,
+      &quot;rule_id&quot;: &quot;SC-004&quot;
+    }
+  ],
+  &quot;schema_version&quot;: 1,
+  &quot;status&quot;: &quot;FAIL&quot;,
+  &quot;sync_policy&quot;: null
+}</pre></details></body></html>

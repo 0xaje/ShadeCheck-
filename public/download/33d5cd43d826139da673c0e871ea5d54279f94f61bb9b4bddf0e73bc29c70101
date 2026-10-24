@@ -1,0 +1,378 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadeCheck evidence report</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:1050px;margin:40px auto;padding:0 24px;color:#17202a;background:#fafafa}h1,h2,h3{line-height:1.3}article{background:white;border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#eee;padding:16px}summary{cursor:pointer}small{overflow-wrap:anywhere}</style></head><body><h1>ShadeCheck: FAIL</h1><p>Defined observable behavior tests; passing does not establish anonymity.</p><p>Policy: strict · 1 findings</p><small>Evidence root: 3509aed257541bb43ecb78cd8616cd444cf508a5d49c273df52b23cb702a38eb</small><h2>Tested rules</h2><table><thead><tr><th>Rule</th><th>Coverage</th><th>Covered</th></tr></thead><tbody><tr><td>SC-001</td><td>complete-range-delivery</td><td>True</td></tr><tr><td>SC-005</td><td>compatible-baseline-comparison</td><td>True</td></tr></tbody></table><h2>Findings</h2><article><h3>SC-001 · MEDIUM · Block range violates configured sync disclosure policy</h3><p><strong>Observed behavior:</strong> Requested heights 100 through 106 (7 blocks): inclusive request size differs from the configured chunk size.</p><p><strong>Possible consequence:</strong> The service observes the connection&#x27;s exact scan boundary and request size. These can depend on local sync state, but wallet history or identity is not proven.</p><p><strong>Affected component:</strong> lightwalletd block-range synchronization</p><p><strong>Investigation:</strong> Review fixed-size aligned retrieval, local filtering, and chain-tip handling against the declared policy; evaluate extra bandwidth and other privacy tradeoffs.</p><details><summary>Inspect current evidence (8 events)</summary><pre>[
+  {
+    &quot;elapsed_ns&quot;: 4155339,
+    &quot;event_hash&quot;: &quot;9bc47b85d6968d1c27f18b4db5c10cfd604d3652c84b57e2769c06c4673755dd&quot;,
+    &quot;metadata&quot;: {
+      &quot;end_height&quot;: 106,
+      &quot;start_height&quot;: 100
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;request&quot;,
+    &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 1,
+    &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+    &quot;timestamp_ns&quot;: 1792833858244580535
+  },
+  {
+    &quot;elapsed_ns&quot;: 5791252,
+    &quot;event_hash&quot;: &quot;c51a4899876063a7f595d5a3cd7f7059cb63a49c07725d203883a6ec2e9a6888&quot;,
+    &quot;metadata&quot;: {
+      &quot;block_hash&quot;: &quot;a8e074974f6bb064524ccd34a8dab5b81f6097f273bc0c65209a34f28d489802&quot;,
+      &quot;height&quot;: 100,
+      &quot;request_sequence&quot;: 1,
+      &quot;serialized_sha256&quot;: &quot;de61628338e5fde38daa54059c64d6ff4c37e604d284ae712b5d1462ed75b9c3&quot;,
+      &quot;transaction_ids&quot;: []
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;9bc47b85d6968d1c27f18b4db5c10cfd604d3652c84b57e2769c06c4673755dd&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 2,
+    &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+    &quot;timestamp_ns&quot;: 1792833858246216428
+  },
+  {
+    &quot;elapsed_ns&quot;: 6233758,
+    &quot;event_hash&quot;: &quot;5107c4517a818386745fcc60fcfd3d21b7c09126a077c7d06efe09f4c85de17c&quot;,
+    &quot;metadata&quot;: {
+      &quot;block_hash&quot;: &quot;18844d130895ef0917b62421e03fcc585469392eb6bd0d8ca46d37ba9b630e03&quot;,
+      &quot;height&quot;: 101,
+      &quot;request_sequence&quot;: 1,
+      &quot;serialized_sha256&quot;: &quot;11a078bb0b066c379eee0fdb1fd6a13f00784b515a651d3170d115cc2e96c28e&quot;,
+      &quot;transaction_ids&quot;: []
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;c51a4899876063a7f595d5a3cd7f7059cb63a49c07725d203883a6ec2e9a6888&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 3,
+    &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+    &quot;timestamp_ns&quot;: 1792833858246659145
+  },
+  {
+    &quot;elapsed_ns&quot;: 6567802,
+    &quot;event_hash&quot;: &quot;5119d3cadae68a10baf254f5b401904e9745fab4179b386d57320b41cb19c52b&quot;,
+    &quot;metadata&quot;: {
+      &quot;block_hash&quot;: &quot;e694d37e5dfe6d82ba05c43969e639c15bbd234b1ce78d468019e7e144b68c07&quot;,
+      &quot;height&quot;: 102,
+      &quot;request_sequence&quot;: 1,
+      &quot;serialized_sha256&quot;: &quot;ee9dff79eb1b47693ad29bf9dd73bcd7209942d81fd7137d5b66c876d2c8ebb5&quot;,
+      &quot;transaction_ids&quot;: []
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;5107c4517a818386745fcc60fcfd3d21b7c09126a077c7d06efe09f4c85de17c&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 4,
+    &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+    &quot;timestamp_ns&quot;: 1792833858246993178
+  },
+  {
+    &quot;elapsed_ns&quot;: 6931142,
+    &quot;event_hash&quot;: &quot;dc93de968746b1626fd0cb1e01da341d62ab61e57cd8dbcda16b4f823554a20f&quot;,
+    &quot;metadata&quot;: {
+      &quot;block_hash&quot;: &quot;f24d6e7666100c5ddb3fe9a42e8dbe150eebdad9b89177cf341086eb26ed0d02&quot;,
+      &quot;height&quot;: 103,
+      &quot;request_sequence&quot;: 1,
+      &quot;serialized_sha256&quot;: &quot;6e3f4e63f4bb6a678599c75cbd43e99c70e6d2d8305f782af495e0614af5f948&quot;,
+      &quot;transaction_ids&quot;: []
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;5119d3cadae68a10baf254f5b401904e9745fab4179b386d57320b41cb19c52b&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 5,
+    &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+    &quot;timestamp_ns&quot;: 1792833858247356488
+  },
+  {
+    &quot;elapsed_ns&quot;: 7206535,
+    &quot;event_hash&quot;: &quot;e2bef3be550d686da820b65b364e1c928240e237bb1d1885ea47dfe2c6f684ca&quot;,
+    &quot;metadata&quot;: {
+      &quot;block_hash&quot;: &quot;9bd1d1e029b32ff597a5fdcd6cf19ab46e23adcfbb1a5ec531787a8a7136bd0b&quot;,
+      &quot;height&quot;: 104,
+      &quot;request_sequence&quot;: 1,
+      &quot;serialized_sha256&quot;: &quot;440462894933a096cb461dd2cf651977fffa082985a82a602be9b1305ed4a643&quot;,
+      &quot;transaction_ids&quot;: []
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;dc93de968746b1626fd0cb1e01da341d62ab61e57cd8dbcda16b4f823554a20f&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 6,
+    &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+    &quot;timestamp_ns&quot;: 1792833858247631901
+  },
+  {
+    &quot;elapsed_ns&quot;: 7524639,
+    &quot;event_hash&quot;: &quot;b35b3cff1e474893f6ff9ecd2406f2373720df80574d5968e233b5b563417bba&quot;,
+    &quot;metadata&quot;: {
+      &quot;block_hash&quot;: &quot;f1d476273a0bf74a1c073dbe098e94a66a760dd14412629890feaef39b26140b&quot;,
+      &quot;height&quot;: 105,
+      &quot;request_sequence&quot;: 1,
+      &quot;serialized_sha256&quot;: &quot;0f591157cf09e74ce9132b11eb1c762c2f28b8314a9ef6f94f698f13413908e3&quot;,
+      &quot;transaction_ids&quot;: []
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;e2bef3be550d686da820b65b364e1c928240e237bb1d1885ea47dfe2c6f684ca&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 7,
+    &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+    &quot;timestamp_ns&quot;: 1792833858247950005
+  },
+  {
+    &quot;elapsed_ns&quot;: 7840037,
+    &quot;event_hash&quot;: &quot;3509aed257541bb43ecb78cd8616cd444cf508a5d49c273df52b23cb702a38eb&quot;,
+    &quot;metadata&quot;: {
+      &quot;block_hash&quot;: &quot;58dbb3169028cbb4726dcef18103bf73a87abf502a360923a3e2196701165a09&quot;,
+      &quot;height&quot;: 106,
+      &quot;request_sequence&quot;: 1,
+      &quot;serialized_sha256&quot;: &quot;494f9ac12f5846fe6fbaea3bfe457a7af3b7b53dd7fbf3aec45fa38be55e331f&quot;,
+      &quot;transaction_ids&quot;: []
+    },
+    &quot;method&quot;: &quot;GetBlockRange&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;b35b3cff1e474893f6ff9ecd2406f2373720df80574d5968e233b5b563417bba&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 8,
+    &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+    &quot;timestamp_ns&quot;: 1792833858248265404
+  }
+]</pre></details></article><h2>Baseline comparison</h2><p>PASS · 0 regressions</p><pre>{
+  &quot;baseline_evidence_root&quot;: &quot;3509aed257541bb43ecb78cd8616cd444cf508a5d49c273df52b23cb702a38eb&quot;,
+  &quot;baseline_hash&quot;: &quot;a6bd509ae342b9364f9168f6b709fddb5d921b67d2942c533ee7356cb986d460&quot;,
+  &quot;changes&quot;: [],
+  &quot;regressions&quot;: 0,
+  &quot;resolved_behaviors&quot;: [],
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;unchanged_behaviors&quot;: 1
+}</pre><h2>Limitations</h2><ul><li>Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.</li><li>A transport peer identifies a connection, not a person or wallet.</li><li>Local fixture replay is not consensus validation or network acceptance.</li><li>Transaction SHA-256 fingerprints are not Zcash transaction IDs.</li><li>No violation observed does not establish anonymity.</li><li>SC-005 compares rule/component/behavior categories, not changing transaction IDs, sessions, timestamps, or finding counts.</li><li>Baselines include inspectable evidence; hashes detect editing but do not authenticate an author.</li><li>Compatible policy and complete coverage are required; a baseline is not a privacy exemption.</li></ul><details><summary>Complete JSON result</summary><pre>{
+  &quot;baseline_comparison&quot;: {
+    &quot;baseline_evidence_root&quot;: &quot;3509aed257541bb43ecb78cd8616cd444cf508a5d49c273df52b23cb702a38eb&quot;,
+    &quot;baseline_hash&quot;: &quot;a6bd509ae342b9364f9168f6b709fddb5d921b67d2942c533ee7356cb986d460&quot;,
+    &quot;changes&quot;: [],
+    &quot;regressions&quot;: 0,
+    &quot;resolved_behaviors&quot;: [],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;unchanged_behaviors&quot;: 1
+  },
+  &quot;correlation_window_seconds&quot;: 30,
+  &quot;evidence_modes&quot;: [
+    &quot;upstream&quot;
+  ],
+  &quot;evidence_root&quot;: &quot;3509aed257541bb43ecb78cd8616cd444cf508a5d49c273df52b23cb702a38eb&quot;,
+  &quot;findings&quot;: [
+    {
+      &quot;affected_component&quot;: &quot;lightwalletd block-range synchronization&quot;,
+      &quot;complete_range_delivered&quot;: true,
+      &quot;evidence&quot;: [
+        {
+          &quot;elapsed_ns&quot;: 4155339,
+          &quot;event_hash&quot;: &quot;9bc47b85d6968d1c27f18b4db5c10cfd604d3652c84b57e2769c06c4673755dd&quot;,
+          &quot;metadata&quot;: {
+            &quot;end_height&quot;: 106,
+            &quot;start_height&quot;: 100
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;request&quot;,
+          &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 1,
+          &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+          &quot;timestamp_ns&quot;: 1792833858244580535
+        },
+        {
+          &quot;elapsed_ns&quot;: 5791252,
+          &quot;event_hash&quot;: &quot;c51a4899876063a7f595d5a3cd7f7059cb63a49c07725d203883a6ec2e9a6888&quot;,
+          &quot;metadata&quot;: {
+            &quot;block_hash&quot;: &quot;a8e074974f6bb064524ccd34a8dab5b81f6097f273bc0c65209a34f28d489802&quot;,
+            &quot;height&quot;: 100,
+            &quot;request_sequence&quot;: 1,
+            &quot;serialized_sha256&quot;: &quot;de61628338e5fde38daa54059c64d6ff4c37e604d284ae712b5d1462ed75b9c3&quot;,
+            &quot;transaction_ids&quot;: []
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;9bc47b85d6968d1c27f18b4db5c10cfd604d3652c84b57e2769c06c4673755dd&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 2,
+          &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+          &quot;timestamp_ns&quot;: 1792833858246216428
+        },
+        {
+          &quot;elapsed_ns&quot;: 6233758,
+          &quot;event_hash&quot;: &quot;5107c4517a818386745fcc60fcfd3d21b7c09126a077c7d06efe09f4c85de17c&quot;,
+          &quot;metadata&quot;: {
+            &quot;block_hash&quot;: &quot;18844d130895ef0917b62421e03fcc585469392eb6bd0d8ca46d37ba9b630e03&quot;,
+            &quot;height&quot;: 101,
+            &quot;request_sequence&quot;: 1,
+            &quot;serialized_sha256&quot;: &quot;11a078bb0b066c379eee0fdb1fd6a13f00784b515a651d3170d115cc2e96c28e&quot;,
+            &quot;transaction_ids&quot;: []
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;c51a4899876063a7f595d5a3cd7f7059cb63a49c07725d203883a6ec2e9a6888&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 3,
+          &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+          &quot;timestamp_ns&quot;: 1792833858246659145
+        },
+        {
+          &quot;elapsed_ns&quot;: 6567802,
+          &quot;event_hash&quot;: &quot;5119d3cadae68a10baf254f5b401904e9745fab4179b386d57320b41cb19c52b&quot;,
+          &quot;metadata&quot;: {
+            &quot;block_hash&quot;: &quot;e694d37e5dfe6d82ba05c43969e639c15bbd234b1ce78d468019e7e144b68c07&quot;,
+            &quot;height&quot;: 102,
+            &quot;request_sequence&quot;: 1,
+            &quot;serialized_sha256&quot;: &quot;ee9dff79eb1b47693ad29bf9dd73bcd7209942d81fd7137d5b66c876d2c8ebb5&quot;,
+            &quot;transaction_ids&quot;: []
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;5107c4517a818386745fcc60fcfd3d21b7c09126a077c7d06efe09f4c85de17c&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 4,
+          &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+          &quot;timestamp_ns&quot;: 1792833858246993178
+        },
+        {
+          &quot;elapsed_ns&quot;: 6931142,
+          &quot;event_hash&quot;: &quot;dc93de968746b1626fd0cb1e01da341d62ab61e57cd8dbcda16b4f823554a20f&quot;,
+          &quot;metadata&quot;: {
+            &quot;block_hash&quot;: &quot;f24d6e7666100c5ddb3fe9a42e8dbe150eebdad9b89177cf341086eb26ed0d02&quot;,
+            &quot;height&quot;: 103,
+            &quot;request_sequence&quot;: 1,
+            &quot;serialized_sha256&quot;: &quot;6e3f4e63f4bb6a678599c75cbd43e99c70e6d2d8305f782af495e0614af5f948&quot;,
+            &quot;transaction_ids&quot;: []
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;5119d3cadae68a10baf254f5b401904e9745fab4179b386d57320b41cb19c52b&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 5,
+          &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+          &quot;timestamp_ns&quot;: 1792833858247356488
+        },
+        {
+          &quot;elapsed_ns&quot;: 7206535,
+          &quot;event_hash&quot;: &quot;e2bef3be550d686da820b65b364e1c928240e237bb1d1885ea47dfe2c6f684ca&quot;,
+          &quot;metadata&quot;: {
+            &quot;block_hash&quot;: &quot;9bd1d1e029b32ff597a5fdcd6cf19ab46e23adcfbb1a5ec531787a8a7136bd0b&quot;,
+            &quot;height&quot;: 104,
+            &quot;request_sequence&quot;: 1,
+            &quot;serialized_sha256&quot;: &quot;440462894933a096cb461dd2cf651977fffa082985a82a602be9b1305ed4a643&quot;,
+            &quot;transaction_ids&quot;: []
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;dc93de968746b1626fd0cb1e01da341d62ab61e57cd8dbcda16b4f823554a20f&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 6,
+          &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+          &quot;timestamp_ns&quot;: 1792833858247631901
+        },
+        {
+          &quot;elapsed_ns&quot;: 7524639,
+          &quot;event_hash&quot;: &quot;b35b3cff1e474893f6ff9ecd2406f2373720df80574d5968e233b5b563417bba&quot;,
+          &quot;metadata&quot;: {
+            &quot;block_hash&quot;: &quot;f1d476273a0bf74a1c073dbe098e94a66a760dd14412629890feaef39b26140b&quot;,
+            &quot;height&quot;: 105,
+            &quot;request_sequence&quot;: 1,
+            &quot;serialized_sha256&quot;: &quot;0f591157cf09e74ce9132b11eb1c762c2f28b8314a9ef6f94f698f13413908e3&quot;,
+            &quot;transaction_ids&quot;: []
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;e2bef3be550d686da820b65b364e1c928240e237bb1d1885ea47dfe2c6f684ca&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 7,
+          &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+          &quot;timestamp_ns&quot;: 1792833858247950005
+        },
+        {
+          &quot;elapsed_ns&quot;: 7840037,
+          &quot;event_hash&quot;: &quot;3509aed257541bb43ecb78cd8616cd444cf508a5d49c273df52b23cb702a38eb&quot;,
+          &quot;metadata&quot;: {
+            &quot;block_hash&quot;: &quot;58dbb3169028cbb4726dcef18103bf73a87abf502a360923a3e2196701165a09&quot;,
+            &quot;height&quot;: 106,
+            &quot;request_sequence&quot;: 1,
+            &quot;serialized_sha256&quot;: &quot;494f9ac12f5846fe6fbaea3bfe457a7af3b7b53dd7fbf3aec45fa38be55e331f&quot;,
+            &quot;transaction_ids&quot;: []
+          },
+          &quot;method&quot;: &quot;GetBlockRange&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;b35b3cff1e474893f6ff9ecd2406f2373720df80574d5968e233b5b563417bba&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 8,
+          &quot;session&quot;: &quot;e4ad8a93e89e6230e05a434961cd3fd5a695f65efdbf6d020e9694f030a1568f&quot;,
+          &quot;timestamp_ns&quot;: 1792833858248265404
+        }
+      ],
+      &quot;observed_behavior&quot;: &quot;Requested heights 100 through 106 (7 blocks): inclusive request size differs from the configured chunk size.&quot;,
+      &quot;possible_privacy_consequence&quot;: &quot;The service observes the connection&#x27;s exact scan boundary and request size. These can depend on local sync state, but wallet history or identity is not proven.&quot;,
+      &quot;request_size&quot;: 7,
+      &quot;rule_id&quot;: &quot;SC-001&quot;,
+      &quot;severity&quot;: &quot;MEDIUM&quot;,
+      &quot;suggested_investigation&quot;: &quot;Review fixed-size aligned retrieval, local filtering, and chain-tip handling against the declared policy; evaluate extra bandwidth and other privacy tradeoffs.&quot;,
+      &quot;sync_policy&quot;: {
+        &quot;alignment_height&quot;: 0,
+        &quot;chunk_size&quot;: 20
+      },
+      &quot;title&quot;: &quot;Block range violates configured sync disclosure policy&quot;,
+      &quot;violations&quot;: [
+        &quot;inclusive request size differs from the configured chunk size&quot;
+      ]
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.&quot;,
+    &quot;A transport peer identifies a connection, not a person or wallet.&quot;,
+    &quot;Local fixture replay is not consensus validation or network acceptance.&quot;,
+    &quot;Transaction SHA-256 fingerprints are not Zcash transaction IDs.&quot;,
+    &quot;No violation observed does not establish anonymity.&quot;,
+    &quot;SC-005 compares rule/component/behavior categories, not changing transaction IDs, sessions, timestamps, or finding counts.&quot;,
+    &quot;Baselines include inspectable evidence; hashes detect editing but do not authenticate an author.&quot;,
+    &quot;Compatible policy and complete coverage are required; a baseline is not a privacy exemption.&quot;
+  ],
+  &quot;payment_policy&quot;: null,
+  &quot;policy&quot;: &quot;strict&quot;,
+  &quot;rules&quot;: [
+    {
+      &quot;coverage&quot;: &quot;complete-range-delivery&quot;,
+      &quot;covered&quot;: true,
+      &quot;executed&quot;: true,
+      &quot;rule_id&quot;: &quot;SC-001&quot;
+    },
+    {
+      &quot;coverage&quot;: &quot;compatible-baseline-comparison&quot;,
+      &quot;covered&quot;: true,
+      &quot;executed&quot;: true,
+      &quot;rule_id&quot;: &quot;SC-005&quot;
+    }
+  ],
+  &quot;schema_version&quot;: 1,
+  &quot;status&quot;: &quot;FAIL&quot;,
+  &quot;sync_policy&quot;: {
+    &quot;alignment_height&quot;: 0,
+    &quot;chunk_size&quot;: 20
+  }
+}</pre></details></body></html>

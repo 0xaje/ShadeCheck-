@@ -1,0 +1,349 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadeCheck evidence report</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:1050px;margin:40px auto;padding:0 24px;color:#17202a;background:#fafafa}h1,h2,h3{line-height:1.3}article{background:white;border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#eee;padding:16px}summary{cursor:pointer}small{overflow-wrap:anywhere}</style></head><body><h1>ShadeCheck: FAIL</h1><p>Defined observable behavior tests; passing does not establish anonymity.</p><p>Policy: strict · 2 findings</p><small>Evidence root: 107be3aabb11f4e34e916cbdabf341d0c133dbf4c1d23e5a7bf06c04d3d5e54e</small><h2>Tested rules</h2><table><thead><tr><th>Rule</th><th>Coverage</th><th>Covered</th></tr></thead><tbody><tr><td>SC-002</td><td>broadcast-observed</td><td>True</td></tr><tr><td>SC-005</td><td>compatible-baseline-comparison</td><td>True</td></tr></tbody></table><h2>Findings</h2><article><h3>SC-002 · HIGH · Broadcast payload linked to a transport session</h3><p><strong>Observed behavior:</strong> Accepted submission and identical mempool bytes observed within the configured window.</p><p><strong>Possible consequence:</strong> The RPC observer can associate these submitted bytes with this connection; this does not identify a person.</p><p><strong>Affected component:</strong> lightwalletd broadcast transport</p><p><strong>Investigation:</strong> Review the server trust model and whether an independent broadcast path reduces the observer&#x27;s linkability.</p><details><summary>Inspect current evidence (3 events)</summary><pre>[
+  {
+    &quot;elapsed_ns&quot;: 6686781,
+    &quot;event_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+    &quot;metadata&quot;: {
+      &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+      &quot;payload_size&quot;: 2373
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;request&quot;,
+    &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 1,
+    &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+    &quot;timestamp_ns&quot;: 1792833768196148034
+  },
+  {
+    &quot;elapsed_ns&quot;: 28796040,
+    &quot;event_hash&quot;: &quot;49ab0d6e38bc0b7b5b9bbfced5dfa56f7a1b82ca60982ad8821e49abb32e6071&quot;,
+    &quot;metadata&quot;: {
+      &quot;error_code&quot;: 0,
+      &quot;request_sequence&quot;: 1
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 2,
+    &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+    &quot;timestamp_ns&quot;: 1792833768218256912
+  },
+  {
+    &quot;elapsed_ns&quot;: 136110810,
+    &quot;event_hash&quot;: &quot;c8cd61880916184250a4902fef189186fbce35769ec4c374553dceea4a040af8&quot;,
+    &quot;metadata&quot;: {
+      &quot;height&quot;: 0,
+      &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+      &quot;payload_size&quot;: 2373
+    },
+    &quot;method&quot;: &quot;GetMempoolStream&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;180b782df8c1c01fd3a46450f4f097c909a5bd8e09361466713e7bc83a15240c&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 5,
+    &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+    &quot;timestamp_ns&quot;: 1792833768325572254
+  }
+]</pre></details></article><article><h3>SC-005 · HIGH · Privacy regression: severity-increased</h3><p><strong>Observed behavior:</strong> Accepted submission and identical mempool bytes observed within the configured window.</p><p><strong>Possible consequence:</strong> A defined privacy-sensitive behavior is newly observed or more severe than the saved baseline.</p><p><strong>Affected component:</strong> lightwalletd broadcast transport</p><p><strong>Investigation:</strong> Inspect the current and baseline evidence and the code or configuration change; restore the tested requirement before accepting a new baseline.</p><details><summary>Inspect current evidence (3 events)</summary><pre>[
+  {
+    &quot;elapsed_ns&quot;: 6686781,
+    &quot;event_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+    &quot;metadata&quot;: {
+      &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+      &quot;payload_size&quot;: 2373
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;request&quot;,
+    &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 1,
+    &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+    &quot;timestamp_ns&quot;: 1792833768196148034
+  },
+  {
+    &quot;elapsed_ns&quot;: 28796040,
+    &quot;event_hash&quot;: &quot;49ab0d6e38bc0b7b5b9bbfced5dfa56f7a1b82ca60982ad8821e49abb32e6071&quot;,
+    &quot;metadata&quot;: {
+      &quot;error_code&quot;: 0,
+      &quot;request_sequence&quot;: 1
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 2,
+    &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+    &quot;timestamp_ns&quot;: 1792833768218256912
+  },
+  {
+    &quot;elapsed_ns&quot;: 136110810,
+    &quot;event_hash&quot;: &quot;c8cd61880916184250a4902fef189186fbce35769ec4c374553dceea4a040af8&quot;,
+    &quot;metadata&quot;: {
+      &quot;height&quot;: 0,
+      &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+      &quot;payload_size&quot;: 2373
+    },
+    &quot;method&quot;: &quot;GetMempoolStream&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;180b782df8c1c01fd3a46450f4f097c909a5bd8e09361466713e7bc83a15240c&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 5,
+    &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+    &quot;timestamp_ns&quot;: 1792833768325572254
+  }
+]</pre></details><details><summary>Inspect baseline evidence</summary><pre>[
+  {
+    &quot;elapsed_ns&quot;: 6686781,
+    &quot;event_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+    &quot;metadata&quot;: {
+      &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+      &quot;payload_size&quot;: 2373
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;request&quot;,
+    &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 1,
+    &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+    &quot;timestamp_ns&quot;: 1792833768196148034
+  }
+]</pre></details></article><h2>Baseline comparison</h2><p>FAIL · 1 regressions</p><pre>{
+  &quot;baseline_evidence_root&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+  &quot;baseline_hash&quot;: &quot;818770e43d18bfde9bc38829b00352084493e9ceca00c96f3494bff868a6a55b&quot;,
+  &quot;changes&quot;: [
+    {
+      &quot;behavior&quot;: [
+        &quot;SC-002&quot;,
+        &quot;lightwalletd broadcast transport&quot;,
+        &quot;&quot;
+      ],
+      &quot;change&quot;: &quot;severity-increased&quot;,
+      &quot;current_severity&quot;: &quot;HIGH&quot;,
+      &quot;previous_severity&quot;: &quot;MEDIUM&quot;,
+      &quot;source_rule&quot;: &quot;SC-002&quot;
+    }
+  ],
+  &quot;regressions&quot;: 1,
+  &quot;resolved_behaviors&quot;: [],
+  &quot;status&quot;: &quot;FAIL&quot;,
+  &quot;unchanged_behaviors&quot;: 1
+}</pre><h2>Limitations</h2><ul><li>Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.</li><li>A transport peer identifies a connection, not a person or wallet.</li><li>Local fixture replay is not consensus validation or network acceptance.</li><li>Transaction SHA-256 fingerprints are not Zcash transaction IDs.</li><li>No violation observed does not establish anonymity.</li><li>SC-005 compares rule/component/behavior categories, not changing transaction IDs, sessions, timestamps, or finding counts.</li><li>Baselines include inspectable evidence; hashes detect editing but do not authenticate an author.</li><li>Compatible policy and complete coverage are required; a baseline is not a privacy exemption.</li></ul><details><summary>Complete JSON result</summary><pre>{
+  &quot;baseline_comparison&quot;: {
+    &quot;baseline_evidence_root&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+    &quot;baseline_hash&quot;: &quot;818770e43d18bfde9bc38829b00352084493e9ceca00c96f3494bff868a6a55b&quot;,
+    &quot;changes&quot;: [
+      {
+        &quot;behavior&quot;: [
+          &quot;SC-002&quot;,
+          &quot;lightwalletd broadcast transport&quot;,
+          &quot;&quot;
+        ],
+        &quot;change&quot;: &quot;severity-increased&quot;,
+        &quot;current_severity&quot;: &quot;HIGH&quot;,
+        &quot;previous_severity&quot;: &quot;MEDIUM&quot;,
+        &quot;source_rule&quot;: &quot;SC-002&quot;
+      }
+    ],
+    &quot;regressions&quot;: 1,
+    &quot;resolved_behaviors&quot;: [],
+    &quot;status&quot;: &quot;FAIL&quot;,
+    &quot;unchanged_behaviors&quot;: 1
+  },
+  &quot;correlation_window_seconds&quot;: 30,
+  &quot;evidence_modes&quot;: [
+    &quot;upstream&quot;
+  ],
+  &quot;evidence_root&quot;: &quot;107be3aabb11f4e34e916cbdabf341d0c133dbf4c1d23e5a7bf06c04d3d5e54e&quot;,
+  &quot;findings&quot;: [
+    {
+      &quot;affected_component&quot;: &quot;lightwalletd broadcast transport&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;elapsed_ns&quot;: 6686781,
+          &quot;event_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+          &quot;metadata&quot;: {
+            &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+            &quot;payload_size&quot;: 2373
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;request&quot;,
+          &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 1,
+          &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+          &quot;timestamp_ns&quot;: 1792833768196148034
+        },
+        {
+          &quot;elapsed_ns&quot;: 28796040,
+          &quot;event_hash&quot;: &quot;49ab0d6e38bc0b7b5b9bbfced5dfa56f7a1b82ca60982ad8821e49abb32e6071&quot;,
+          &quot;metadata&quot;: {
+            &quot;error_code&quot;: 0,
+            &quot;request_sequence&quot;: 1
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 2,
+          &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+          &quot;timestamp_ns&quot;: 1792833768218256912
+        },
+        {
+          &quot;elapsed_ns&quot;: 136110810,
+          &quot;event_hash&quot;: &quot;c8cd61880916184250a4902fef189186fbce35769ec4c374553dceea4a040af8&quot;,
+          &quot;metadata&quot;: {
+            &quot;height&quot;: 0,
+            &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+            &quot;payload_size&quot;: 2373
+          },
+          &quot;method&quot;: &quot;GetMempoolStream&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;180b782df8c1c01fd3a46450f4f097c909a5bd8e09361466713e7bc83a15240c&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 5,
+          &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+          &quot;timestamp_ns&quot;: 1792833768325572254
+        }
+      ],
+      &quot;network_acceptance_reported&quot;: true,
+      &quot;observed_behavior&quot;: &quot;Accepted submission and identical mempool bytes observed within the configured window.&quot;,
+      &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+      &quot;possible_privacy_consequence&quot;: &quot;The RPC observer can associate these submitted bytes with this connection; this does not identify a person.&quot;,
+      &quot;rule_id&quot;: &quot;SC-002&quot;,
+      &quot;severity&quot;: &quot;HIGH&quot;,
+      &quot;suggested_investigation&quot;: &quot;Review the server trust model and whether an independent broadcast path reduces the observer&#x27;s linkability.&quot;,
+      &quot;title&quot;: &quot;Broadcast payload linked to a transport session&quot;
+    },
+    {
+      &quot;affected_component&quot;: &quot;lightwalletd broadcast transport&quot;,
+      &quot;baseline_evidence&quot;: [
+        {
+          &quot;elapsed_ns&quot;: 6686781,
+          &quot;event_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+          &quot;metadata&quot;: {
+            &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+            &quot;payload_size&quot;: 2373
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;request&quot;,
+          &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 1,
+          &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+          &quot;timestamp_ns&quot;: 1792833768196148034
+        }
+      ],
+      &quot;baseline_evidence_root&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+      &quot;change&quot;: {
+        &quot;behavior&quot;: [
+          &quot;SC-002&quot;,
+          &quot;lightwalletd broadcast transport&quot;,
+          &quot;&quot;
+        ],
+        &quot;change&quot;: &quot;severity-increased&quot;,
+        &quot;current_severity&quot;: &quot;HIGH&quot;,
+        &quot;previous_severity&quot;: &quot;MEDIUM&quot;,
+        &quot;source_rule&quot;: &quot;SC-002&quot;
+      },
+      &quot;evidence&quot;: [
+        {
+          &quot;elapsed_ns&quot;: 6686781,
+          &quot;event_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+          &quot;metadata&quot;: {
+            &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+            &quot;payload_size&quot;: 2373
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;request&quot;,
+          &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 1,
+          &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+          &quot;timestamp_ns&quot;: 1792833768196148034
+        },
+        {
+          &quot;elapsed_ns&quot;: 28796040,
+          &quot;event_hash&quot;: &quot;49ab0d6e38bc0b7b5b9bbfced5dfa56f7a1b82ca60982ad8821e49abb32e6071&quot;,
+          &quot;metadata&quot;: {
+            &quot;error_code&quot;: 0,
+            &quot;request_sequence&quot;: 1
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 2,
+          &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+          &quot;timestamp_ns&quot;: 1792833768218256912
+        },
+        {
+          &quot;elapsed_ns&quot;: 136110810,
+          &quot;event_hash&quot;: &quot;c8cd61880916184250a4902fef189186fbce35769ec4c374553dceea4a040af8&quot;,
+          &quot;metadata&quot;: {
+            &quot;height&quot;: 0,
+            &quot;payload_sha256&quot;: &quot;bb0dd7dc6a10a205c05e116e8a321750dd395fd31a23f4124b9633ddac5586f4&quot;,
+            &quot;payload_size&quot;: 2373
+          },
+          &quot;method&quot;: &quot;GetMempoolStream&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;180b782df8c1c01fd3a46450f4f097c909a5bd8e09361466713e7bc83a15240c&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 5,
+          &quot;session&quot;: &quot;3b2e589b08e3de2fc6a1fab7e3b452b500b3c6060c21856ea16032d4131f8899&quot;,
+          &quot;timestamp_ns&quot;: 1792833768325572254
+        }
+      ],
+      &quot;observed_behavior&quot;: &quot;Accepted submission and identical mempool bytes observed within the configured window.&quot;,
+      &quot;possible_privacy_consequence&quot;: &quot;A defined privacy-sensitive behavior is newly observed or more severe than the saved baseline.&quot;,
+      &quot;rule_id&quot;: &quot;SC-005&quot;,
+      &quot;severity&quot;: &quot;HIGH&quot;,
+      &quot;suggested_investigation&quot;: &quot;Inspect the current and baseline evidence and the code or configuration change; restore the tested requirement before accepting a new baseline.&quot;,
+      &quot;title&quot;: &quot;Privacy regression: severity-increased&quot;
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.&quot;,
+    &quot;A transport peer identifies a connection, not a person or wallet.&quot;,
+    &quot;Local fixture replay is not consensus validation or network acceptance.&quot;,
+    &quot;Transaction SHA-256 fingerprints are not Zcash transaction IDs.&quot;,
+    &quot;No violation observed does not establish anonymity.&quot;,
+    &quot;SC-005 compares rule/component/behavior categories, not changing transaction IDs, sessions, timestamps, or finding counts.&quot;,
+    &quot;Baselines include inspectable evidence; hashes detect editing but do not authenticate an author.&quot;,
+    &quot;Compatible policy and complete coverage are required; a baseline is not a privacy exemption.&quot;
+  ],
+  &quot;payment_policy&quot;: null,
+  &quot;policy&quot;: &quot;strict&quot;,
+  &quot;rules&quot;: [
+    {
+      &quot;coverage&quot;: &quot;broadcast-observed&quot;,
+      &quot;covered&quot;: true,
+      &quot;executed&quot;: true,
+      &quot;rule_id&quot;: &quot;SC-002&quot;
+    },
+    {
+      &quot;coverage&quot;: &quot;compatible-baseline-comparison&quot;,
+      &quot;covered&quot;: true,
+      &quot;executed&quot;: true,
+      &quot;rule_id&quot;: &quot;SC-005&quot;
+    }
+  ],
+  &quot;schema_version&quot;: 1,
+  &quot;status&quot;: &quot;FAIL&quot;,
+  &quot;sync_policy&quot;: null
+}</pre></details></body></html>

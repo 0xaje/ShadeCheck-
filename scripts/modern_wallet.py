@@ -88,9 +88,13 @@ def wait_indexer(height):
                 stub=rpc.CompactTxStreamerStub(channel)
                 info=stub.GetLightdInfo(pb.Empty(),timeout=5)
                 genesis=stub.GetBlock(pb.BlockID(height=0),timeout=5)
+                latest=stub.GetLatestBlock(pb.ChainSpec(),timeout=5)
+                tip=stub.GetBlock(pb.BlockID(height=height),timeout=5)
             if info.chainName.lower() not in {'test','regtest'} or genesis.hash[::-1].hex()!=REGTEST_GENESIS:
                 raise ValueError('Refusing indexer without the pinned regtest genesis')
-            if info.blockHeight>=height: return info
+            # Advertised validator height can lead the indexer's serving cache.
+            # Require both the served tip and the requested compact block.
+            if info.blockHeight>=height and latest.height>=height and tip.height==height: return info
         except grpc.RpcError: pass
         time.sleep(2)
     raise RuntimeError('Zaino synchronization timed out')

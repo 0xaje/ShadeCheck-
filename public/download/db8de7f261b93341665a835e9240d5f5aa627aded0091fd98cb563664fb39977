@@ -1,0 +1,48 @@
+{
+  "lightwalletd_revision": "d16d48124e9ad4157ebc2324b5090c6ba201470c",
+  "network": "regtest",
+  "node_subversion": "/MagicBean:6.12.2/",
+  "requested_end": 109,
+  "requested_start": 103,
+  "returned_blocks": [
+    {
+      "block_hash": "020ded26eb861034cf7791b8d9daeb0e15be8d2ea4e93fdb5d0c1066766e4df2",
+      "height": 103,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0bbd36718a7a7831c55e1abbcfad236eb49af16ccdfda597f52fb329e0d1d19b",
+      "height": 104,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0b14269bf3aefe9098621244d10d766aa6948e09be3d071c4af70b3a2776d4f1",
+      "height": 105,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "095a16016719e2a32309362a50bf7aa873bf0381f1ce6d72b4cb289016b3db58",
+      "height": 106,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0a95d9be755662716939f6e4ad24e90ce311beca264249017232933e06c2e75f",
+      "height": 107,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "0ba4918a8f8ac53e5c8ac2a041c27d3096ccae3d2024e7612b5a1fd5d9758b39",
+      "height": 108,
+      "node_block_hash_matches": true
+    },
+    {
+      "block_hash": "08111b1e8176d65709416e7054aafa0939e7e6f539539481eb7b9fd247b10802",
+      "height": 109,
+      "node_block_hash_matches": true
+    }
+  ],
+  "sync_policy": {
+    "alignment_height": 0,
+    "chunk_size": 20
+  }
+}

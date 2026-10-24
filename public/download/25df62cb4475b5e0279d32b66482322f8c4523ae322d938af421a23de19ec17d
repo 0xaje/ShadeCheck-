@@ -1,0 +1,95 @@
+{
+  "known_failure": {
+    "baseline_evidence_root": "3509aed257541bb43ecb78cd8616cd444cf508a5d49c273df52b23cb702a38eb",
+    "baseline_hash": "a6bd509ae342b9364f9168f6b709fddb5d921b67d2942c533ee7356cb986d460",
+    "changes": [],
+    "regressions": 0,
+    "resolved_behaviors": [],
+    "status": "PASS",
+    "unchanged_behaviors": 1
+  },
+  "limitations": [
+    "Fresh real block requests, plus an explicitly labeled prefix of actual broadcast evidence.",
+    "Severity increase can reflect stronger observation, not necessarily a code regression.",
+    "PASS is limited to compatible tested rules; it does not establish anonymity."
+  ],
+  "new_behavior": {
+    "baseline_evidence_root": "3509aed257541bb43ecb78cd8616cd444cf508a5d49c273df52b23cb702a38eb",
+    "baseline_hash": "a6bd509ae342b9364f9168f6b709fddb5d921b67d2942c533ee7356cb986d460",
+    "changes": [
+      {
+        "behavior": [
+          "SC-001",
+          "lightwalletd block-range synchronization",
+          "inclusive request size differs from the configured chunk size|start height is not aligned to the configured boundary"
+        ],
+        "change": "new-sensitive-behavior",
+        "current_severity": "MEDIUM",
+        "previous_severity": null,
+        "source_rule": "SC-001"
+      }
+    ],
+    "regressions": 1,
+    "resolved_behaviors": [
+      [
+        "SC-001",
+        "lightwalletd block-range synchronization",
+        "inclusive request size differs from the configured chunk size"
+      ]
+    ],
+    "status": "FAIL",
+    "unchanged_behaviors": 0
+  },
+  "new_failure": {
+    "baseline_evidence_root": "dfb194b230480995a629f133c93adb0eba07503fd2e19b020f7e0ee7ecf8c459",
+    "baseline_hash": "398f71908e48f83dbf5e3d4e2ba8368cc50bd4d3906471d7adffbd9376d7c37a",
+    "changes": [
+      {
+        "behavior": [
+          "SC-001",
+          "lightwalletd block-range synchronization",
+          "inclusive request size differs from the configured chunk size|start height is not aligned to the configured boundary"
+        ],
+        "change": "new-failure",
+        "current_severity": "MEDIUM",
+        "previous_severity": null,
+        "source_rule": "SC-001"
+      }
+    ],
+    "regressions": 1,
+    "resolved_behaviors": [],
+    "status": "FAIL",
+    "unchanged_behaviors": 0
+  },
+  "rule_id": "SC-005",
+  "severity_increase": {
+    "baseline_evidence_root": "c684eadaf0a04e45a283215750f725ef58fc368df9bf58f02f9401b7afc6a15e",
+    "baseline_hash": "818770e43d18bfde9bc38829b00352084493e9ceca00c96f3494bff868a6a55b",
+    "changes": [
+      {
+        "behavior": [
+          "SC-002",
+          "lightwalletd broadcast transport",
+          ""
+        ],
+        "change": "severity-increased",
+        "current_severity": "HIGH",
+        "previous_severity": "MEDIUM",
+        "source_rule": "SC-002"
+      }
+    ],
+    "regressions": 1,
+    "resolved_behaviors": [],
+    "status": "FAIL",
+    "unchanged_behaviors": 1
+  },
+  "unchanged": {
+    "baseline_evidence_root": "dfb194b230480995a629f133c93adb0eba07503fd2e19b020f7e0ee7ecf8c459",
+    "baseline_hash": "398f71908e48f83dbf5e3d4e2ba8368cc50bd4d3906471d7adffbd9376d7c37a",
+    "changes": [],
+    "regressions": 0,
+    "resolved_behaviors": [],
+    "status": "PASS",
+    "unchanged_behaviors": 0
+  }
+}

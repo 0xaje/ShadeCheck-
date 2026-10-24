@@ -9,12 +9,17 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from shadecheck.dashboard_server import snapshot, display_safe
 
 
-def export(suite, output, run_url, commit):
+def export(suite, output, run_url, commit, *, acknowledge_public_evidence=False):
+    if not acknowledge_public_evidence:
+        raise ValueError("Publication exposes correlation metadata. Review the regtest artifacts and pass --acknowledge-public-evidence explicitly.")
     if not re.fullmatch(r'https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/actions/runs/[0-9]+',run_url):
         raise ValueError('A source GitHub Actions run URL is required')
     if not re.fullmatch(r'[0-9a-f]{40}',commit):
         raise ValueError('A full source commit SHA is required')
     payload, files = snapshot(suite)
+    environment = json.loads((Path(suite) / "environment.json").read_text())
+    if environment.get("chain") != "regtest":
+        raise ValueError("Public exporter accepts only reviewed controlled regtest suites")
     payload['suite']['source']={'run_url':run_url,'commit':commit,'kind':'recorded-regtest-acceptance'}
     output=Path(output)
     output.mkdir(parents=True,exist_ok=False)
@@ -33,4 +38,5 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--suite',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--source-run-url',required=True);p.add_argument('--source-commit',required=True)
-    a=p.parse_args();export(a.suite,a.output,a.source_run_url,a.source_commit)
+    p.add_argument('--acknowledge-public-evidence', action='store_true', help='Explicit consent to publish reviewed test metadata; never publish a real user wallet trace')
+    a=p.parse_args();export(a.suite,a.output,a.source_run_url,a.source_commit, acknowledge_public_evidence=a.acknowledge_public_evidence)

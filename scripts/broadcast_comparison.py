@@ -68,7 +68,7 @@ def exercise(directory, separated):
             broadcaster = reader
         response = broadcaster.SendTransaction(pb.RawTransaction(data=raw), timeout=15)
         if response.errorCode != 0:
-            raise RuntimeError(f"Verifier rejected transaction: {response.errorMessage}")
+            raise RuntimeError(f"Verifier rejected transaction: {response.errorCode}")
         backend.observe_matching_mempool(reader, raw)
         if separated:
             backend.observe_matching_mempool(broadcaster, raw)
@@ -77,7 +77,7 @@ def exercise(directory, separated):
         backend.write_json(directory / "backend-proof.json", {
             "txid": tx["txid"], "transaction_kind": tx["transaction_kind"],
             "decoded_structure": structure, "payload_sha256": hashlib.sha256(raw).hexdigest(),
-            "send_response_code": response.errorCode, "send_response_message": response.errorMessage,
+            "send_response_code": response.errorCode,
             "node_mempool_contains_txid": True, "node_raw_transaction_matches": True,
             "construction": tx["construction"], "setup_transactions": tx["setup_transactions"],
             "read_observed_height": tip.height,

@@ -12,6 +12,7 @@ import uuid
 from .core import load_events
 from .regression import recompute
 from .suite import verify
+from .privacy import private_open, private_directory
 
 
 class BusyError(ValueError): pass
@@ -37,7 +38,7 @@ class LocalRunner:
         with self.lock:
             if self.state['status'] in {'queued','running','validating'}:raise BusyError('A controlled test is already running')
             key=uuid.uuid4().hex
-            directory=self.project/'out/jobs'/key;directory.mkdir(parents=True,exist_ok=False)
+            directory=self.project/'out/jobs'/key;private_directory(directory)
             self.state={'id':key,'scenario':scenario,'status':'queued','logs':[],'results':[]}
             self.started=time.monotonic();self.ended=None
             threading.Thread(target=self._run,args=(scenario,directory),daemon=True).start()
@@ -58,7 +59,7 @@ class LocalRunner:
             timer=threading.Timer(1200,timeout);timer.daemon=True;timer.start()
             completed_suite=None
             try:
-                with (directory/'execution.log').open('x',encoding='utf-8') as log:
+                with private_open(directory/'execution.log',exclusive=True) as log:
                     for line in process.stdout:
                         log.write(line);log.flush()
                         with self.lock:self.state['logs']=(self.state['logs']+[line.rstrip()])[-120:]

@@ -1,0 +1,23 @@
+{
+  "construction": "real isolated zcashd wallet; locally accepted in wallet mempool",
+  "decoded_structure": {
+    "sapling_outputs": 2,
+    "sapling_spends": 1,
+    "sprout_joinsplits": 0,
+    "transparent_inputs": 0,
+    "transparent_outputs": 0
+  },
+  "lightwalletd_revision": "d16d48124e9ad4157ebc2324b5090c6ba201470c",
+  "node_mempool_contains_txid": true,
+  "node_raw_transaction_matches": true,
+  "node_subversion": "/MagicBean:6.12.2/",
+  "payload_sha256": "46e0cc42e1d9fd0a6a8d47f6d46df0b40cef04c2e7049865d2d48d22dced0bf0",
+  "read_observed_height": 118,
+  "send_response_code": 0,
+  "setup_transactions": {
+    "sapling_funding": "b7d8609858cbe08f54a6964f47ba37baf8c34623b18dbb8e0e870263a52ee941",
+    "transparent_funding": "1c1dafa125d7a26cd3bcec2833108af2231162193db0212cde4eca21df372ae1"
+  },
+  "transaction_kind": "sapling-shielded",
+  "txid": "259e098b4d189d59b95c3f7044be7977ee70caf98b9bc350d436ae0458f1aeb1"
+}

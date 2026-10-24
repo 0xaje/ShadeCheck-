@@ -1,7 +1,7 @@
 # ShadeCheck — final demo recording guide
 
 Target: approximately two minutes, landscape 16:9, readable 1080p footage.
-This is the primary recording plan. Rehearse timing before the final export.
+This is the original recording plan. For the verified current-release funded integration added October 24, use the [short replacement segment and editor prompt](VIDEO_UPDATE_PROMPT.md). The historical sync-only segment below remains an audit reference, not the newest integration. Rehearse timing before the final export.
 The organizer submission form requests a two-minute video; keep the complete export at or below two minutes.
 
 ## 1. Understand the demonstration

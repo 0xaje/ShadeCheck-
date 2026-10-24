@@ -1,0 +1,38 @@
+{
+  "limitations": [
+    "The broadcast observer still links submission bytes to its transport peer.",
+    "No broadcast at the read observer means missing SC-002 coverage, not PASS.",
+    "Both local observer roles share one verifier/lightwalletd backend; this is not service independence.",
+    "Colluding observers or the shared backend can correlate transaction fingerprints and timing.",
+    "This controlled routing comparison does not establish anonymity or production mitigation."
+  ],
+  "schema_version": 1,
+  "separated": {
+    "broadcast_observer": {
+      "evidence_root": "82985a6c62e416f4050ef76ad3714930bf0248be4d114e5ac7634b046bb3c12d",
+      "findings": 1,
+      "status": "FAIL"
+    },
+    "read_observer": {
+      "evidence_root": "c1c4549e00348814cf5466e8471eb976195ff14a9e9d9d4d95327cc726067085",
+      "findings": 0,
+      "matching_mempool_events": 1,
+      "status": "WARN",
+      "submission_requests": 0
+    }
+  },
+  "unified": {
+    "broadcast_observer": {
+      "evidence_root": "796a465c22b0f03ad8e00b6dc260033eb40e3789871f295c8361f4531499b290",
+      "findings": 1,
+      "status": "FAIL"
+    },
+    "read_observer": {
+      "evidence_root": "796a465c22b0f03ad8e00b6dc260033eb40e3789871f295c8361f4531499b290",
+      "findings": 1,
+      "matching_mempool_events": 1,
+      "status": "FAIL",
+      "submission_requests": 1
+    }
+  }
+}

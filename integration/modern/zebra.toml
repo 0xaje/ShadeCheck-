@@ -1,0 +1,25 @@
+[network]
+network = "Regtest"
+listen_addr = "0.0.0.0:18233"
+initial_mainnet_peers = []
+initial_testnet_peers = []
+[network.testnet_parameters.activation_heights]
+BeforeOverwinter = 1
+Overwinter = 1
+Sapling = 1
+Blossom = 1
+Heartwood = 1
+Canopy = 1
+NU5 = 1
+NU6 = 1
+"NU6.1" = 1
+"NU6.2" = 1
+"NU6.3" = 1
+[state]
+cache_dir = "/home/zebra/.cache/zebra"
+[rpc]
+listen_addr = "0.0.0.0:18232"
+enable_cookie_auth = false
+[mining]
+# The test driver substitutes a fresh local wallet's transparent address.
+miner_address = "tmSRd1r8gs77Ja67Fw1JcdoXytxsyrLTPJm"

@@ -1,0 +1,55 @@
+# Current-release independent wallet on Zebra and Zaino
+
+[Real funded CI run 40099904709](https://github.com/0xaje/ShadeCheck-/actions/runs/40099904709) passed at ShadeCheck revision `7ccf7c9e7270a9bde88c18ef8a4170acf80fa258`, including 54 unit/boundary checks. The original artifact was downloaded, hash checked and independently revalidated. Its manifest reports `integration_status: VERIFIED`; the privacy report is FAIL with two HIGH SC-002 findings and strict exit 1. [Original evidence and offline inspection](../examples/modern/README.md).
+
+Both initial scans completed heights 1–210. The run recorded 1,009 events and verified 213 distinct delivered block heights against Zebra. The wallet shielded actual mined funds and sent 100,000 shielded zatoshis; the recipient verified that exact Ironwood balance with zero transparent value. The payment's accepted node-decoded transaction had zero transparent inputs and outputs. Both broadcasts were accepted, re-observed with identical mempool bytes, and mined. These are controlled test-transport observations, not a production wallet vulnerability claim.
+
+## Pinned components
+
+- Zebra 7.0.0, image digest `sha256:a70d2be8ffef3a4b6e37355724e36a0e6c1838e46baa28bfb216739f00cf2d34`.
+- Zaino 0.10.1-no-tls, image digest `sha256:c8428a39d510fd59a9182a5e19cf473d6af6a4b6a672aff8b1a690e9c23c17b9`.
+- Zingolib release `zingolib_v7.0.0`, source commit `bfb0a2156819ea7f75a9b09b1724abfd06c8925e`; Rust 1.99.0.
+- Unmodified upstream source, built with `--no-default-features --features nakednet-test-mode`. This is upstream's explicit local transport testing feature. It bypasses default mixnet transport for a controlled experiment and is never a claim about production Zingo network behavior.
+
+The activation schedule matches the client's regtest defaults through NU6.3 at height 1, with NU7 not activated. The fact Zebra supports NU7 does not mean this scenario exercises it.
+
+## Required runtime evidence
+
+1. Create throwaway sender/recipient wallets locally; never request or publish seeds/keys.
+2. Mine actual local coinbase funds to the sender's transparent address. Require advertised height, served latest-block height and delivery of the requested compact tip; advertised validator height alone is insufficient for indexer readiness.
+3. Require complete, nonempty direct and observed client synchronization over the same initial block span.
+4. Let the independent wallet shield the mature local funds and broadcast through ShadeCheck. Require actual Zebra mempool acceptance, identical mempool bytes observed through the proxy, and block inclusion.
+5. Let the wallet send 100000 zatoshis to a shielded recipient through the observer. Require accepted node-decoded transaction structure with zero transparent inputs and outputs, matching mempool evidence, and block inclusion.
+6. Require the recipient wallet to scan and report exactly 100000 shielded zatoshis, without transparent receipt.
+7. Check every recorded compact-block hash against the canonical Zebra chain, recompute SC-002 findings, and require an actual strict CLI exit of 1 supported by HIGH evidence for each transmission.
+8. Save an inventory and recompute the resulting bundle. Other families are not implicitly covered by this workflow.
+
+## Reproduce
+
+Requirements: Docker Linux engine with Compose v2, Python 3.11+, Rust 1.99.0, C/C++ build tools, OpenSSL development libraries, pkg-config and protobuf compiler. Use a trusted developer machine. Do not run two copies concurrently.
+
+```bash
+python -m shadecheck.cli doctor
+# Clone once; do not reuse a modified client checkout.
+git clone https://github.com/zingolabs/zingolib.git ../shadecheck-modern-zingo
+git -C ../shadecheck-modern-zingo checkout --detach bfb0a2156819ea7f75a9b09b1724abfd06c8925e
+cd ../shadecheck-modern-zingo
+rustup toolchain install 1.99.0 --profile minimal
+cargo +1.99.0 build --locked --release -p zingo-cli --no-default-features --features nakednet-test-mode
+cd ../ShadeCheck-
+python scripts/modern_wallet.py --source ../shadecheck-modern-zingo
+```
+
+The driver uses a distinct Compose project, `shadecheck-modern-regtest`, volumes and localhost port 29067 (indexer); node RPC stays internal and the driver queries it through Docker exec. It does not modify the existing regression backend. It may append blocks to its dedicated modern chain on repeat runs. The driver first establishes a setup tip, creates both control wallets at the same tip with upstream completion-mode sync settings, switches mining to the new throwaway sender, then mines 110 funding blocks. It preserves the client’s three-confirmation spending requirement. Wallets and private client failure logs stay in `.shadecheck/modern-wallets`, outside `out/modern` artifacts. Local test node RPC is unencrypted and unauthenticated inside its isolated container network, with no published host RPC or P2P port. This is not a production deployment configuration.
+
+The driver sets the miner address only for the child Compose processes. To stop this stack while preserving its local volumes, a placeholder valid regtest address is sufficient for Compose substitution:
+
+```bash
+SHADECHECK_MODERN_MINER=tmSRd1r8gs77Ja67Fw1JcdoXytxsyrLTPJm docker compose -f integration/modern/compose.yml down
+```
+
+On Windows PowerShell set `$env:SHADECHECK_MODERN_MINER` before the Compose command. Never run `down -v` on a chain whose data you intend to retain.
+
+Offline inspection uses `python scripts/modern_wallet.py --verify out/modern/RUN`. It validates the inventory and recomputes recorded evidence/results. It does not independently rerun the historical wallet process, revalidate consensus, or authenticate an author. Source CI and exact pins provide the execution context.
+
+This current-client gate complements the five-family legacy regression suite and historical Zingo sync experiment. It does not turn their separate evidence into one client trace or claim every backend/wallet combination is supported.

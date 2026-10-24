@@ -6,11 +6,11 @@ Privacy CI for Zcash applications. A correctly shielded transaction can still be
 
 Primary user: a wallet/SDK developer who needs evidence that a release did not introduce a tested privacy regression. Track choice: Core & Tooling, subject to the organizer's current form/rules.
 
-The implementation uses a controlled regtest zcashd wallet, protocol-authentic lightwalletd clients, and a separately verified pinned independent Zingo CLI synchronization workflow. It does not claim support for every wallet or discovery of new protocol vulnerabilities.
+The implementation has a five-family controlled regression suite and a separate verified, unmodified current Zingo source release that shields mined funds, sends a shielded payment and verifies recipient receipt on Zebra/Zaino. That funded SC-002 gate uses explicit upstream local test transport. A historical independent sync-only workflow remains available for audit. It does not claim support for every wallet or discovery of new protocol vulnerabilities.
 
 ## Demonstration
 
-Use the [final step-by-step recording guide](VIDEO_RECORDING_GUIDE.md) as the primary script. It includes the deployed recorded-evidence viewer, exact filters, a fresh local sync comparison, saved baseline navigation, the verified independent Zingo sync experiment, narration, captions, and recording checks. Keep the opening brief and prioritize inspectable evidence.
+Use the [step-by-step recording guide](VIDEO_RECORDING_GUIDE.md), with the [current funded-wallet replacement segment](VIDEO_UPDATE_PROMPT.md). It includes the deployed recorded-evidence viewer, exact filters, a fresh local sync comparison, saved baseline navigation, the verified independent Zingo sync experiment, narration, captions, and recording checks. Keep the opening brief and prioritize inspectable evidence.
 
 ## Claims that are supported
 

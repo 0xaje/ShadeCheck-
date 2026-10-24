@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadeCheck evidence report</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:1050px;margin:40px auto;padding:0 24px;color:#17202a;background:#fafafa}h1,h2,h3{line-height:1.3}article{background:white;border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#eee;padding:16px}summary{cursor:pointer}small{overflow-wrap:anywhere}</style></head><body><h1>ShadeCheck: FAIL</h1><p>Defined observable behavior tests; passing does not establish anonymity.</p><p>Policy: strict · 1 findings</p><small>Evidence root: ebbe688ff80f903adf4703be229ed92ec3949ba81d171ebab815175bf90460e1</small><h2>Tested rules</h2><table><thead><tr><th>Rule</th><th>Coverage</th><th>Covered</th></tr></thead><tbody><tr><td>SC-002</td><td>broadcast-observed</td><td>True</td></tr></tbody></table><h2>Findings</h2><article><h3>SC-002 · HIGH · Broadcast payload linked to a transport session</h3><p><strong>Observed behavior:</strong> Accepted submission and identical mempool bytes observed within the configured window.</p><p><strong>Possible consequence:</strong> The RPC observer can associate these submitted bytes with this connection; this does not identify a person.</p><p><strong>Affected component:</strong> lightwalletd broadcast transport</p><p><strong>Investigation:</strong> Review the server trust model and whether an independent broadcast path reduces the observer&#x27;s linkability.</p><details><summary>Inspect current evidence (3 events)</summary><pre>[
+  {
+    &quot;elapsed_ns&quot;: 6625116,
+    &quot;event_hash&quot;: &quot;18949f6b205606f8a667d10d6f9a16db3209db7e8933804ddc50808210caa758&quot;,
+    &quot;metadata&quot;: {
+      &quot;payload_sha256&quot;: &quot;451f0b35eff84b9297c2485224e675d5c4e9f0ab06d5a4f427e759b9cf965d3d&quot;,
+      &quot;payload_size&quot;: 210
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;request&quot;,
+    &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 1,
+    &quot;session&quot;: &quot;63720a6f0a73422cd74878bbf9941b3d997ddba1bcd7ce3f7ef17d83fbb6da40&quot;,
+    &quot;timestamp_ns&quot;: 1792833701706218035
+  },
+  {
+    &quot;elapsed_ns&quot;: 9325016,
+    &quot;event_hash&quot;: &quot;686569c614c7cbedd3a67d8c83aacbb920464032edc84573a2033631a0109e23&quot;,
+    &quot;metadata&quot;: {
+      &quot;error_code&quot;: 0,
+      &quot;request_sequence&quot;: 1
+    },
+    &quot;method&quot;: &quot;SendTransaction&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;18949f6b205606f8a667d10d6f9a16db3209db7e8933804ddc50808210caa758&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 2,
+    &quot;session&quot;: &quot;63720a6f0a73422cd74878bbf9941b3d997ddba1bcd7ce3f7ef17d83fbb6da40&quot;,
+    &quot;timestamp_ns&quot;: 1792833701708917955
+  },
+  {
+    &quot;elapsed_ns&quot;: 116070042,
+    &quot;event_hash&quot;: &quot;fe4fda2cae508fcc4f348d2041dcfdf024854f29284ed884a184af941365b512&quot;,
+    &quot;metadata&quot;: {
+      &quot;height&quot;: 0,
+      &quot;payload_sha256&quot;: &quot;451f0b35eff84b9297c2485224e675d5c4e9f0ab06d5a4f427e759b9cf965d3d&quot;,
+      &quot;payload_size&quot;: 210
+    },
+    &quot;method&quot;: &quot;GetMempoolStream&quot;,
+    &quot;mode&quot;: &quot;upstream&quot;,
+    &quot;phase&quot;: &quot;response&quot;,
+    &quot;previous_hash&quot;: &quot;02343308cfc23b7bd9966097082f239a8ae91d6eb0740e140560817793b44237&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sequence&quot;: 5,
+    &quot;session&quot;: &quot;63720a6f0a73422cd74878bbf9941b3d997ddba1bcd7ce3f7ef17d83fbb6da40&quot;,
+    &quot;timestamp_ns&quot;: 1792833701815663121
+  }
+]</pre></details></article><h2>Limitations</h2><ul><li>Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.</li><li>A transport peer identifies a connection, not a person or wallet.</li><li>Local fixture replay is not consensus validation or network acceptance.</li><li>Transaction SHA-256 fingerprints are not Zcash transaction IDs.</li><li>No violation observed does not establish anonymity.</li></ul><details><summary>Complete JSON result</summary><pre>{
+  &quot;correlation_window_seconds&quot;: 30,
+  &quot;evidence_modes&quot;: [
+    &quot;upstream&quot;
+  ],
+  &quot;evidence_root&quot;: &quot;ebbe688ff80f903adf4703be229ed92ec3949ba81d171ebab815175bf90460e1&quot;,
+  &quot;findings&quot;: [
+    {
+      &quot;affected_component&quot;: &quot;lightwalletd broadcast transport&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;elapsed_ns&quot;: 6625116,
+          &quot;event_hash&quot;: &quot;18949f6b205606f8a667d10d6f9a16db3209db7e8933804ddc50808210caa758&quot;,
+          &quot;metadata&quot;: {
+            &quot;payload_sha256&quot;: &quot;451f0b35eff84b9297c2485224e675d5c4e9f0ab06d5a4f427e759b9cf965d3d&quot;,
+            &quot;payload_size&quot;: 210
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;request&quot;,
+          &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 1,
+          &quot;session&quot;: &quot;63720a6f0a73422cd74878bbf9941b3d997ddba1bcd7ce3f7ef17d83fbb6da40&quot;,
+          &quot;timestamp_ns&quot;: 1792833701706218035
+        },
+        {
+          &quot;elapsed_ns&quot;: 9325016,
+          &quot;event_hash&quot;: &quot;686569c614c7cbedd3a67d8c83aacbb920464032edc84573a2033631a0109e23&quot;,
+          &quot;metadata&quot;: {
+            &quot;error_code&quot;: 0,
+            &quot;request_sequence&quot;: 1
+          },
+          &quot;method&quot;: &quot;SendTransaction&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;18949f6b205606f8a667d10d6f9a16db3209db7e8933804ddc50808210caa758&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 2,
+          &quot;session&quot;: &quot;63720a6f0a73422cd74878bbf9941b3d997ddba1bcd7ce3f7ef17d83fbb6da40&quot;,
+          &quot;timestamp_ns&quot;: 1792833701708917955
+        },
+        {
+          &quot;elapsed_ns&quot;: 116070042,
+          &quot;event_hash&quot;: &quot;fe4fda2cae508fcc4f348d2041dcfdf024854f29284ed884a184af941365b512&quot;,
+          &quot;metadata&quot;: {
+            &quot;height&quot;: 0,
+            &quot;payload_sha256&quot;: &quot;451f0b35eff84b9297c2485224e675d5c4e9f0ab06d5a4f427e759b9cf965d3d&quot;,
+            &quot;payload_size&quot;: 210
+          },
+          &quot;method&quot;: &quot;GetMempoolStream&quot;,
+          &quot;mode&quot;: &quot;upstream&quot;,
+          &quot;phase&quot;: &quot;response&quot;,
+          &quot;previous_hash&quot;: &quot;02343308cfc23b7bd9966097082f239a8ae91d6eb0740e140560817793b44237&quot;,
+          &quot;schema_version&quot;: 1,
+          &quot;sequence&quot;: 5,
+          &quot;session&quot;: &quot;63720a6f0a73422cd74878bbf9941b3d997ddba1bcd7ce3f7ef17d83fbb6da40&quot;,
+          &quot;timestamp_ns&quot;: 1792833701815663121
+        }
+      ],
+      &quot;network_acceptance_reported&quot;: true,
+      &quot;observed_behavior&quot;: &quot;Accepted submission and identical mempool bytes observed within the configured window.&quot;,
+      &quot;payload_sha256&quot;: &quot;451f0b35eff84b9297c2485224e675d5c4e9f0ab06d5a4f427e759b9cf965d3d&quot;,
+      &quot;possible_privacy_consequence&quot;: &quot;The RPC observer can associate these submitted bytes with this connection; this does not identify a person.&quot;,
+      &quot;rule_id&quot;: &quot;SC-002&quot;,
+      &quot;severity&quot;: &quot;HIGH&quot;,
+      &quot;suggested_investigation&quot;: &quot;Review the server trust model and whether an independent broadcast path reduces the observer&#x27;s linkability.&quot;,
+      &quot;title&quot;: &quot;Broadcast payload linked to a transport session&quot;
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.&quot;,
+    &quot;A transport peer identifies a connection, not a person or wallet.&quot;,
+    &quot;Local fixture replay is not consensus validation or network acceptance.&quot;,
+    &quot;Transaction SHA-256 fingerprints are not Zcash transaction IDs.&quot;,
+    &quot;No violation observed does not establish anonymity.&quot;
+  ],
+  &quot;payment_policy&quot;: null,
+  &quot;policy&quot;: &quot;strict&quot;,
+  &quot;rules&quot;: [
+    {
+      &quot;coverage&quot;: &quot;broadcast-observed&quot;,
+      &quot;covered&quot;: true,
+      &quot;executed&quot;: true,
+      &quot;rule_id&quot;: &quot;SC-002&quot;
+    }
+  ],
+  &quot;schema_version&quot;: 1,
+  &quot;status&quot;: &quot;FAIL&quot;,
+  &quot;sync_policy&quot;: null
+}</pre></details></body></html>

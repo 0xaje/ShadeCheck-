@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/zingolabs/zingolib.git",
+  "release": "zingolib_v7.0.0",
+  "revision": "bfb0a2156819ea7f75a9b09b1724abfd06c8925e",
+  "rust": "1.99.0",
+  "build": ["cargo", "build", "--locked", "--release", "-p", "zingo-cli", "--no-default-features", "--features", "nakednet-test-mode"],
+  "scope": "Unmodified release with explicit upstream local transport test feature. Not production mixnet behavior."
+}

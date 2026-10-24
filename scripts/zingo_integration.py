@@ -20,6 +20,7 @@ from shadecheck.core import Recorder, load_events, evaluate
 from shadecheck.generated import service_pb2 as pb
 from shadecheck.generated import service_pb2_grpc as rpc
 from shadecheck.harness import start_server
+from shadecheck.privacy import private_directory, private_write
 
 COMPOSE = ["docker", "compose", "-f", str(backend.ROOT / "integration/zingo/compose.yml")]
 ENDPOINT = "127.0.0.1:19067"
@@ -85,14 +86,16 @@ def parse_sync_status(output):
 
 def run_wallet(binary, endpoint, wallet_dir, artifacts):
     # Each run gets a new wallet. Never export wallet files, seed phrases or keys.
-    wallet_dir.mkdir(parents=True, exist_ok=False)
+    if wallet_dir.exists():
+        raise ValueError("Requires fresh wallet directory")
+    private_directory(wallet_dir)
     args = [str(binary), "--chain", "regtest", "--server", f"http://{endpoint}",
             "--data-dir", str(wallet_dir), "--waitsync", "sync", "status"]
     run = subprocess.run(args, cwd=wallet_dir, capture_output=True, text=True, timeout=180)
     # These commands never ask the client to print a seed/key. Keep diagnostics
     # local on failure; only export the parsed, nonsecret sync status on success.
     if run.returncode:
-        (wallet_dir / "failure.log").write_text(run.stdout + "\n" + run.stderr)
+        private_write(wallet_dir / "failure.log", run.stdout + "\n" + run.stderr)
         # Export only bounded error/panic lines, never general wallet output.
         safe_errors = [line[:500] for line in run.stderr.splitlines()
                        if re.search(r"(?i)(^error:|panicked at|^failed to)", line)
@@ -101,7 +104,7 @@ def run_wallet(binary, endpoint, wallet_dir, artifacts):
     try:
         status = parse_sync_status(run.stdout)
     except RuntimeError as error:
-        (wallet_dir / "failure.log").write_text(run.stdout + "\n" + run.stderr)
+        private_write(wallet_dir / "failure.log", run.stdout + "\n" + run.stderr)
         raise RuntimeError(f"{error}; private diagnostics: {wallet_dir / 'failure.log'}") from error
     backend.write_json(artifacts / "client-sync.json", {"process_exit": run.returncode, "sync_status": status})
     return status

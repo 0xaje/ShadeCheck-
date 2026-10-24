@@ -1,4 +1,20 @@
-# Submission-hardening validation — October 21, 2026
+# Privacy hardening validation — October 24, 2026
+
+Source commit: `74d2f8f199ed2b631c899aef8a25c722f4deeee4`.
+
+[Real acceptance run 40081554868](https://github.com/0xaje/ShadeCheck-/actions/runs/40081554868) passed 53 unit/boundary checks, all five rule families on the controlled regression backend, consumer gate exit assertions, an installed-wheel check, and browser/local-runner checks. The original downloaded archive has SHA-256 `265f33cf4061140a0d83639fbf293f21c9840dd8a9591c58d972c0cada211853`. Offline verification revalidated 24 reports and 112 hashed acceptance artifacts. The committed public snapshot was refreshed from this exact run.
+
+Fresh recordings now use per-run keyed session identifiers, omit arbitrary backend broadcast response text, and retain compatibility-only message fingerprints without raw RPC bodies. Evidence files use private POSIX permissions. Public export requires explicit acknowledgement and a validated controlled regtest suite. These controls reduce retained data; they do not make transaction fingerprints or exported metadata anonymous. See [evidence handling](evidence-privacy.md).
+
+The read-only `shadecheck doctor` command checks prerequisites and reports a blocked setup clearly. Its READY state is not a privacy test result. [Rule applicability](rule-applicability.md) explains which requirements fit which observers and distinguishes configured policy failures from discovered vulnerabilities.
+
+The [current-release funded-wallet gate](modern-wallet.md) passed [run 40099904709](https://github.com/0xaje/ShadeCheck-/actions/runs/40099904709) at source `7ccf7c9e7270a9bde88c18ef8a4170acf80fa258` with 54 unit/boundary checks. Both initial scans completed heights 1–210. It recorded 1,009 events, checked 213 distinct delivered block heights, shielded real mined funds, sent a shielded payment and verified the recipient's exact 100,000 shielded zatoshis. The accepted payment had zero transparent inputs/outputs. Two SC-002 HIGH findings and actual strict exit 1 were required. Original archive SHA-256: `ed2f80fd89eb55fa975728e6e8740ffaf95173dab58f3a23236dd36a9f534f9f`; it was downloaded and revalidated locally. [Evidence bundle](../examples/modern/README.md).
+
+This unmodified upstream source build explicitly uses local test transport, not default production mixnet transport. Its SC-002 coverage stays separate from the five-family regression suite. The historical checks below remain an audit record, not claims that their older components are the recommended current production stack.
+
+---
+
+## Historical submission-hardening validation — October 21, 2026
 
 Source commit: `c3ce35f93979eae57fa91c394be2bf7ced3d3e1a`
 

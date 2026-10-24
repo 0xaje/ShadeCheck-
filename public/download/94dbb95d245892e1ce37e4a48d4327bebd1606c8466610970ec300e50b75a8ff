@@ -1,0 +1,33 @@
+{
+  "aligned": {
+    "delivered_blocks": 20,
+    "evidence_root": "11b32f96ee809040ed86eb7387b1d204fbf04da77660b753576db12e2ea6bec5",
+    "findings": 0,
+    "requested_end": 119,
+    "requested_start": 100,
+    "status": "PASS",
+    "strict_exit": 0
+  },
+  "limitations": [
+    "Protocol-authentic test client, not a full wallet synchronization algorithm.",
+    "This declared policy is a test requirement, not a universal Zcash requirement.",
+    "Actual range boundaries and sizes are observable; wallet state and identity are not proven.",
+    "The test uses a completed historical chunk; live chain-tip handling remains outside coverage.",
+    "Timing fingerprinting and repeated sync history are not implemented in this rule.",
+    "PASS applies only to the declared SC-001 policy and executed trace, not anonymity."
+  ],
+  "narrow": {
+    "delivered_blocks": 7,
+    "evidence_root": "88d6b5dbbd0f5f6402ef91ff2602e633745e3bacb3aad6024026552584906de9",
+    "findings": 1,
+    "requested_end": 109,
+    "requested_start": 103,
+    "status": "FAIL",
+    "strict_exit": 1
+  },
+  "rule_id": "SC-001",
+  "sync_policy": {
+    "alignment_height": 0,
+    "chunk_size": 20
+  }
+}

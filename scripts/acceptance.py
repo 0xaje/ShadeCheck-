@@ -10,6 +10,7 @@ import time
 import uuid
 
 import regtest as backend
+from shadecheck.privacy import private_open, private_write
 from shadecheck.core import canonical, load_events, evaluate
 from shadecheck.suite import REQUIRED_RULES, require, check_artifacts, summary_html, verify
 
@@ -32,9 +33,8 @@ STEPS = [
 
 def run_step(root, name, arguments, env):
     log = root / "logs" / (name + ".log")
-    log.parent.mkdir(parents=True, exist_ok=True)
     print(f"Acceptance step: {name}", flush=True)
-    with log.open("x", encoding="utf-8") as f:
+    with private_open(log, exclusive=True) as f:
         run = subprocess.run([sys.executable, *arguments], cwd=backend.ROOT,
                              env=env, stdout=f, stderr=subprocess.STDOUT, timeout=1200)
     if run.returncode:
@@ -82,7 +82,7 @@ def main():
                      "Node release and lightwalletd source revision are pinned. Upstream lightwalletd base-image tags and package repositories can change; actual image identities are recorded, not claimed fully hermetic.",
                      "Evidence hashes are integrity checks, not author authentication. Node and native wallet adapter evidence depend on trusted local test components."]}
         backend.write_json(root / "suite.json", value)
-        (root / "suite.html").write_text(summary_html(value))
+        private_write(root / "suite.html", summary_html(value))
         verify(root)
         print(f"SHADECHECK MVP ACCEPTANCE VERIFIED: all five rules; real backend; expected strict failures; JSON/HTML; baselines. Reports: {root}")
         return 0

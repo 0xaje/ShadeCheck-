@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 from .core import canonical, evaluate, load_events
+from .privacy import private_open
 
 VERSION = 1
 RANK = {"LOW": 1, "MEDIUM": 2, "HIGH": 3, "CRITICAL": 4}
@@ -38,8 +39,7 @@ def save_baseline(events_path, report_path, output):
              "events": events, "result": result}
     value["baseline_hash"] = hashlib.sha256(canonical(value).encode()).hexdigest()
     path = Path(output)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("x", encoding="utf-8") as f:
+    with private_open(path, exclusive=True) as f:
         f.write(canonical(value) + "\n")
     return value
 

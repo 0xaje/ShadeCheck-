@@ -4,7 +4,7 @@ Adversary: the service receiving a client's broadcast RPC, able to observe the t
 
 MEDIUM is justified by direct connection-to-payload association even when the broadcast is rejected. HIGH requires upstream-reported acceptance and exact byte correlation within the configured 30-second window. Fixture mode cannot generate HIGH. Matching is by submitted serialization, not a naive SHA-256 Zcash txid.
 
-The observer captures the gRPC transport peer and hashes it. A connection is not a stable wallet identity. The observer itself changes routing and timings. A mitigated architecture must demonstrate a reduced link at the modeled observer; relabeling a session or choosing advisory policy is not mitigation.
+Fresh recordings use a random per-run HMAC key to pseudonymize the gRPC transport peer; the key is not saved. Historical evidence used a plain peer hash and remains unchanged for provenance. A connection is not a stable wallet identity. The observer itself changes routing and timings. A mitigated architecture must demonstrate a reduced link at the modeled observer; relabeling a session or choosing advisory policy is not mitigation.
 
 The first transport milestone requires a controlled real backend to accept a valid transaction, GetMempoolStream to return matching bytes, the finding to embed those recorded events, and strict CLI execution to return 1. The real regtest CI run on October 6, 2026 satisfied these conditions with a genuinely signed transparent transaction and independent node confirmation. The subsequent [real shielded integration run](https://github.com/0xaje/ShadeCheck-/actions/runs/37401106271) verified two successive Sapling-to-Sapling transactions, each with one Sapling spend, two Sapling outputs, and zero transparent inputs or outputs. The wallet constructs and accepts each transaction on an isolated local node; its first submission to the separate verifier passes through ShadeCheck. This is not a mitigation proof. Fixture replay remains only an internal protocol test.
 
@@ -37,3 +37,7 @@ The [local dashboard](dashboard.md) uses the same acceptance artifact validator 
 ## Independent-client compatibility boundary
 
 The [pinned Zingo CLI experiment](zingo-integration.md) uses a separate chain and unmodified historical upstream client. Direct and observed block scanning must both complete, and delivered compact blocks must match the canonical node before the integration can be labelled VERIFIED. Compatibility-only RPC forwarding adds no rule coverage; raw addresses and tree messages are not exported by these handlers. The selected fixed-chunk sync policy is an experiment requirement, not a universal privacy standard or a claim of a Zingo vulnerability. Fresh unfunded wallet sync does not cover receiving, spending, production transport defaults, other releases, adoption, or endorsement.
+
+## Evidence handling
+
+See [evidence privacy](evidence-privacy.md) for the exact collection, file permission, retention and publication boundaries, and [rule applicability](rule-applicability.md) before turning a heuristic into a CI requirement. Keyed pseudonyms do not anonymize payload fingerprints, timestamps or transaction identifiers.

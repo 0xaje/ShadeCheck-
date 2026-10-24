@@ -1,0 +1,36 @@
+{
+  "full_privacy": {
+    "decoded_structure": {
+      "sapling_outputs": 2,
+      "sapling_spends": 1,
+      "transparent_inputs": 0,
+      "transparent_outputs": 0
+    },
+    "evidence_root": "a96158cbfcb31e7866a8f4bbbd1b5f6e65c4b1fc05f859295a1c86096c9c96e7",
+    "findings": 0,
+    "status": "PASS",
+    "strict_exit": 0
+  },
+  "limitations": [
+    "Instrumented native-wallet payment adapter, not passive receiver inference.",
+    "Tests an explicit transparent recipient path; automatic Unified Address fallback is not implemented.",
+    "Wallet adapter receipts depend on the trusted local test driver and node RPC.",
+    "PASS is scoped to the shielded requirement in this executed flow, not anonymity."
+  ],
+  "payment_policy": {
+    "require_shielded": true
+  },
+  "permissive": {
+    "decoded_structure": {
+      "sapling_outputs": 2,
+      "sapling_spends": 1,
+      "transparent_inputs": 0,
+      "transparent_outputs": 1
+    },
+    "evidence_root": "c9cd3fc432909f6f62d6a9faef141b6498eb73c07316033bd608ffa25bc02e9c",
+    "findings": 1,
+    "status": "FAIL",
+    "strict_exit": 1
+  },
+  "rule_id": "SC-004"
+}

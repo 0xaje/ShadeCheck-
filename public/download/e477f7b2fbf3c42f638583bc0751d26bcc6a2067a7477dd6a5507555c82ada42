@@ -1,0 +1,7 @@
+{
+  "kind": "actual-event-prefix",
+  "last_sequence": 1,
+  "limitation": "Partial observation before response/mempool evidence; no rejection or acceptance is asserted here.",
+  "source_events": "/home/runner/work/ShadeCheck-/ShadeCheck-/out/acceptance/20261024T092038-3b255dfc/regtest/20261024T092248-b9b26289/events.jsonl",
+  "source_evidence_root": "107be3aabb11f4e34e916cbdabf341d0c133dbf4c1d23e5a7bf06c04d3d5e54e"
+}

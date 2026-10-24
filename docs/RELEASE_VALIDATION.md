@@ -8,7 +8,9 @@ Fresh recordings now use per-run keyed session identifiers, omit arbitrary backe
 
 The read-only `shadecheck doctor` command checks prerequisites and reports a blocked setup clearly. Its READY state is not a privacy test result. [Rule applicability](rule-applicability.md) explains which requirements fit which observers and distinguishes configured policy failures from discovered vulnerabilities.
 
-The [current-release funded-wallet gate](modern-wallet.md) has separate execution status and coverage. A source build or an incomplete runtime is not a verified integration. The historical checks below remain an audit record, not claims that their older components are the recommended current production stack.
+The [current-release funded-wallet gate](modern-wallet.md) passed [run 40099904709](https://github.com/0xaje/ShadeCheck-/actions/runs/40099904709) at source `7ccf7c9e7270a9bde88c18ef8a4170acf80fa258` with 54 unit/boundary checks. Both initial scans completed heights 1–210. It recorded 1,009 events, checked 213 distinct delivered block heights, shielded real mined funds, sent a shielded payment and verified the recipient's exact 100,000 shielded zatoshis. The accepted payment had zero transparent inputs/outputs. Two SC-002 HIGH findings and actual strict exit 1 were required. Original archive SHA-256: `ed2f80fd89eb55fa975728e6e8740ffaf95173dab58f3a23236dd36a9f534f9f`; it was downloaded and revalidated locally. [Evidence bundle](../examples/modern/README.md).
+
+This unmodified upstream source build explicitly uses local test transport, not default production mixnet transport. Its SC-002 coverage stays separate from the five-family regression suite. The historical checks below remain an audit record, not claims that their older components are the recommended current production stack.
 
 ---
 

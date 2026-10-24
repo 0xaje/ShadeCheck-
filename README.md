@@ -12,7 +12,7 @@
   <a href="https://shade-check-nu.vercel.app/"><strong>Open demo</strong></a> ·
   <a href="#run-the-real-system">Run locally</a> ·
   <a href="docs/threat-model.md">Threat model</a> ·
-  <a href="docs/zingo-integration.md">Zingo integration</a> ·
+  <a href="docs/modern-wallet.md">Current wallet integration</a> ·
   <a href="https://github.com/0xaje/ShadeCheck-/actions">CI evidence</a>
 </p>
 
@@ -31,8 +31,8 @@ A transaction can be correctly shielded while application requests still expose 
 | Explore findings immediately | [Open the public evidence viewer](https://shade-check-nu.vercel.app/) — saved real regtest reports; no setup required |
 | Execute fresh tests | [Run locally](#run-the-real-system) with Python and Docker |
 | Check what was actually verified | [Acceptance audit](docs/acceptance.md) and [validation record](docs/RELEASE_VALIDATION.md) |
-| Inspect an independent client integration | [Pinned, unmodified Zingo synchronization](docs/zingo-integration.md) and [recorded artifacts](examples/zingo/README.md) |
-| Understand the limits | [Threat model](docs/threat-model.md) and [rule boundaries](#five-initial-rule-families) |
+| Inspect an independent client integration | [Current funded Zingo / Zebra / Zaino test](docs/modern-wallet.md) and [original evidence](examples/modern/README.md) |
+| Understand the limits | [Threat model](docs/threat-model.md), [rule applicability](docs/rule-applicability.md), and [submission review](docs/JUDGE_REVIEW.md) |
 
 <!-- Add the ShadeCheck-specific YouTube thumbnail/link here once its URL is supplied. Do not reuse another project's video. -->
 
@@ -42,7 +42,7 @@ A transaction can be correctly shielded while application requests still expose 
 - **Evidence-backed findings:** recorded RPC events support each finding; JSON and HTML reports are available for inspection.
 - **Behavior comparisons:** deliberately weak flows fail the declared policy; controlled alternatives change selected results.
 - **Regression gates:** saved baselines identify new failures, behavior categories, and increased severity; strict policy failures return nonzero exit codes.
-- **Independent synchronization:** a separate unmodified, pinned Zingo client completed direct and observed scanning, with 101 canonical blocks checked and 124 recorded events. This integration covers synchronization, not Zingo payments or broadcast.
+- **Independent funded wallet:** unmodified Zingolib 7.0.0 on Zebra 7.0.0 / Zaino 0.10.1 synchronized, shielded real mined funds, sent a shielded payment and verified recipient receipt. The separate test recorded 1,009 events and two HIGH SC-002 findings, with strict exit 1. It uses explicit upstream local test transport; it does not audit production mixnet behavior.
 
 The public website displays recorded evidence. Fresh execution runs on the developer's computer through the CLI or optional local dashboard runner.
 
@@ -64,6 +64,8 @@ Fresh recordings use per-run keyed session identifiers and omit arbitrary broadc
 Select requirements that match your actual observer and workflow. A finding is not automatically a newly discovered vulnerability. See [rule applicability and developer actions](docs/rule-applicability.md).
 
 ## Run the real system
+
+The five-family acceptance suite uses a frozen zcashd/lightwalletd regression backend. It is a controlled test target, not a recommendation for a new production wallet backend. The separate [current Zebra/Zaino wallet integration](docs/modern-wallet.md) validates its own documented coverage.
 
 Requirements: Git, Python 3.11+, and Docker Desktop with Linux containers (or Docker Engine/Compose on Linux). Start Docker and require both Client and Server in `docker version`.
 
@@ -109,7 +111,13 @@ To run actual controlled tests from the local dashboard, use `shadecheck dashboa
 
 ## Current-release wallet integration
 
-The [Zebra/Zaino funded-wallet gate](docs/modern-wallet.md) targets the pinned current Zingo release with an explicit upstream local transport test feature. Its workflow must verify funding, shielding, sending, receipt and strict SC-002 evidence before a completed gate is claimed. See its exact pins, coverage and execution status; the older five-family regression backend remains a separate compatibility target.
+The [funded-wallet gate](docs/modern-wallet.md) passed on the pinned current release: [real CI](https://github.com/0xaje/ShadeCheck-/actions/runs/40099904709), [original downloadable evidence](examples/modern/README.md). Funding, complete scans, shielding, shielded sending, node acceptance, exact mempool bytes, recipient receipt and strict SC-002 failure were verified. No source patches or public funds were used.
+
+| Execution target | Verified scope | Boundary |
+| --- | --- | --- |
+| Zingolib 7.0.0 + Zebra 7.0.0 + Zaino 0.10.1 | Funded independent wallet; SC-002, two HIGH findings | Explicit upstream local test transport; not default mixnet behavior |
+| Frozen zcashd 6.12.2 + pinned lightwalletd | All five rule families, weak/controlled alternatives, baselines, CLI and browser | Separate native-adapter and protocol-client scenarios; not one independent wallet audit |
+| Historical Zingolib 3.0.1 sync | 101 blocks, 124 events; explicit SC-001 policy | Preserved historical evidence; no payment coverage or production vulnerability claim |
 
 ## Five initial rule families
 
@@ -125,12 +133,7 @@ The [Zebra/Zaino funded-wallet gate](docs/modern-wallet.md) targets the pinned c
 
 The proxy records rule-specific evidence for GetLatestBlock, GetBlockRange, GetTransaction, SendTransaction, and GetMempoolStream. Additional RPCs in the vendored protocol schema are forwarded with compatibility-only fingerprints and sizes; unknown methods remain UNIMPLEMENTED. Forwarding does not imply privacy rule coverage or universal wallet compatibility. See the [pinned independent Zingo CLI integration](docs/zingo-integration.md) for its real-execution gate and limitations.
 
-**Independent-client gate verified:** unmodified Zingo CLI from zingolib release
-`zingolib_v3.0.1` completed direct and observed regtest scanning. The run checked
-101 canonical blocks and captured 124 events. See [real CI](https://github.com/0xaje/ShadeCheck-/actions/runs/39599061669)
-and [recorded evidence](examples/zingo/README.md). Coverage is fresh unfunded
-wallet synchronization under a declared SC-001 policy; this is not current-version
-production validation, all-wallet support, adoption, endorsement, or an anonymity claim.
+The [historical independent synchronization record](docs/zingo-integration.md) remains available for audit alongside the current funded integration. Its older source version and narrower coverage are preserved explicitly.
 
 
 ## Evaluate your captured evidence in CI

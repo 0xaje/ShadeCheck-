@@ -1,6 +1,8 @@
 # Current-release independent wallet on Zebra and Zaino
 
-This is a separate real-execution gate for a funded independent Zingo wallet. Its status is determined by the workflow and artifact verifier, not by this document or a successful build. Do not describe the gate as verified unless its run completes and produces a validated `integration_status: VERIFIED` manifest.
+[Real funded CI run 40099904709](https://github.com/0xaje/ShadeCheck-/actions/runs/40099904709) passed at ShadeCheck revision `7ccf7c9e7270a9bde88c18ef8a4170acf80fa258`, including 54 unit/boundary checks. The original artifact was downloaded, hash checked and independently revalidated. Its manifest reports `integration_status: VERIFIED`; the privacy report is FAIL with two HIGH SC-002 findings and strict exit 1. [Original evidence and offline inspection](../examples/modern/README.md).
+
+Both initial scans completed heights 1–210. The run recorded 1,009 events and verified 213 distinct delivered block heights against Zebra. The wallet shielded actual mined funds and sent 100,000 shielded zatoshis; the recipient verified that exact Ironwood balance with zero transparent value. The payment's accepted node-decoded transaction had zero transparent inputs and outputs. Both broadcasts were accepted, re-observed with identical mempool bytes, and mined. These are controlled test-transport observations, not a production wallet vulnerability claim.
 
 ## Pinned components
 

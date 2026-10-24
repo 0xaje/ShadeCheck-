@@ -129,10 +129,16 @@ def wallet(binary,directory,*command,endpoint=None,initialize=False):
     return result.stdout
 
 
-def sync(binary,directory,endpoint):
-    result=object_with(wallet(binary,directory,'sync','status',endpoint=endpoint),'percentage_total_blocks_scanned')
-    if result['percentage_total_blocks_scanned']!=100 or result.get('total_blocks_scanned',0)<=0:
+def require_complete_scan(result,minimum_height):
+    scanned=[int(r['end_block']) for r in result.get('scan_ranges',[]) if r.get('priority')=='Scanned']
+    if (result.get('percentage_total_blocks_scanned')!=100 or result.get('total_blocks_scanned',0)<=0
+            or not scanned or max(scanned)<minimum_height):
         raise RuntimeError('Client did not complete nonempty block scan')
+
+
+def sync(binary,directory,endpoint,minimum_height):
+    result=object_with(wallet(binary,directory,'sync','status',endpoint=endpoint),'percentage_total_blocks_scanned')
+    require_complete_scan(result,minimum_height)
     return result
 
 
@@ -202,11 +208,13 @@ def verify(directory):
     receipt=json.loads((directory/'recipient-receipt.json').read_text())
     if sum(receipt['balance'].get('total_'+p+'_balance',0) for p in ['ironwood','orchard','sapling'])!=100000:
         raise ValueError('Incorrect shielded recipient amount')
+    if receipt['balance'].get('total_transparent_balance',0)!=0:
+        raise ValueError('Unexpected transparent recipient balance')
+    require_complete_scan(receipt['sync_status'],max(r['confirmed_height'] for r in manifest['shielded_send']))
     if result['status']!='FAIL' or manifest['strict_exit']!=1: raise ValueError('Incorrect strict result')
     for mode in ['direct','observed']:
         status=json.loads((directory/f'{mode}-sync.json').read_text())
-        if status['percentage_total_blocks_scanned']!=100 or status.get('total_blocks_scanned',0)<=0:
-            raise ValueError('Incomplete scan')
+        require_complete_scan(status,manifest['initial_sync_target_height'])
     delivered={str(e['metadata']['height']):bytes.fromhex(e['metadata']['block_hash'])[::-1].hex()
                for e in events if e['method']=='GetBlockRange' and e['phase']=='response'}
     if not delivered or delivered!=manifest['canonical_blocks_verified']: raise ValueError('Canonical checks mismatch')
@@ -255,7 +263,7 @@ def main():
         height+=110
         info=wait_indexer(height)
         print('Checking direct and observed current-release client synchronization...',flush=True)
-        direct=sync(binary,private/'direct',INDEXER)
+        direct=sync(binary,private/'direct',INDEXER,height)
         write(directory/'direct-sync.json',direct)
         with ExitStack() as stack:
             recorder=Recorder(directory/'events.jsonl','upstream');stack.callback(recorder.close)
@@ -265,17 +273,17 @@ def main():
             endpoint=f'127.0.0.1:{port}'
             client_channel=stack.enter_context(grpc.insecure_channel(endpoint))
             stub=rpc.CompactTxStreamerStub(client_channel)
-            observed_status=sync(binary,observed,endpoint)
+            observed_status=sync(binary,observed,endpoint,height)
             write(directory/'observed-sync.json',observed_status)
             if any(direct.get(k)!=observed_status.get(k) for k in ['sync_start_height','total_blocks_scanned']):
                 raise RuntimeError('Direct/observed block spans differ')
             print('Shielding real mined funds through the observed independent wallet...',flush=True)
             shield=confirm_transmission(wallet(binary,observed,'quickshield',endpoint=endpoint),stub)
-            sync(binary,observed,endpoint)
+            sync(binary,observed,endpoint,node('getblockchaininfo')['blocks'])
             receiver=object_with(wallet(binary,private/'recipient','new_address','o',endpoint=INDEXER,initialize=True),'encoded_address')['encoded_address']
             print('Sending real shielded wallet funds through ShadeCheck...',flush=True)
             sent=confirm_transmission(wallet(binary,observed,'quicksend',receiver,'100000',endpoint=endpoint),stub,require_shielded=True)
-            recipient=sync(binary,private/'recipient',INDEXER)
+            recipient=sync(binary,private/'recipient',INDEXER,node('getblockchaininfo')['blocks'])
             output=wallet(binary,private/'recipient','balance')
             balance=recipient_balance(output)
             write(directory/'recipient-receipt.json',{'sync_status':recipient,'balance':balance})
@@ -294,7 +302,7 @@ def main():
         write(directory/'integration.json',{
             'integration_status':'VERIFIED','network':'regtest','client':{**pin,'binary_sha256':hashlib.sha256(binary.read_bytes()).hexdigest()},
             'node':node('getnetworkinfo'),'indexer_revision':info.gitCommit,'indexer_reported_chain':info.chainName,
-            'regtest_genesis':REGTEST_GENESIS,'images':images,
+            'regtest_genesis':REGTEST_GENESIS,'images':images,'initial_sync_target_height':height,
             'shielding':shield,'shielded_send':sent,'canonical_blocks_verified':verified,'strict_exit':gate.returncode,
             'evidence_root':result['evidence_root'],
             'artifacts':[{'path':str(p.relative_to(directory)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(directory.rglob('*')) if p.is_file()],

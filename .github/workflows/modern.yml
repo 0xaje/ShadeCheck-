@@ -7,6 +7,7 @@ on:
       - 'scripts/modern_wallet.py'
       - 'shadecheck/**'
       - 'tests/test_evidence_privacy.py'
+      - 'tests/test_modern_wallet.py'
       - '.github/workflows/modern.yml'
   workflow_dispatch:
 permissions:

@@ -14,7 +14,7 @@ The activation schedule matches the client's regtest defaults through NU6.3 at h
 ## Required runtime evidence
 
 1. Create throwaway sender/recipient wallets locally; never request or publish seeds/keys.
-2. Mine actual local coinbase funds to the sender's transparent address and wait for indexer readiness.
+2. Mine actual local coinbase funds to the sender's transparent address. Require advertised height, served latest-block height and delivery of the requested compact tip; advertised validator height alone is insufficient for indexer readiness.
 3. Require complete, nonempty direct and observed client synchronization over the same initial block span.
 4. Let the independent wallet shield the mature local funds and broadcast through ShadeCheck. Require actual Zebra mempool acceptance, identical mempool bytes observed through the proxy, and block inclusion.
 5. Let the wallet send 100000 zatoshis to a shielded recipient through the observer. Require accepted node-decoded transaction structure with zero transparent inputs and outputs, matching mempool evidence, and block inclusion.

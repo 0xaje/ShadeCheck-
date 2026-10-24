@@ -186,7 +186,7 @@ Vercel serves the committed `public` directory using vercel.json; `/api/data` ma
 
 ## Verified execution records
 
-[Run 39577173119](https://github.com/0xaje/ShadeCheck-/actions/runs/39577173119) is green at source commit `c3ce35f93979eae57fa91c394be2bf7ced3d3e1a`: 37 unit checks, actual Zcash acceptance, real positive/negative consumer Action gates, installed-wheel verification, local and static Chrome/mobile checks, and an actual dashboard-triggered sync job. Its 24 reports and 112 hashed acceptance artifacts were independently revalidated. The committed public snapshot contains those exact reports, downloadable artifacts, and source provenance; it is recorded evidence, not a live scan.
+[Run 40081554868](https://github.com/0xaje/ShadeCheck-/actions/runs/40081554868) is green at source commit `74d2f8f199ed2b631c899aef8a25c722f4deeee4`: 53 unit checks, actual five-family Zcash acceptance, real positive/negative consumer Action gates, installed-wheel verification, local and static Chrome/mobile checks, and an actual dashboard-triggered sync job. Its 24 reports and 112 hashed acceptance artifacts were downloaded and independently revalidated. The committed public snapshot contains those exact reports, downloadable artifacts, and source provenance; it is recorded evidence, not a live scan. The newer funded-wallet gate has separate evidence and coverage.
 
 [Validation record](docs/RELEASE_VALIDATION.md)
 

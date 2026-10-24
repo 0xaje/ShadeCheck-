@@ -68,6 +68,8 @@ Keep the backend, scenario and requirement comparable. The baseline validates ex
 
 Your preceding integration step must start/stop the observer and run the real client. Replace these example paths with the output of that step. The Action evaluates supplied evidence; it does not launch arbitrary wallet code automatically.
 
+This is a job fragment, not a complete workflow file: place `steps` under your own job, and set `permissions` at workflow or job scope. For a complete executable example, use the linked onboarding workflow.
+
 ```yaml
 permissions:
   contents: read

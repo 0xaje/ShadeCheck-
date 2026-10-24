@@ -1,0 +1,42 @@
+name: shadecheck-modern-regtest
+services:
+  zebra:
+    image: zfnd/zebra:7.0.0
+    platform: linux/amd64
+    environment:
+      ZEBRA_NETWORK__NETWORK: Regtest
+      ZEBRA_RPC__LISTEN_ADDR: 0.0.0.0:18232
+      ZEBRA_RPC__ENABLE_COOKIE_AUTH: "false"
+      ZEBRA_MINING__MINER_ADDRESS: ${SHADECHECK_MODERN_MINER:?driver must supply a fresh local miner address}
+    volumes:
+      - ./zebra.toml:/home/zebra/.config/zebrad.toml:ro
+      - zebra-data:/home/zebra/.cache/zebra
+    ports:
+      - "127.0.0.1:29032:18232"
+    networks: [regtest]
+  zaino:
+    image: zingodevops/zainod:0.10.1-no-tls
+    platform: linux/amd64
+    environment:
+      ZAINO_BACKEND: fetch
+      ZAINO_NETWORK: Regtest
+      ZAINO_VALIDATOR_SETTINGS__VALIDATOR_JSONRPC_LISTEN_ADDRESS: zebra:18232
+      ZAINO_VALIDATOR_SETTINGS__VALIDATOR_USER: local-regtest-only
+      ZAINO_VALIDATOR_SETTINGS__VALIDATOR_PASSWORD: local-regtest-only
+      ZAINO_GRPC_SETTINGS__LISTEN_ADDRESS: 0.0.0.0:8137
+      ZAINO_STORAGE__DATABASE__PATH: /app/data
+      ZAINO_STORAGE__DATABASE__SYNC_WRITE_BATCH_SIZE: "1"
+      ZAINO_STORAGE__DATABASE__ACCUMULATOR_REBUILD_MEMORY_SIZE: "1"
+    depends_on: [zebra]
+    volumes:
+      - zaino-data:/app/data
+    ports:
+      - "127.0.0.1:29067:8137"
+    networks: [regtest, observer]
+volumes:
+  zebra-data:
+  zaino-data:
+networks:
+  regtest:
+    internal: true
+  observer: {}

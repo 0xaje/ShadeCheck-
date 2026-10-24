@@ -15,6 +15,7 @@ from shadecheck.core import Recorder, load_events
 from shadecheck.generated import service_pb2 as pb
 from shadecheck.generated import service_pb2_grpc as rpc
 from shadecheck.harness import start_server
+from shadecheck.privacy import private_write
 
 ROOT = Path(__file__).resolve().parents[1]
 COMPOSE = ["docker", "compose", "-f", str(ROOT / "integration/compose.yml")]
@@ -54,8 +55,7 @@ def require_regtest(service="zcashd"):
 
 
 def write_json(path, value):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, sort_keys=True, default=str) + "\n")
+    private_write(path, json.dumps(value, indent=2, sort_keys=True, default=str) + "\n")
 
 
 def wait_node(service="zcashd"):
@@ -335,7 +335,6 @@ def prove():
                 "node_raw_transaction_matches": bytes.fromhex(actual_hex) == data,
                 "payload_sha256": hashlib.sha256(data).hexdigest(),
                 "send_response_code": response.errorCode,
-                "send_response_message": response.errorMessage,
                 "node_subversion": node("getnetworkinfo")["subversion"],
                 "lightwalletd_revision": lightd_info().gitCommit,
                 "construction": transaction.get("construction", "zcashd raw transaction signing"),

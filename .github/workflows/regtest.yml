@@ -75,7 +75,7 @@ jobs:
           test "$EXIT_CODE" = 1
           python -c "import json; r=json.load(open('out/consumer-fail/report.json')); assert r['findings'][0]['rule_id']=='SC-001'"
       - name: Export verified public recorded site
-        run: python scripts/export_site.py --suite "$SC_REAL_SUITE" --output out/site --source-run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" --source-commit "${{ github.sha }}"
+        run: python scripts/export_site.py --acknowledge-public-evidence --suite "$SC_REAL_SUITE" --output out/site --source-run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" --source-commit "${{ github.sha }}"
       - name: Verify installed wheel outside source checkout
         run: python scripts/release_smoke.py
       - name: Install pinned browser-test driver

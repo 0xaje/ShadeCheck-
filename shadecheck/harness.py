@@ -81,8 +81,7 @@ class Observer(rpc.CompactTxStreamerServicer):
                                      request_sequence=seq, grpc_code=error.code().name)
                 context.abort(error.code(), error.details())
         self.recorder.record("SendTransaction", "response", context.peer(),
-                             request_sequence=seq, error_code=response.errorCode,
-                             response_message=response.errorMessage)
+                             request_sequence=seq, error_code=response.errorCode)
         return response
 
     def GetMempoolStream(self, request, context):
@@ -108,9 +107,9 @@ def _compatibility_method(method):
     Only message fingerprints/sizes are retained: tree material, addresses, and
     wallet keys are not copied into the compatibility event metadata.
     """
-    def fingerprint(message):
+    def fingerprint(message, recorder):
         data = message.SerializeToString(deterministic=True)
-        return {"message_sha256": hashlib.sha256(data).hexdigest(),
+        return {"message_hmac_sha256": recorder.fingerprint(data, "compatibility-message"),
                 "message_size": len(data), "coverage_role": "compatibility-only"}
 
     def invoke(self, request, context):
@@ -118,12 +117,12 @@ def _compatibility_method(method):
             context.abort(grpc.StatusCode.UNIMPLEMENTED, "Compatibility RPC requires an actual backend")
         seq = self.recorder.record(method.name, "request", context.peer(),
                                    **({"coverage_role": "compatibility-only"} if method.client_streaming
-                                      else fingerprint(request)))
+                                      else fingerprint(request, self.recorder)))
         if method.client_streaming:
             def requests():
                 for item in request:
                     self.recorder.record(method.name, "request-item", context.peer(),
-                                         request_sequence=seq, **fingerprint(item))
+                                         request_sequence=seq, **fingerprint(item, self.recorder))
                     yield item
             outgoing = requests()
         else:
@@ -137,14 +136,14 @@ def _compatibility_method(method):
                 context.add_callback(response.cancel)
                 for item in response:
                     self.recorder.record(method.name, "response", context.peer(),
-                                         request_sequence=seq, **fingerprint(item))
+                                         request_sequence=seq, **fingerprint(item, self.recorder))
                     yield item
             else:
                 response = call.future(outgoing, timeout=timeout)
                 context.add_callback(response.cancel)
                 item = response.result()
                 self.recorder.record(method.name, "response", context.peer(),
-                                     request_sequence=seq, **fingerprint(item))
+                                     request_sequence=seq, **fingerprint(item, self.recorder))
                 yield item
         except grpc.RpcError as error:
             self.recorder.record(method.name, "error", context.peer(),

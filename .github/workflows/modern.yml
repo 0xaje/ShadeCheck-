@@ -1,0 +1,75 @@
+name: Modern Zcash wallet receive and send
+on:
+  push:
+    branches: [main, 'hardening/**']
+    paths:
+      - 'integration/modern/**'
+      - 'scripts/modern_wallet.py'
+      - 'shadecheck/**'
+      - 'tests/test_evidence_privacy.py'
+      - '.github/workflows/modern.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  modern:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install .
+      - name: Unit and privacy boundaries
+        run: python -m unittest discover -s tests -v
+      - name: Build prerequisites and disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler libssl-dev pkg-config build-essential
+      - uses: dtolnay/rust-toolchain@1.99.0
+      - name: Checkout unmodified released client
+        run: |
+          git clone --no-checkout https://github.com/zingolabs/zingolib.git "$RUNNER_TEMP/modern-zingo"
+          git -C "$RUNNER_TEMP/modern-zingo" checkout --detach bfb0a2156819ea7f75a9b09b1724abfd06c8925e
+      - uses: actions/cache/restore@v4
+        id: build-cache
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.zcash-params
+            ${{ runner.temp }}/modern-zingo/target
+          key: modern-zingo-${{ runner.os }}-bfb0a215-rust199-v1
+      - name: Build upstream explicit local transport test mode
+        working-directory: ${{ runner.temp }}/modern-zingo
+        run: cargo build --locked --release -p zingo-cli --no-default-features --features nakednet-test-mode
+      - uses: actions/cache/save@v4
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.zcash-params
+            ${{ runner.temp }}/modern-zingo/target
+          key: modern-zingo-${{ runner.os }}-bfb0a215-rust199-v1
+      - name: Real funded wallet receive and send through observer
+        run: python scripts/modern_wallet.py --source "$RUNNER_TEMP/modern-zingo"
+      - name: Backend diagnostics
+        if: always()
+        env:
+          SHADECHECK_MODERN_MINER: tmSRd1r8gs77Ja67Fw1JcdoXytxsyrLTPJm
+        run: |
+          mkdir -p out/modern-diagnostics
+          docker compose -f integration/modern/compose.yml logs --no-color > out/modern-diagnostics/backend.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: modern-wallet-evidence
+          path: out/modern/
+      - name: Stop only modern backend
+        if: always()
+        env:
+          SHADECHECK_MODERN_MINER: tmSRd1r8gs77Ja67Fw1JcdoXytxsyrLTPJm
+        run: docker compose -f integration/modern/compose.yml down

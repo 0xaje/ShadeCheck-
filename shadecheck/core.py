@@ -1,10 +1,13 @@
 """SC-002 uses observed bytes; SHA-256 here is an evidence fingerprint, not a Zcash txid."""
 import hashlib
+import hmac
 import json
+import secrets
 import threading
 import time
 from pathlib import Path
 from .payment_rule import evaluate_payment
+from .privacy import private_open
 
 LIMITATIONS = [
     "Defined tests cover SC-001 through SC-004; SC-005 requires a compatible saved baseline.",
@@ -22,14 +25,20 @@ def canonical(value):
 class Recorder:
     def __init__(self, path, mode):
         self.path = Path(path)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
         # Exclusive creation prevents mixing runs or accidentally overwriting evidence.
-        self.file = self.path.open("x", encoding="utf-8")
+        self.file = private_open(self.path, exclusive=True)
+        # Never persist this key. Same peer within a run remains correlatable;
+        # separate runs cannot be joined by guessing IP/port or address hashes.
+        self._privacy_key = secrets.token_bytes(32)
         self.lock = threading.Lock()
         self.mode = mode
         self.started = time.monotonic_ns()
         self.sequence = 0
         self.previous = "0" * 64
+
+    def fingerprint(self, data, domain):
+        return hmac.new(self._privacy_key, domain.encode() + b"\0" + data,
+                        hashlib.sha256).hexdigest()
 
     def record(self, method, phase, peer, source_mode=None, **metadata):
         if source_mode is not None and source_mode not in {"upstream", "wallet-adapter", "protocol-fixture"}:
@@ -40,7 +49,7 @@ class Recorder:
                          method=method, phase=phase,
                          timestamp_ns=time.time_ns(),
                          elapsed_ns=time.monotonic_ns() - self.started,
-                         session=hashlib.sha256(peer.encode()).hexdigest(),
+                         session=self.fingerprint(peer.encode(), "transport-session"),
                          metadata=metadata, previous_hash=self.previous)
             event["event_hash"] = hashlib.sha256(canonical(event).encode()).hexdigest()
             self.previous = event["event_hash"]

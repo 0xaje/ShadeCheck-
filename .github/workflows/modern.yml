@@ -63,6 +63,7 @@ jobs:
         run: |
           mkdir -p out/modern-diagnostics
           docker compose -f integration/modern/compose.yml logs --no-color > out/modern-diagnostics/backend.log 2>&1
+          tail -n 100 out/modern-diagnostics/backend.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:

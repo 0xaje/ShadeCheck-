@@ -101,7 +101,8 @@ def wallet(binary,directory,*command,endpoint=None):
     result=subprocess.run(args+list(command),cwd=directory,capture_output=True,text=True,timeout=360)
     if result.returncode:
         private_write(directory/'private-failure.log',result.stdout+'\n'+result.stderr)
-        raise RuntimeError(f'Zingo command {command[0]} failed; private diagnostics retained locally')
+        categories=[word for word in ['gap','offline','indexer','birthday','panicked','permission','unknown','unrecognized','network','wallet'] if word in (result.stdout+result.stderr).lower()]
+        raise RuntimeError(f'Zingo command {command[0]} failed (exit {result.returncode}; categories: {categories}); private diagnostics retained locally')
     return result.stdout
 
 
@@ -203,7 +204,7 @@ def main():
     directory=ROOT/'out/modern'/run_id
     private=ROOT/'.shadecheck/modern-wallets'/run_id
     observed=private/'observed'
-    miner=object_with(wallet(binary,observed,'new_taddress'),'encoded_address')['encoded_address']
+    miner=object_with(wallet(binary,observed,'new_taddress_allow_gap'),'encoded_address')['encoded_address']
     if not re.fullmatch(r't[0-9A-Za-z]{30,60}',miner): raise ValueError('Invalid local mining receiver')
     env={**os.environ,'SHADECHECK_MODERN_MINER':miner}
     private_directory(directory)

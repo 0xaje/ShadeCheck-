@@ -73,10 +73,11 @@ def capture(root, name, start, end):
 def verify(root):
     root = root.resolve()
     manifest = json.loads((root / 'walkthrough.json').read_text())
-    if manifest.get('kind') != 'shadecheck-developer-walkthrough' or manifest.get('network') != 'regtest':
+    if (manifest.get('schema_version') != 1 or manifest.get('kind') != 'shadecheck-developer-walkthrough'
+            or manifest.get('network') != 'regtest'):
         raise ValueError('Not a controlled developer walkthrough')
     inventory = manifest['artifacts']
-    actual = {p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file() and p.name != 'walkthrough.json'}
+    actual = {p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file() and p != root / 'walkthrough.json'}
     if actual != {item['path'] for item in inventory} or len(actual) != len(inventory):
         raise ValueError('Artifact inventory differs')
     for item in inventory:

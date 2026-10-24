@@ -45,6 +45,8 @@ python scripts/modern_wallet.py --verify out/modern-recorded/20261024T135437-8bc
 
 Expect `MODERN WALLET ARTIFACTS VERIFIED`. Open that directory's `report.html`. The two HIGH SC-002 findings describe observable broadcasts in explicit upstream local test transport. Verification success means saved evidence recomputed correctly; it does not mean the privacy report passed or that a fresh wallet ran on your computer. [Exact source CI and limits](../examples/modern/README.md).
 
+If you want to inspect the baseline-to-regression decision without Docker, the [original recorded developer walkthrough](../examples/range-client/README.md#original-recorded-onboarding-proof) has a separate downloadable archive and verifier.
+
 ## 3. Run the fresh developer walkthrough
 
 Start Docker Desktop with Linux containers, or Docker Engine with Compose v2. Then:
@@ -107,4 +109,4 @@ On Bash: `docker compose -f integration/compose.yml down` stops this dedicated b
 
 ## What this onboarding check establishes
 
-The automated workflow builds an actual wheel, installs it into a fresh virtual environment, runs the example client outside the checkout, validates real node-backed results, then exercises passing and failing consumer Actions. Its completion status comes from CI and the artifact verifier. It does not establish that an unfamiliar person can follow the instructions unaided. Use the [independent reader exercise](ONBOARDING_REVIEW.md) to test that separately.
+The automated workflow builds an actual wheel, installs it into a fresh virtual environment, runs the example client outside the checkout, validates real node-backed results, then exercises passing and failing consumer Actions. The [first real run](https://github.com/0xaje/ShadeCheck-/actions/runs/40103273814) completed successfully; its [original evidence](../examples/range-client/README.md#original-recorded-onboarding-proof) was downloaded and revalidated. Each future run must still pass CI and the artifact verifier. It does not establish that an unfamiliar person can follow the instructions unaided. Use the [independent reader exercise](ONBOARDING_REVIEW.md) to test that separately.

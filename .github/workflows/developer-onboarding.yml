@@ -4,6 +4,7 @@ on:
     paths:
       - 'examples/range-client/**'
       - 'scripts/developer_walkthrough.py'
+      - 'tests/test_developer_walkthrough.py'
       - '.github/workflows/developer-onboarding.yml'
       - 'shadecheck/**'
       - 'action.yml'

@@ -67,7 +67,7 @@ Select requirements that match your actual observer and workflow. A finding is n
 
 ## First developer workflow
 
-Follow [getting started](docs/GETTING_STARTED.md) for Windows and Bash commands, expected outputs and troubleshooting. A separate example client retrieves real completed block ranges through the observer. The walkthrough validates a compliant baseline, a fresh unchanged run and an actual changed request, then asserts the resulting policy and regression exits. The [real onboarding CI](.github/workflows/developer-onboarding.yml) installs a wheel into a clean environment and tests the consumer Action against those traces. Its run and artifact verifier determine completion; this is not a claim of independent user adoption.
+Follow [getting started](docs/GETTING_STARTED.md) for Windows and Bash commands, expected outputs and troubleshooting. A separate example client retrieves real completed block ranges through the observer. The walkthrough validates a compliant baseline, a fresh unchanged run and an actual changed request, then asserts the resulting policy and regression exits. The [real onboarding CI](.github/workflows/developer-onboarding.yml) installs a wheel into a clean environment and tests the consumer Action against those traces. [Real onboarding CI](https://github.com/0xaje/ShadeCheck-/actions/runs/40103273814) passed; its [original evidence](examples/range-client/README.md#original-recorded-onboarding-proof) is committed for offline inspection. This is automated clean-environment validation, not a claim of independent user adoption.
 
 ## Run the real system
 
